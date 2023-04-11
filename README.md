@@ -15,7 +15,7 @@ To install `SDL2` on windows:
 ### Canvas
 The `Canvas` class allows you to create a canvas and to drow on it
 ```js
-import { Canvas } from "draw2d";
+import { Canvas } from "simply2d";
 const canvas = new Canvas(
 	"my canvas",	// window title
 	600,			// window width
@@ -81,7 +81,7 @@ Return the window height
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```js
-import { Colors } from "draw2d";
+import { Colors } from "simply2d";
 const canvas = new Canvas("title", 100, 100);
 canvas.setBackgroundColor(Colors.RED);	// #FF0000 hex color
 canvas.drawLine(

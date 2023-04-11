@@ -1,19 +1,6 @@
 import * as ffi from "ffi-napi";
-import * as ref from "ref-napi";
 import { getSDL2Lib } from "./getLibrary.js";
-
-const VOID = ref.types.void;
-const VOIDPTR = ref.refType(VOID);
-const SDL2_Structure = ref.types.void;
-const SDL2_StructurePtr = ref.refType(SDL2_Structure);
-const SDL2_Window = ref.types.void;
-const SDL2_WindowPtr = ref.refType(SDL2_Window);
-const SDL2_Renderer = ref.types.void;
-const SDL2_RendererPtr = ref.refType(SDL2_Renderer);
-const SDL2_Surface = ref.types.void;
-const SDL2_SurfacePtr = ref.refType(SDL2_Surface);
-const SDL2_Texture = ref.types.void;
-const SDL2_TexturePtr = ref.refType(SDL2_Texture);
+import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, VOIDPTR } from "./sdlTypes.js";
 
 export const SDL_Init_Flags = {
 	SDL_INIT_TIMER: 0x00000001,

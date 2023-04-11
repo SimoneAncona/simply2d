@@ -57,6 +57,10 @@ export class Canvas {
 		setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
 	}
 
+	loadRawData(pixels: Uint8Array) {
+		if (pixels.length != this._height * this._width) throw "The buffer must be the same size as the window resolution";
+	}
+
 	getWidth() { return this._width };
 	getHeight() { return this._height };
 

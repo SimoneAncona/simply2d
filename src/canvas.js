@@ -1,7 +1,7 @@
 import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setLine, setPoint, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 var Canvas = (function () {
-    function Canvas(title, width, height, xPos, yPos, options) {
+    function Canvas(windowTitle, width, height, xPos, yPos, options) {
         if (xPos === void 0) { xPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED; }
         if (yPos === void 0) { yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED; }
         if (options === void 0) { options = {
@@ -21,7 +21,7 @@ var Canvas = (function () {
             flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
         else if (options.mode === "shown")
             flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
-        this._window = getWindow(title, xPos, yPos, width, height, flags);
+        this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
         this._renderer = getRenderer(this._window, -1, 0);
     }
     Canvas.prototype.show = function () {
@@ -42,10 +42,17 @@ var Canvas = (function () {
     Canvas.prototype.drawLine = function (color, from, to) {
         setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
     };
+    Canvas.prototype.loadRawData = function (pixels) {
+        if (pixels.length != this._height * this._width)
+            throw "The buffer must be the same size as the window resolution";
+    };
     Canvas.prototype.getWidth = function () { return this._width; };
     ;
     Canvas.prototype.getHeight = function () { return this._height; };
     ;
+    Canvas.prototype.clear = function () {
+        clearWithColor(this._renderer, 0, 0, 0, 255);
+    };
     return Canvas;
 }());
 export { Canvas };

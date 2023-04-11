@@ -1,12 +1,6 @@
 import * as ffi from "ffi-napi";
-import * as ref from "ref-napi";
 import { getSDL2Lib } from "./getLibrary.js";
-var SDL2_Structure = ref.types["void"];
-var SDL2_StructurePtr = ref.refType(SDL2_Structure);
-var SDL2_Window = ref.types["void"];
-var SDL2_WindowPtr = ref.refType(SDL2_Window);
-var SDL2_Renderer = ref.types["void"];
-var SDL2_RendererPtr = ref.refType(SDL2_Renderer);
+import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, VOIDPTR } from "./sdlTypes.js";
 export var SDL_Init_Flags = {
     SDL_INIT_TIMER: 0x00000001,
     SDL_INIT_AUDIO: 0x00000010,
@@ -68,5 +62,6 @@ export var SDL2 = ffi.Library(getSDL2Lib(), {
     "SDL_RenderClear": ["void", [SDL2_RendererPtr]],
     "SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
     "SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
-    "SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]]
+    "SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]],
+    "SDL_CreateRGBSurfaceFrom": [SDL2_SurfacePtr, [VOIDPTR, "int", "int", "int", "int", "uint32", "unit32", "unit32", "unit32"]]
 });

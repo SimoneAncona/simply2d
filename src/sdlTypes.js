@@ -1,0 +1,13 @@
+import * as ref from "ref-napi";
+export var VOID = ref.types["void"];
+export var VOIDPTR = ref.refType(VOID);
+export var SDL2_Structure = ref.types["void"];
+export var SDL2_StructurePtr = ref.refType(SDL2_Structure);
+export var SDL2_Window = ref.types["void"];
+export var SDL2_WindowPtr = ref.refType(SDL2_Window);
+export var SDL2_Renderer = ref.types["void"];
+export var SDL2_RendererPtr = ref.refType(SDL2_Renderer);
+export var SDL2_Surface = ref.types["void"];
+export var SDL2_SurfacePtr = ref.refType(SDL2_Surface);
+export var SDL2_Texture = ref.types["void"];
+export var SDL2_TexturePtr = ref.refType(SDL2_Texture);

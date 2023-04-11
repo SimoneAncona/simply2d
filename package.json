@@ -1,0 +1,28 @@
+{
+  "name": "draw2d",
+  "version": "0.1.0",
+  "description": "Basic 2d GUI library for node.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "2d",
+    "graphics",
+    "canvas"
+  ],
+  "author": "Simone Ancona",
+  "license": "ISC",
+  "dependencies": {
+    "ffi-napi": "^4.0.3",
+    "ref-napi": "^3.0.3",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/ffi-napi": "^4.0.7",
+    "@types/ref-napi": "^3.0.7"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "simply2d",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Basic 2D GUI library for node.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,7 +17,11 @@
   "keywords": [
     "2d",
     "graphics",
-    "canvas"
+    "graphic",
+    "canvas",
+    "sdl",
+    "images",
+    "bindings"
   ],
   "author": "Simone Ancona",
   "license": "ISC",

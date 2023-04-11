@@ -2,12 +2,18 @@ import * as ffi from "ffi-napi";
 import * as ref from "ref-napi";
 import { getSDL2Lib } from "./getLibrary.js";
 
+const VOID = ref.types.void;
+const VOIDPTR = ref.refType(VOID);
 const SDL2_Structure = ref.types.void;
 const SDL2_StructurePtr = ref.refType(SDL2_Structure);
 const SDL2_Window = ref.types.void;
 const SDL2_WindowPtr = ref.refType(SDL2_Window);
 const SDL2_Renderer = ref.types.void;
 const SDL2_RendererPtr = ref.refType(SDL2_Renderer);
+const SDL2_Surface = ref.types.void;
+const SDL2_SurfacePtr = ref.refType(SDL2_Surface);
+const SDL2_Texture = ref.types.void;
+const SDL2_TexturePtr = ref.refType(SDL2_Texture);
 
 export const SDL_Init_Flags = {
 	SDL_INIT_TIMER: 0x00000001,
@@ -77,5 +83,6 @@ export const SDL2 = ffi.Library(getSDL2Lib(), {
 	"SDL_RenderClear": ["void", [SDL2_RendererPtr]],
 	"SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
 	"SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
-	"SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]]
+	"SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]],
+	"SDL_CreateRGBSurfaceFrom": [SDL2_SurfacePtr, [VOIDPTR, "int", "int", "int", "int", "uint32", "unit32", "unit32", "unit32"]]
 });

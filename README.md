@@ -68,15 +68,21 @@ Draw a line from `from` coordinates to `to` coordinates
 
 ### Canvas.getWidth
 ```js
-getWidth(void): void
+getWidth(): void
 ```
 Return the window width
 
 ### Canvas.getHeight
 ```js
-getHeight(void): void
+getHeight(): void
 ```
 Return the window height
+
+### Canvas.clear
+```js
+clear(): void
+```
+Clear the screen
 
 ### Colors
 Colors is an object that contains different standard colors and some useful function

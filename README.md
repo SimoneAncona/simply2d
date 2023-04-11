@@ -1,4 +1,4 @@
-# draw2d
+# Simply2D
 ## Introduction
 This library allows, thanks to SDL2, to create windows and draw on the screen
 

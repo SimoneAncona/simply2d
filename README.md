@@ -62,7 +62,7 @@ Draw a point on the screen
 
 ### Canvas.drawLine
 ```js
-drawLine(color: RGBAColor, from: Position, to: Position)
+drawLine(color: RGBAColor, from: Position, to: Position): void
 ```
 Draw a line from `from` coordinates to `to` coordinates
 
@@ -102,3 +102,10 @@ canvas.drawLine(
 	}
 );
 ```
+
+
+### Colors.from8bit
+```js
+from8bit(color256: number): RGBAColor
+```
+Convert an 8 bit color into a 24 bit color

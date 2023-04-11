@@ -11,7 +11,7 @@ To install `SDL2` on windows:
 ### Linux installation
 > Linux is not fully supported right now
 
-## References
+## API
 ### Canvas
 The `Canvas` class allows you to create a canvas and to drow on it
 ```js

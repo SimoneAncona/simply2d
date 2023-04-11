@@ -4,6 +4,10 @@
   "description": "Basic 2D GUI library for node.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SimoneAncona/draw2d"
+  },
   "type": "module",
   "scripts": {
     "start": "node index.js",

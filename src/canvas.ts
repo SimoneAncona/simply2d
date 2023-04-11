@@ -11,7 +11,7 @@ export class Canvas {
 	_renderer: Pointer<void>;
 
 	constructor(
-		title: string,
+		windowTitle: string,
 		width: number,
 		height: number,
 		xPos: number = SDL_WindowPos.SDL_WINDOWPOS_CENTERED,
@@ -29,7 +29,7 @@ export class Canvas {
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
 		else if (options.mode === "minimazied") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
-		this._window = getWindow(title, xPos, yPos, width, height, flags);
+		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
 	}
 

@@ -5,6 +5,8 @@ var SDL2_Structure = ref.types["void"];
 var SDL2_StructurePtr = ref.refType(SDL2_Structure);
 var SDL2_Window = ref.types["void"];
 var SDL2_WindowPtr = ref.refType(SDL2_Window);
+var SDL2_Renderer = ref.types["void"];
+var SDL2_RendererPtr = ref.refType(SDL2_Renderer);
 export var SDL_Init_Flags = {
     SDL_INIT_TIMER: 0x00000001,
     SDL_INIT_AUDIO: 0x00000010,
@@ -58,5 +60,13 @@ export var SDL2 = ffi.Library(getSDL2Lib(), {
     "SDL_Quit": ["void", ["void"]],
     "SDL_GetError": ["string", ["void"]],
     "SDL_CreateWindow": [SDL2_WindowPtr, ["string", "int", "int", "int", "int", "uint32"]],
-    "SDL_Delay": ["void", ["uint32"]]
+    "SDL_Delay": ["void", ["uint32"]],
+    "SDL_CreateRenderer": [SDL2_RendererPtr, [SDL2_WindowPtr, "int", "uint32"]],
+    "SDL_ShowWindow": ["void", [SDL2_WindowPtr]],
+    "SDL_HideWindow": ["void", [SDL2_WindowPtr]],
+    "SDL_SetRenderDrawColor": ["void", [SDL2_RendererPtr, "int", "int", "int", "int"]],
+    "SDL_RenderClear": ["void", [SDL2_RendererPtr]],
+    "SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
+    "SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
+    "SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]]
 });

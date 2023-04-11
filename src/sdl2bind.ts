@@ -6,6 +6,8 @@ const SDL2_Structure = ref.types.void;
 const SDL2_StructurePtr = ref.refType(SDL2_Structure);
 const SDL2_Window = ref.types.void;
 const SDL2_WindowPtr = ref.refType(SDL2_Window);
+const SDL2_Renderer = ref.types.void;
+const SDL2_RendererPtr = ref.refType(SDL2_Renderer);
 
 export const SDL_Init_Flags = {
 	SDL_INIT_TIMER: 0x00000001,
@@ -67,5 +69,13 @@ export const SDL2 = ffi.Library(getSDL2Lib(), {
 	"SDL_Quit": ["void", ["void"]],
 	"SDL_GetError": ["string", ["void"]],
 	"SDL_CreateWindow": [SDL2_WindowPtr, ["string", "int", "int", "int", "int", "uint32"]],
-	"SDL_Delay": ["void", ["uint32"]]
+	"SDL_Delay": ["void", ["uint32"]],
+	"SDL_CreateRenderer": [SDL2_RendererPtr, [SDL2_WindowPtr, "int", "uint32"]],
+	"SDL_ShowWindow": ["void", [SDL2_WindowPtr]],
+	"SDL_HideWindow": ["void", [SDL2_WindowPtr]],
+	"SDL_SetRenderDrawColor": ["void", [SDL2_RendererPtr, "int", "int", "int", "int"]],
+	"SDL_RenderClear": ["void", [SDL2_RendererPtr]],
+	"SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
+	"SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
+	"SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]]
 });

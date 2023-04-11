@@ -59,4 +59,8 @@ export class Canvas {
 
 	getWidth() { return this._width };
 	getHeight() { return this._height };
+
+	clear() {
+		clearWithColor(this._renderer, 0, 0, 0, 255);
+	}
 }

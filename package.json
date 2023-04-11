@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/SimoneAncona/draw2d"
   },
+  "homepage": "https://github.com/SimoneAncona/draw2d#readme",
   "type": "module",
   "scripts": {
     "start": "node index.js",

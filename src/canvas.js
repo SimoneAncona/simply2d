@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setLine, setPoint, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 var Canvas = (function () {
     function Canvas(windowTitle, width, height, xPos, yPos, options) {
@@ -45,6 +45,12 @@ var Canvas = (function () {
     Canvas.prototype.loadRawData = function (pixels) {
         if (pixels.length != this._height * this._width)
             throw "The buffer must be the same size as the window resolution";
+    };
+    Canvas.prototype.loadPNG = function (filename) {
+        setPNG(this._renderer, filename);
+    };
+    Canvas.prototype.loadJPG = function (filename) {
+        setJPG(this._renderer, filename);
     };
     Canvas.prototype.getWidth = function () { return this._width; };
     ;

@@ -7,10 +7,11 @@ var SDL2_WIN_PATHS = [
     ".\\SDL2.dll"
 ];
 var SDL2_IMAGE_WIN_PATHS = [
-    "C:\\SDL\\SDL2_image*\\x86_64*\\bin\\SDL2_image.dll",
+    "C:\\SDL_Image\\SDL2_image*\\x86_64*\\bin\\SDL2_image.dll",
     "C:\\SDL2_image*\\x86_64*\\bin\\SDL2_image.dll",
-    ".\\SDL2_image*\\x86_64*\\bin\\SDL2_image.dll",
-    ".\\SDL2_image.dll"
+    ".\\SDL2_Image*\\x86_64*\\bin\\SDL2_image.dll",
+    ".\\SDL2_image.dll",
+    "C:\\SDL_image\\SDL2_image*\\x86_64*\\bin\\SDL2_image.dll",
 ];
 var SDL2_LINUX_PATHS = [
     ""
@@ -46,10 +47,9 @@ export function getSDL2Lib() {
         throw "The system is not supported now";
     var p = getLib(paths);
     if (p === "")
-        throw "Missing dependencies: " +
-            process.platform === "win32" ?
+        throw "Missing dependencies: " + (process.platform === "win32" ?
             "make sure you have installed SDL2.dll in C:\\SDL\\SDL2*\\x86_64-w64-mingw32\\bin" :
-            "make sure to have installed SDL2 library";
+            "make sure to have installed SDL2 library");
     return p;
 }
 export function getSDL2ImageLib() {
@@ -62,10 +62,9 @@ export function getSDL2ImageLib() {
         throw "The system is not supported now";
     var p = getLib(paths);
     if (p === "")
-        throw "Missing dependencies: " +
-            process.platform === "win32" ?
+        throw "Missing dependencies: " + (process.platform === "win32" ?
             "make sure you have installed SDL2_Image.dll in C:\\SDL_Image\\SDL2_image*\\x86_64-w64-mingw32\\bin" :
-            "make sure to have installed SDL2_Image library";
+            "make sure to have installed SDL2_Image library");
     return p;
 }
 function containsDir(ls, dirname) {

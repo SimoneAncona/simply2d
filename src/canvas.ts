@@ -1,5 +1,5 @@
 import { Pointer } from "ref-napi";
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setLine, setPoint, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -59,6 +59,14 @@ export class Canvas {
 
 	loadRawData(pixels: Uint8Array) {
 		if (pixels.length != this._height * this._width) throw "The buffer must be the same size as the window resolution";
+	}
+
+	loadPNG(filename: string) {
+		setPNG(this._renderer, filename);
+	}
+
+	loadJPG(filename: string) {
+		setJPG(this._renderer, filename);
 	}
 
 	getWidth() { return this._width };

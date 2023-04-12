@@ -6,10 +6,18 @@ This library allows, thanks to SDL2, to create windows and draw on the screen
 This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross-platform library designed to provide low level access to different resources such as video. SDL2 is available for windows, linux and macos as well
 ### Windows installation
 To install `SDL2` on windows:
-- <a href="https://github.com/libsdl-org/SDL/releases/download/release-2.26.5/SDL2-devel-2.26.5-mingw.zip">Click this link</a> to download the SDL2 dev library
-- Unzip the file in `C:\`
+- <a href="https://github.com/libsdl-org/SDL/releases/download/release-2.26.5/SDL2-devel-2.26.5-mingw.zip">Click this link</a> to download the `SDL2` dev library
+- Unzip the file in `C:\SDL`
+- <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-mingw.zip">Click here</a> to download the `SDL2_Image` dev library
+- Unzip the file in `C:\SDL_Image`
+
 ### Linux installation
 > Linux is not fully supported right now
+#### Ubunutu
+To install SDL2 and SLD2_Image run this command in the bash
+```bash
+sudo apt-get libsdl2-dev libsdl2-image-dev
+```
 
 ## API
 ### Canvas
@@ -87,7 +95,7 @@ Clear the screen
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```js
-import { Colors } from "simply2d";
+import { Canvas, Colors } from "simply2d";
 const canvas = new Canvas("title", 100, 100);
 canvas.setBackgroundColor(Colors.RED);	// #FF0000 hex color
 canvas.drawLine(
@@ -109,3 +117,8 @@ canvas.drawLine(
 from8bit(color256: number): RGBAColor
 ```
 Convert an 8 bit color into a 24 bit color
+
+```js
+from16bit(color: number): RGBAColor
+```
+Convert a 16 bit color into a 24 bit color

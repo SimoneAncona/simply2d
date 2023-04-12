@@ -11,3 +11,6 @@ export var SDL2_Surface = ref.types["void"];
 export var SDL2_SurfacePtr = ref.refType(SDL2_Surface);
 export var SDL2_Texture = ref.types["void"];
 export var SDL2_TexturePtr = ref.refType(SDL2_Texture);
+export var SDL2_Rect = ref.types["void"];
+export var SDL2_RectPtr = ref.refType(SDL2_Rect);
+export var NULL = ref.NULL;

@@ -1,4 +1,6 @@
 import * as sdl from "./sdl2bind.js";
+import * as image from "./sdl2imageBind.js";
+import { NULL } from "./sdlTypes.js";
 export function getWindow(title, xPos, yPos, width, height, flags) {
     if (sdl.SDL2.SDL_Init(sdl.SDL_Init_Everything) != 0) {
         throw "An error occurred while initializing SDL: " + sdl.SDL2.SDL_GetError();
@@ -31,4 +33,22 @@ export function setLine(renderer, r, g, b, a, px1, py1, px2, py2) {
     sdl.SDL2.SDL_SetRenderDrawColor(renderer, r, g, b, a);
     sdl.SDL2.SDL_RenderDrawLine(renderer, px1, py1, px2, py2);
     sdl.SDL2.SDL_RenderPresent(renderer);
+}
+export function setPNG(renderer, filename) {
+    if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_PNG) === 0) {
+        throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+    }
+    var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
+    sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
+    sdl.SDL2.SDL_RenderPresent(renderer);
+    image.SDL2_IMAGE.IMG_Quit();
+}
+export function setJPG(renderer, filename) {
+    if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_JPG) === 0) {
+        throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+    }
+    var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
+    sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
+    sdl.SDL2.SDL_RenderPresent(renderer);
+    image.SDL2_IMAGE.IMG_Quit();
 }

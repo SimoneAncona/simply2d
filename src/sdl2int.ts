@@ -51,7 +51,7 @@ export function setImage(renderer: Pointer<void>, filename: string, imgInitFlag:
 		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
 	}
 	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
-	if (texture.deref() === null) {
+	if (texture.isNull()) {
 		throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
 	}
 	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);

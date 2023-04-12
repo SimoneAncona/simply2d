@@ -123,3 +123,25 @@ Convert an 8 bit color into a 24 bit color
 from16bit(color: number): RGBAColor
 ```
 Convert a 16 bit color into a 24 bit color
+
+### Position
+Is a type for storing coordinates
+```ts
+import { Position } from "simply2d"	// only in typescript
+cord: Position = {
+	x: 203,
+	y: 301
+}
+```
+
+### RGBAColor
+Used to save RGBA color values
+```ts
+import { RGBAColor } from "simply2d"	// only in typescript
+cord: RGBAColor = {
+	red: 255,
+	green: 255,
+	blue: 0,
+	alpha: 255
+}
+```

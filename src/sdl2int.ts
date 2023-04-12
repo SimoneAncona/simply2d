@@ -46,22 +46,23 @@ export function setLine(renderer: Pointer<void>, r: number, g: number, b: number
 	sdl.SDL2.SDL_RenderPresent(renderer);
 }
 
-export function setPNG(renderer: Pointer<void>, filename: string) {
-	if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_PNG) === 0) {
+export function setImage(renderer: Pointer<void>, filename: string, imgInitFlag: number) {
+	if (image.SDL2_IMAGE.IMG_Init(imgInitFlag) === 0) {
 		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
 	}
 	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
+	if (texture.deref() === null) {
+		throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
+	}
 	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
 	sdl.SDL2.SDL_RenderPresent(renderer);
 	image.SDL2_IMAGE.IMG_Quit();
 }
 
+export function setPNG(renderer: Pointer<void>, filename: string) {
+	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);
+}
+
 export function setJPG(renderer: Pointer<void>, filename: string) {
-	if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_JPG) === 0) {
-		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
-	}
-	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
-	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
-	sdl.SDL2.SDL_RenderPresent(renderer);
-	image.SDL2_IMAGE.IMG_Quit();
+	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 }

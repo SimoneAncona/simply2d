@@ -34,21 +34,22 @@ export function setLine(renderer, r, g, b, a, px1, py1, px2, py2) {
     sdl.SDL2.SDL_RenderDrawLine(renderer, px1, py1, px2, py2);
     sdl.SDL2.SDL_RenderPresent(renderer);
 }
-export function setPNG(renderer, filename) {
-    if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_PNG) === 0) {
+export function setImage(renderer, filename, imgInitFlag) {
+    if (image.SDL2_IMAGE.IMG_Init(imgInitFlag) === 0) {
         throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
     }
     var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
+    if (texture.deref() === null) {
+        throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
+        ;
+    }
     sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
     sdl.SDL2.SDL_RenderPresent(renderer);
     image.SDL2_IMAGE.IMG_Quit();
 }
+export function setPNG(renderer, filename) {
+    setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);
+}
 export function setJPG(renderer, filename) {
-    if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_JPG) === 0) {
-        throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
-    }
-    var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
-    sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
-    sdl.SDL2.SDL_RenderPresent(renderer);
-    image.SDL2_IMAGE.IMG_Quit();
+    setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 }

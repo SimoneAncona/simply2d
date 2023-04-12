@@ -59,8 +59,8 @@ export const SDL_Window_Flags = {
 
 export const SDL2 = ffi.Library(getSDL2Lib(), {
 	"SDL_Init": ["int", ["uint32"]],
-	"SDL_Quit": ["void", ["void"]],
-	"SDL_GetError": ["string", ["void"]],
+	"SDL_Quit": ["void", []],
+	"SDL_GetError": ["string", []],
 	"SDL_CreateWindow": [SDL2_WindowPtr, ["string", "int", "int", "int", "int", "uint32"]],
 	"SDL_Delay": ["void", ["uint32"]],
 	"SDL_CreateRenderer": [SDL2_RendererPtr, [SDL2_WindowPtr, "int", "uint32"]],

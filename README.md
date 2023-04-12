@@ -124,6 +124,12 @@ from16bit(color: number): RGBAColor
 ```
 Convert a 16 bit color into a 24 bit color
 
+### Colors.from24bit
+```js
+from24bit(color: number): RGBAColor
+```
+Convert a 24 bit color number into a 24 bit color RGBAColor object
+
 ### Position
 Is a type for storing coordinates
 ```ts

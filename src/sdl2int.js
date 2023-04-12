@@ -44,7 +44,7 @@ export function setImage(renderer, filename, imgInitFlag) {
     }
     sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
     sdl.SDL2.SDL_RenderPresent(renderer);
-    image.SDL2_IMAGE.IMG_Quit();
+    // image.SDL2_IMAGE.IMG_Quit();
 }
 export function setPNG(renderer, filename) {
     setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);

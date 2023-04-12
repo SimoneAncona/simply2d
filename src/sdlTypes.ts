@@ -14,4 +14,4 @@ export const SDL2_Texture = ref.types.void;
 export const SDL2_TexturePtr = ref.refType(SDL2_Texture);
 export const SDL2_Rect = ref.types.void;
 export const SDL2_RectPtr = ref.refType(SDL2_Rect);
-export const NULL = ref.NULL;
+export const NULL = ref.NULL

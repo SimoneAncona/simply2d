@@ -48,7 +48,7 @@ export function setLine(renderer: Pointer<void>, r: number, g: number, b: number
 
 export function setPNG(renderer: Pointer<void>, filename: string) {
 	if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_PNG) === 0) {
-		throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
 	}
 	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
 	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -58,7 +58,7 @@ export function setPNG(renderer: Pointer<void>, filename: string) {
 
 export function setJPG(renderer: Pointer<void>, filename: string) {
 	if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_JPG) === 0) {
-		throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
 	}
 	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
 	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);

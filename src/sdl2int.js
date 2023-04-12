@@ -36,7 +36,7 @@ export function setLine(renderer, r, g, b, a, px1, py1, px2, py2) {
 }
 export function setPNG(renderer, filename) {
     if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_PNG) === 0) {
-        throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+        throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
     }
     var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
     sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -45,7 +45,7 @@ export function setPNG(renderer, filename) {
 }
 export function setJPG(renderer, filename) {
     if (image.SDL2_IMAGE.IMG_Init(image.IMG_Init_Flags.IMG_INIT_JPG) === 0) {
-        throw "An error occurred while setting image: " + image.SDL2_IMAGE.IMG_GetError();
+        throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
     }
     var texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
     sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);

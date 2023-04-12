@@ -15,6 +15,5 @@ export const SDL2_IMAGE = ffi.Library(getSDL2ImageLib(), {
 	"IMG_Load": [SDL2_SurfacePtr, ["string"]],
 	"IMG_Init": ["int", ["int"]],
 	"IMG_Quit": ["void", ["void"]],
-	"IMG_GetError": ["string", ["void"]],
 	"IMG_LoadTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "string"]]
 });

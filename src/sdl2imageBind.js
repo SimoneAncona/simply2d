@@ -9,11 +9,9 @@ export var IMG_Init_Flags = {
     IMG_INIT_JXL: 0x00000010,
     IMG_INIT_AVIF: 0x00000020
 };
-console.log(getSDL2ImageLib());
 export var SDL2_IMAGE = ffi.Library(getSDL2ImageLib(), {
     "IMG_Load": [SDL2_SurfacePtr, ["string"]],
     "IMG_Init": ["int", ["int"]],
     "IMG_Quit": ["void", ["void"]],
-    "IMG_GetError": ["string", ["void"]],
     "IMG_LoadTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "string"]]
 });

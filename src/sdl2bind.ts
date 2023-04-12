@@ -1,6 +1,6 @@
 import * as ffi from "ffi-napi";
 import { getSDL2Lib } from "./getLibrary.js";
-import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, SDL2_TexturePtr, VOIDPTR, SDL2_StructurePtr, SDL2_RectPtr } from "./sdlTypes.js";
+import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, SDL2_TexturePtr, VOIDPTR, SDL2_StructurePtr, SDL2_RectPtr, VOIDPTRPTR } from "./sdlTypes.js";
 
 export const SDL_Init_Flags = {
 	SDL_INIT_TIMER: 0x00000001,
@@ -73,5 +73,8 @@ export const SDL2 = ffi.Library(getSDL2Lib(), {
 	"SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]],
 	"SDL_RenderCopy": ["int", [SDL2_RendererPtr, SDL2_TexturePtr, SDL2_RectPtr, SDL2_RectPtr]],
 	"SDL_CreateRGBSurfaceFrom": [SDL2_SurfacePtr, [VOIDPTR, "int", "int", "int", "int", "uint32", "uint32", "uint32", "uint32"]],
-	"SDL_CreateTextureFromSurface": [SDL2_TexturePtr, [SDL2_RendererPtr, SDL2_StructurePtr]]
+	"SDL_CreateTextureFromSurface": [SDL2_TexturePtr, [SDL2_RendererPtr, SDL2_StructurePtr]],
+	"SDL_CreateTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "uint32", "int", "int", "int"]],
+	"SDL_LockTexture": ["int", [SDL2_TexturePtr, SDL2_RectPtr, VOIDPTRPTR, "int *"]],
+	"SDL_UnlockTexture": ["void", [SDL2_TexturePtr]]
 });

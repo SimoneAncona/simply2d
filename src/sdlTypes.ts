@@ -2,6 +2,7 @@ import * as ref from "ref-napi";
 
 export const VOID = ref.types.void;
 export const VOIDPTR = ref.refType(VOID);
+export const VOIDPTRPTR = ref.refType(VOIDPTR);
 export const SDL2_Structure = ref.types.void;
 export const SDL2_StructurePtr = ref.refType(SDL2_Structure);
 export const SDL2_Window = ref.types.void;

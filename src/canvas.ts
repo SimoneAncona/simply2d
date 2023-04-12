@@ -91,11 +91,16 @@ export class Canvas {
 	/**
 	 * Draw an image from raw data on the canvas
 	 * @param {Uint8Array} pixels the name of the image file
-	 * @param {8 | 16 | 24} bitPerPixel the bit size of the color
+	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
+	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
+	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
+	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
+	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v0.1.9
 	 */
-	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24) {
-		if (pixels.length != this._height * this._width) throw "The buffer must be the same size as the window resolution";
+	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = 32) {
+		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
+		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		throw "Not implementd";
 	}
 

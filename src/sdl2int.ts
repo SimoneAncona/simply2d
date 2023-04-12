@@ -66,3 +66,15 @@ export function setPNG(renderer: Pointer<void>, filename: string) {
 export function setJPG(renderer: Pointer<void>, filename: string) {
 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 }
+
+export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
+	let pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+	if (bitPerPixel === 8) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+	else if (bitPerPixel === 16) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+	else pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+	let texture = sdl.SDL2.SDL_CreateTexture(renderer, pixelFormat, image.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_TARGET, width, height);
+	// sdl.SDL2.SDL_LockTexture(texture, NULL, buffer, 7);
+	// sdl.SDL2.SDL_UnlockTexture(texture);
+	// sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
+    // sdl.SDL2.SDL_RenderPresent(renderer);
+}

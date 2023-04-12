@@ -12,6 +12,6 @@ export var IMG_Init_Flags = {
 export var SDL2_IMAGE = ffi.Library(getSDL2ImageLib(), {
     "IMG_Load": [SDL2_SurfacePtr, ["string"]],
     "IMG_Init": ["int", ["int"]],
-    "IMG_Quit": ["void", ["void"]],
+    "IMG_Quit": ["void", []],
     "IMG_LoadTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "string"]]
 });

@@ -10,12 +10,30 @@ type CanvasOptions = {
 
 ### Canvas.dumpPNG
 ```js
-dumpPNG(): void
+dumpPNG(filename: string): void
 ```
 Used to save the canvas as a PNG file
 
 ### Canvas.dumpJPG
 ```js
-dumpJPG(): void
+dumpJPG(filename: string): void
 ```
 Used to save the canvas as a JPG file
+
+### Canvas.drawCircle
+```js
+drawArc(radius: number, angle: number /* radians */, pos: Position): void
+```
+Draw an arc
+
+### Canvas.drawPath
+```js
+drawPath(path: Path): void
+```
+Draw a polyline
+
+### Path
+```js
+import { Path } from "simply2d";
+const house = new Path();
+```

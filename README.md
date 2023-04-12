@@ -13,7 +13,7 @@ To install `SDL2` on windows:
 
 ### Linux installation
 > Linux is not fully supported right now
-#### Ubunutu
+#### Ubuntu
 To install SDL2 and SLD2_Image run this command in the bash
 ```bash
 sudo apt-get libsdl2-dev libsdl2-image-dev

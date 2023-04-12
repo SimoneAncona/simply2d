@@ -118,6 +118,7 @@ from8bit(color256: number): RGBAColor
 ```
 Convert an 8 bit color into a 24 bit color
 
+### Colors.from16bit
 ```js
 from16bit(color: number): RGBAColor
 ```

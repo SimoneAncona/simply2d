@@ -1,5 +1,5 @@
 import { Pointer } from "ref-napi";
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -86,6 +86,18 @@ export class Canvas {
 	 */
 	drawLine(color: RGBAColor, from: Position, to: Position) {
 		setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
+	}
+
+	/**
+	 * Draw a rectangle
+	 * @param {RGBAColor} color the border color
+	 * @param {Position} center the center of the rectangle
+	 * @param {number} width the width 
+	 * @param {number} height the height
+	 * @since v0.1.10
+	 */
+	drawRectangle(color: RGBAColor, center: Position, width: number, height: number) {
+		setRectangle(this._renderer, center.x, center.y, width, height);
 	}
 
 	/**

@@ -99,7 +99,6 @@ export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPi
 		throw "Cannot load the texture into the renderer";
 	};
     sdl.SDL2.SDL_RenderPresent(renderer);
-	_debug();
 }
 
 function _debug() {

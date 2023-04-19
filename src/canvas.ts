@@ -1,5 +1,5 @@
 import { Pointer } from "ref-napi";
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -101,7 +101,7 @@ export class Canvas {
 	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = 32) {
 		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
-		throw "Not implementd";
+		setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
 	}
 
 	/**

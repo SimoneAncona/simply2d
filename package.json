@@ -11,6 +11,7 @@
   "homepage": "https://github.com/SimoneAncona/simply2d#readme",
   "type": "module",
   "scripts": {
+    "build": "tsc --build",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,6 +29,7 @@
   "dependencies": {
     "ffi-napi": "^4.0.3",
     "ref-napi": "^3.0.3",
+    "ref-struct-napi": "^1.1.1",
     "typescript": "^5.0.4"
   },
   "devDependencies": {

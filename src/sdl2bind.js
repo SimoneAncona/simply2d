@@ -1,6 +1,6 @@
 import * as ffi from "ffi-napi";
 import { getSDL2Lib } from "./getLibrary.js";
-import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, SDL2_TexturePtr, VOIDPTR, SDL2_StructurePtr, SDL2_RectPtr } from "./sdlTypes.js";
+import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, SDL2_TexturePtr, VOIDPTR, SDL2_StructurePtr } from "./sdlTypes.js";
 export var SDL_Init_Flags = {
     SDL_INIT_TIMER: 0x00000001,
     SDL_INIT_AUDIO: 0x00000010,
@@ -10,7 +10,7 @@ export var SDL_Init_Flags = {
     SDL_INIT_GAMECONTROLLER: 0x00002000,
     SDL_INIT_EVENTS: 0x00004000,
     SDL_INIT_SENSOR: 0x00008000,
-    SDL_INIT_NOPARACHUTE: 0x00100000
+    SDL_INIT_NOPARACHUTE: 0x00100000,
 };
 export var SDL_Init_Everything = SDL_Init_Flags.SDL_INIT_TIMER |
     SDL_Init_Flags.SDL_INIT_AUDIO |
@@ -47,7 +47,7 @@ export var SDL_Window_Flags = {
     SDL_WINDOW_POPUP_MENU: 0x00080000,
     SDL_WINDOW_KEYBOARD_GRABBED: 0x00100000,
     SDL_WINDOW_VULKAN: 0x10000000,
-    SDL_WINDOW_METAL: 0x20000000
+    SDL_WINDOW_METAL: 0x20000000,
 };
 export var SDL2 = ffi.Library(getSDL2Lib(), {
     "SDL_Init": ["int", ["uint32"]],
@@ -63,7 +63,10 @@ export var SDL2 = ffi.Library(getSDL2Lib(), {
     "SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
     "SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
     "SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]],
-    "SDL_RenderCopy": ["int", [SDL2_RendererPtr, SDL2_TexturePtr, SDL2_RectPtr, SDL2_RectPtr]],
+    "SDL_RenderCopy": ["int", ["void*", "void*", "void*", "void*"]],
     "SDL_CreateRGBSurfaceFrom": [SDL2_SurfacePtr, [VOIDPTR, "int", "int", "int", "int", "uint32", "uint32", "uint32", "uint32"]],
-    "SDL_CreateTextureFromSurface": [SDL2_TexturePtr, [SDL2_RendererPtr, SDL2_StructurePtr]]
+    "SDL_CreateTextureFromSurface": [SDL2_TexturePtr, [SDL2_RendererPtr, SDL2_StructurePtr]],
+    "SDL_CreateTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "uint32", "int", "int", "int"]],
+    "SDL_LockTexture": ["int", ["void*", "void**", "void*", "int*"]],
+    "SDL_UnlockTexture": ["void", [SDL2_TexturePtr]]
 });

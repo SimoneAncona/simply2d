@@ -42,13 +42,42 @@ export function setImage(renderer, filename, imgInitFlag) {
     if (texture.isNull()) {
         throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
     }
-    sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
+    if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
+        throw "Cannot load the texture into the renderer";
+    }
     sdl.SDL2.SDL_RenderPresent(renderer);
-    // image.SDL2_IMAGE.IMG_Quit();
+    image.SDL2_IMAGE.IMG_Quit();
 }
 export function setPNG(renderer, filename) {
     setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);
 }
 export function setJPG(renderer, filename) {
     setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
+}
+export function setRawData(renderer, buffer, bitPerPixel, width, height) {
+    var pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+    if (bitPerPixel === 8)
+        pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+    else if (bitPerPixel === 16)
+        pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+    else
+        pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+    var texture = sdl.SDL2.SDL_CreateTexture(renderer, pixelFormat, image.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_STREAMING, width, height);
+    var buff = Buffer.from(buffer);
+    var int = Buffer.allocUnsafe(4);
+    int.writeInt32LE(width * bitPerPixel / 8);
+    if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref(), int.ref()) !== 0) {
+        throw "Cannot draw the texture";
+    }
+    ;
+    sdl.SDL2.SDL_UnlockTexture(texture);
+    if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
+        throw "Cannot load the texture into the renderer";
+    }
+    ;
+    sdl.SDL2.SDL_RenderPresent(renderer);
+    _debug();
+}
+function _debug() {
+    console.log(sdl.SDL2.SDL_GetError());
 }

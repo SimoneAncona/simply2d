@@ -8,7 +8,7 @@ export var Colors = {
     MAGENTA: { red: 255, green: 0, blue: 255, alpha: 255 },
     CYAN: { red: 0, green: 255, blue: 255, alpha: 255 },
     from8bit: function (color256) {
-        if (color256 < 0 || color256 > 255)
+        if (color256 < 0 || color256 >= 256)
             throw "Color256 must be between 0 and 255";
         return {
             red: (color256 >> 5) * 36,
@@ -18,12 +18,22 @@ export var Colors = {
         };
     },
     from16bit: function (color) {
-        if (color < 0 || color > 65536)
+        if (color < 0 || color >= 65536)
             throw "Color must be between 0 and 65536";
         return {
             red: (color >> 11) * 8,
             green: ((color & 2016) >> 5) * 4,
             blue: (color & 31) * 8,
+            alpha: 255
+        };
+    },
+    from24bit: function (color) {
+        if (color < 0 || color >= Math.pow(2, 24))
+            throw "Color must be between 0 and 2^24";
+        return {
+            red: (color >> 16),
+            green: ((color & 0x00FF00) >> 8),
+            blue: color & 0x0000FF,
             alpha: 255
         };
     }

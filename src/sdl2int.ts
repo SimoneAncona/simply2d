@@ -1,7 +1,7 @@
 import { Pointer } from "ref-napi";
 import * as sdl from "./sdl2bind.js";
 import * as image from "./sdl2imageBind.js"
-import { NULL } from "./sdlTypes.js";
+import { NULL, SDL2_Rect } from "./sdlTypes.js";
 
 export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number) {
 	if (sdl.SDL2.SDL_Init(sdl.SDL_Init_Everything) != 0) {
@@ -54,7 +54,10 @@ export function setImage(renderer: Pointer<void>, filename: string, imgInitFlag:
 	if (texture.isNull()) {
 		throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
 	}
-	sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
+	//@ts-ignore
+	if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
+		throw "Cannot load the texture into the renderer";
+	}
 	sdl.SDL2.SDL_RenderPresent(renderer);
 	image.SDL2_IMAGE.IMG_Quit();
 }
@@ -67,14 +70,38 @@ export function setJPG(renderer: Pointer<void>, filename: string) {
 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 }
 
+export function setRectangle(renderer: Pointer<void>, x: number, y: number, width: number, height: number) {
+	let rect = new SDL2_Rect();
+	rect.x = x;
+	rect.y = y;
+	rect.w = width;
+	rect.h = height;
+	sdl.SDL2.SDL_RenderDrawRect(renderer, rect.ref());
+}
+
 export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
 	let pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
 	if (bitPerPixel === 8) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
 	else if (bitPerPixel === 16) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
 	else pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
-	let texture = sdl.SDL2.SDL_CreateTexture(renderer, pixelFormat, image.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_TARGET, width, height);
-	// sdl.SDL2.SDL_LockTexture(texture, NULL, buffer, 7);
-	// sdl.SDL2.SDL_UnlockTexture(texture);
-	// sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL);
-    // sdl.SDL2.SDL_RenderPresent(renderer);
+	let texture = sdl.SDL2.SDL_CreateTexture(renderer, pixelFormat, image.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_STREAMING, width, height);
+
+	let buff = Buffer.from(buffer);
+	let int = Buffer.allocUnsafe(4);
+	int.writeInt32LE(width * bitPerPixel / 8);
+	//@ts-ignore
+	if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref(), int.ref()) !== 0) {
+		throw "Cannot draw the texture";
+	};
+	sdl.SDL2.SDL_UnlockTexture(texture);
+	//@ts-ignore
+	if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
+		throw "Cannot load the texture into the renderer";
+	};
+    sdl.SDL2.SDL_RenderPresent(renderer);
+	_debug();
+}
+
+function _debug() {
+	console.log(sdl.SDL2.SDL_GetError());
 }

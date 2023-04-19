@@ -54,6 +54,8 @@ export function setPNG(renderer, filename) {
 export function setJPG(renderer, filename) {
     setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 }
+export function setRectangle(renderer, x, y, width, height) {
+}
 export function setRawData(renderer, buffer, bitPerPixel, width, height) {
     var pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
     if (bitPerPixel === 8)
@@ -66,7 +68,7 @@ export function setRawData(renderer, buffer, bitPerPixel, width, height) {
     var buff = Buffer.from(buffer);
     var int = Buffer.allocUnsafe(4);
     int.writeInt32LE(width * bitPerPixel / 8);
-    if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref(), int.ref()) !== 0) {
+    if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref().ref(), int.ref()) !== 0) {
         throw "Cannot draw the texture";
     }
     ;
@@ -76,7 +78,6 @@ export function setRawData(renderer, buffer, bitPerPixel, width, height) {
     }
     ;
     sdl.SDL2.SDL_RenderPresent(renderer);
-    _debug();
 }
 function _debug() {
     console.log(sdl.SDL2.SDL_GetError());

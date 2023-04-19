@@ -1,6 +1,5 @@
 import * as ref from "ref-napi";
-// import * as Struct from "ref-struct-di";
-var Struct = require('ref-struct');
+// var Struct = require('ref-struct');
 
 export const VOID = ref.types.void;
 export const VOIDPTR = ref.refType(VOID);
@@ -15,11 +14,6 @@ export const SDL2_Surface = ref.types.void;
 export const SDL2_SurfacePtr = ref.refType(SDL2_Surface);
 export const SDL2_Texture = ref.types.void;
 export const SDL2_TexturePtr = ref.refType(SDL2_Texture);
-export const SDL2_Rect = Struct({
-    "x": "int",
-    "y": "int",
-    "w": "int",
-    "h": "int"
-});
+export const SDL2_Rect = ref.types.void;
 export const SDL2_RectPtr = ref.refType(SDL2_Rect);
 export const NULL = Buffer.alloc(4);

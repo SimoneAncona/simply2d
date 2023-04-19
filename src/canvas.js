@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdl2bind.js";
 var Canvas = (function () {
     function Canvas(windowTitle, width, height, xPos, yPos, options) {
@@ -41,6 +41,9 @@ var Canvas = (function () {
     };
     Canvas.prototype.drawLine = function (color, from, to) {
         setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
+    };
+    Canvas.prototype.drawRectangle = function (color, center, width, height) {
+        setRectangle(this._renderer, center.x, center.y, width, height);
     };
     Canvas.prototype.loadRawData = function (pixels, bitPerPixel) {
         if (bitPerPixel === void 0) { bitPerPixel = 32; }

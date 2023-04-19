@@ -71,12 +71,17 @@ export function setJPG(renderer: Pointer<void>, filename: string) {
 }
 
 export function setRectangle(renderer: Pointer<void>, x: number, y: number, width: number, height: number) {
-	let rect = new SDL2_Rect();
-	rect.x = x;
-	rect.y = y;
-	rect.w = width;
-	rect.h = height;
-	sdl.SDL2.SDL_RenderDrawRect(renderer, rect.ref());
+	// let rect = new SDL2_Rect();
+	// //@ts-ignore
+	// rect.x = x;
+	// //@ts-ignore
+	// rect.y = y;
+	// //@ts-ignore
+	// rect.w = width;
+	// //@ts-ignore
+	// rect.h = height;
+	// //@ts-ignore
+	// sdl.SDL2.SDL_RenderDrawRect(renderer, rect.ref());
 }
 
 export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
@@ -90,7 +95,7 @@ export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPi
 	let int = Buffer.allocUnsafe(4);
 	int.writeInt32LE(width * bitPerPixel / 8);
 	//@ts-ignore
-	if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref(), int.ref()) !== 0) {
+	if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref().ref(), int.ref()) !== 0) {
 		throw "Cannot draw the texture";
 	};
 	sdl.SDL2.SDL_UnlockTexture(texture);

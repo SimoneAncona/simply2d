@@ -1,2 +1,2 @@
-export { Canvas } from "./src/canvas.js";
-export { Colors } from "./src/colors.js";
+export { Canvas } from "./lib/canvas.js";
+export { Colors } from "./lib/colors.js";

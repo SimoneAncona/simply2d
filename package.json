@@ -33,6 +33,7 @@
     "typescript": "^5.0.4"
   },
   "devDependencies": {
+    "@types/node": "^18.16.0"
   },
   "gypfile": true
 }

@@ -1,11 +1,10 @@
 {
 	"compilerOptions": {
-		"module": "ES6",
+		"module": "NodeNext",
 		"noImplicitAny": true,
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"sourceMap": false,
-		"moduleResolution": "nodenext"
 	},
 	"include": [
 		"index.ts",

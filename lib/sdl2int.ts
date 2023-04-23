@@ -1,4 +1,8 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 const sdl2bind = require("../build/Release/canvas_sdl2.node");
+console.log(sdl2bind);
 import * as sdl from "./sdlValues.js"
 import { Colors } from "./colors.js";
 

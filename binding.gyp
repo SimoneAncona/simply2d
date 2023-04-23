@@ -2,16 +2,18 @@
     'targets': [
         {
             'target_name': 'canvas_sdl2',
-            'sources': ['src/sdl2node.cpp'],
+            'sources': ['src\\sdl2node.cpp'],
             'include_dirs': [
-                "C:\\SDL\\SDL2-2.26.5\\x86_64-w64-mingw32\\include",
+                "C:\\SDL\\SDL2-2.26.5\\include",
+                "C:\\SDL_Image\\SDL2_image-2.6.3\\include",
                 "<!@(node -p \"require('node-addon-api').include\")"
             ],
             'dependencies': [
                 "<!(node -p \"require('node-addon-api').gyp\")"
             ],
             'libraries': [
-                "C:\\Users\\simon\\Downloads\\SDL2-devel-2.26.5-VC\\SDL2-2.26.5\\lib\\x64\\SDL2.lib"
+                "C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.lib",
+                "C:\\SDL_Image\\SDL2_image-2.6.3\\lib\\x64\\SDL2_image.lib"
             ],
             'cflags!': ['-fno-exceptions'],
             'cflags_cc!': ['-fno-exceptions'],

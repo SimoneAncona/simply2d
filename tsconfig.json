@@ -5,6 +5,7 @@
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"sourceMap": false,
+		"moduleResolution": "nodenext"
 	},
 	"include": [
 		"index.ts",

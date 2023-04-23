@@ -1,7 +1,3 @@
-import * as ffi from "ffi-napi";
-import { getSDL2Lib } from "./getLibrary.js";
-import { SDL2_RendererPtr, SDL2_SurfacePtr, SDL2_WindowPtr, SDL2_TexturePtr, VOIDPTR, SDL2_StructurePtr, SDL2_RectPtr, VOIDPTRPTR, SDL2_Renderer } from "./sdlTypes.js";
-
 export const SDL_Init_Flags = {
 	SDL_INIT_TIMER: 0x00000001,
 	SDL_INIT_AUDIO: 0x00000010,
@@ -56,26 +52,3 @@ export const SDL_Window_Flags = {
 	SDL_WINDOW_VULKAN: 0x10000000,   /**< window usable for Vulkan surface */
 	SDL_WINDOW_METAL: 0x20000000,   /**< window usable for Metal view */
 }
-
-export const SDL2 = ffi.Library(getSDL2Lib(), {
-	"SDL_Init": ["int", ["uint32"]],
-	"SDL_Quit": ["void", []],
-	"SDL_GetError": ["string", []],
-	"SDL_CreateWindow": [SDL2_WindowPtr, ["string", "int", "int", "int", "int", "uint32"]],
-	"SDL_Delay": ["void", ["uint32"]],
-	"SDL_CreateRenderer": [SDL2_RendererPtr, [SDL2_WindowPtr, "int", "uint32"]],
-	"SDL_ShowWindow": ["void", [SDL2_WindowPtr]],
-	"SDL_HideWindow": ["void", [SDL2_WindowPtr]],
-	"SDL_SetRenderDrawColor": ["void", [SDL2_RendererPtr, "int", "int", "int", "int"]],
-	"SDL_RenderClear": ["void", [SDL2_RendererPtr]],
-	"SDL_RenderPresent": ["void", [SDL2_RendererPtr]],
-	"SDL_RenderDrawPoint": ["int", [SDL2_RendererPtr, "int", "int"]],
-	"SDL_RenderDrawLine": ["int", [SDL2_RendererPtr, "int", "int", "int", "int"]],
-	"SDL_RenderCopy": ["int", ["void*", "void*", "void*", "void*"]],
-	"SDL_CreateRGBSurfaceFrom": [SDL2_SurfacePtr, [VOIDPTR, "int", "int", "int", "int", "uint32", "uint32", "uint32", "uint32"]],
-	"SDL_CreateTextureFromSurface": [SDL2_TexturePtr, [SDL2_RendererPtr, SDL2_StructurePtr]],
-	"SDL_CreateTexture": [SDL2_TexturePtr, [SDL2_RendererPtr, "uint32", "int", "int", "int"]],
-	"SDL_LockTexture": ["int", ["void*", "void**", "void*", "int*"]],
-	"SDL_UnlockTexture": ["void", [SDL2_TexturePtr]],
-	"SDL_RenderDrawRect": ["int", [SDL2_RendererPtr, SDL2_RectPtr]]
-});

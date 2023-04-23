@@ -1,4 +1,4 @@
-import { RGBAColor } from "./types"
+import { RGBAColor } from "./types.js"
 export const Colors = {
 	BLACK: { red: 0, green: 0, blue: 0, alpha: 255 } as RGBAColor,
 	WHITE: { red: 255, green: 255, blue: 255, alpha: 255 } as RGBAColor,

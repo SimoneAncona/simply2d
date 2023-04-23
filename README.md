@@ -6,9 +6,9 @@ This library allows, thanks to SDL2, to create windows and draw on the screen
 This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross-platform library designed to provide low level access to different resources such as video. SDL2 is available for windows, linux and macos as well
 ### Windows installation
 To install `SDL2` on windows:
-- <a href="https://github.com/libsdl-org/SDL/releases/download/release-2.26.5/SDL2-devel-2.26.5-mingw.zip">Click this link</a> to download the `SDL2` dev library
+- <a href="https://github.com/libsdl-org/SDL/releases/download/release-2.26.5/SDL2-devel-2.26.5-VC.zip">Click this link</a> to download the `SDL2` dev library
 - Unzip the file in `C:\SDL`
-- <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-mingw.zip">Click here</a> to download the `SDL2_Image` dev library
+- <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-VC.zip">Click here</a> to download the `SDL2_Image` dev library
 - Unzip the file in `C:\SDL_Image`
 
 ### Linux installation

@@ -11,7 +11,7 @@
                 "<!(node -p \"require('node-addon-api').gyp\")"
             ],
             'libraries': [
-              "C:\\SDL\\SDL2-2.26.5\\x86_64-w64-mingw32\\lib\\libSDL2main.a"
+                "C:\\Users\\simon\\Downloads\\SDL2-devel-2.26.5-VC\\SDL2-2.26.5\\lib\\x64\\SDL2.lib"
             ],
             'cflags!': ['-fno-exceptions'],
             'cflags_cc!': ['-fno-exceptions'],

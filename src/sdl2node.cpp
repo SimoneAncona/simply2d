@@ -1,11 +1,5 @@
-#ifdef WIN32
-	#pragma comment(lib, "C:\\SDL\\SDL2-2.26.5\\x86_64-w64-mingw32\\bin\\SDL2.dll")
-#elif 
-	#pragma comment(lib, "SDL2.lib")
-#endif
-
 #include <napi.h>
-#include <SDL2/SDL.h>
+#include <SDL2\SDL.h>
 
 namespace SDL2binding
 {

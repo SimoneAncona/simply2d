@@ -1,5 +1,5 @@
 export type CanvasOptions = {
-	mode: "fullscreen" | "minimazied" | "maximized" | "hidden" | "shown",
+	mode: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown",
 	resizable: boolean
 }
 

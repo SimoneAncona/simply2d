@@ -33,6 +33,12 @@
                             'files': [
                                 'C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.dll'
                             ]
+                        },
+                        {
+                            'destination': '<(module_root_dir)/build/Debug/',
+                            'files': [
+                                'C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.dll'
+                            ]
                         }
                     ]
                 }]

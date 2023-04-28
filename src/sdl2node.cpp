@@ -4,7 +4,7 @@
 
 void* get_value_from_ptr(Napi::ArrayBuffer& buffer)
 {
-	return (void*) (buffer.Get((uint32_t)0).As<Napi::Number>().Int64Value());
+	return (void*)((uint64_t*)buffer.Data());
 }
 
 Napi::Value sdl_init(const Napi::CallbackInfo& info)

@@ -145,9 +145,9 @@
   <ItemGroup>
     <CustomBuild Include="C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll">
       <FileType>Document</FileType>
-      <Command>call mkdir &quot;C:\Users\simon\Documents\draw2d\build\Release&quot; 2&gt;nul &amp; set ERRORLEVEL=0 &amp; copy /Y &quot;C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll&quot; &quot;C:\Users\simon\Documents\draw2d\build\Release\SDL2.dll&quot;&#xD;&#xA;if %errorlevel% neq 0 exit /b %errorlevel%</Command>
-      <Message>Copying C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll to C:\Users\simon\Documents\draw2d\build\Release</Message>
-      <Outputs>C:\Users\simon\Documents\draw2d\build\Release\SDL2.dll</Outputs>
+      <Command>call mkdir &quot;C:\Users\simon\Documents\draw2d\build\Release&quot; 2&gt;nul &amp; set ERRORLEVEL=0 &amp; copy /Y &quot;C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll&quot; &quot;C:\Users\simon\Documents\draw2d\build\Release\SDL2.dll&quot;&#xD;&#xA;if %errorlevel% neq 0 exit /b %errorlevel%&#xD;&#xA;call mkdir &quot;C:\Users\simon\Documents\draw2d\build\Debug&quot; 2&gt;nul &amp; set ERRORLEVEL=0 &amp; copy /Y &quot;C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll&quot; &quot;C:\Users\simon\Documents\draw2d\build\Debug\SDL2.dll&quot;&#xD;&#xA;if %errorlevel% neq 0 exit /b %errorlevel%</Command>
+      <Message>Copying C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll to C:\Users\simon\Documents\draw2d\build\Release, and also Copying C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll to C:\Users\simon\Documents\draw2d\build\Debug</Message>
+      <Outputs>C:\Users\simon\Documents\draw2d\build\Release\SDL2.dll;C:\Users\simon\Documents\draw2d\build\Debug\SDL2.dll</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

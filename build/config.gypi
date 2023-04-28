@@ -2,7 +2,7 @@
 {
   "target_defaults": {
     "cflags": [],
-    "default_configuration": "Release",
+    "default_configuration": "Debug",
     "defines": [],
     "include_dirs": [],
     "libraries": [],

@@ -3,7 +3,7 @@ import * as sdl from "./sdlValues.js"
 import { Colors } from "./colors.js";
 const require = createRequire(import.meta.url);
 
-const sdl2bind = require("../build/Release/canvas_sdl2.node");
+const sdl2bind = require("../build/Debug/canvas_sdl2.node");
 
 
 export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number) {

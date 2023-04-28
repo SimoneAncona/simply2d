@@ -26,7 +26,7 @@ export class Canvas {
 		if (options.mode === "fullscreen") flags |= SDL_Window_Flags.SDL_WINDOW_FULLSCREEN;
 		else if (options.mode === "hidden") flags |= SDL_Window_Flags.SDL_WINDOW_HIDDEN;
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
-		else if (options.mode === "minimazied") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
+		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
 		console.log(this._window);

@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <string>
 
-void* get_value_from_ptr(Napi::ArrayBuffer& buffer)
+void* get_ptr_from_js(Napi::ArrayBuffer& buffer)
 {
 	return (void*)((uint64_t*)buffer.Data());
 }
@@ -36,11 +36,34 @@ Napi::Value sdl_create_window(const Napi::CallbackInfo& info)
 Napi::Value sdl_create_renderer(const Napi::CallbackInfo& info)
 {
 	Napi::Env env = info.Env();
-	SDL_Window *window = (SDL_Window*) get_value_from_ptr(info[0].As<Napi::ArrayBuffer>());
+	SDL_Window *window = (SDL_Window*) get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	int index = info[1].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags);
 	return Napi::ArrayBuffer::New(env, renderer, sizeof(renderer));
+}
+
+Napi::Value sdl_show_window(const Napi::CallbackInfo& info)
+{
+	Napi::Env env = info.Env();
+	SDL_Window *window = (SDL_Window*) get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	SDL_ShowWindow(window);
+	return env.Undefined();
+}
+
+Napi::Value sdl_hide_window(const Napi::CallbackInfo& info)
+{
+	Napi::Env env = info.Env();
+	SDL_Window* window = (SDL_Window*) get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	SDL_HideWindow(window);
+	return env.Undefined();
+}
+
+Napi::Value sdl_render_draw_color(const Napi::CallbackInfo& info)
+{
+	Napi::Env env = info.Env();
+	SDL_Renderer *renderer = (SDL_Renderer*) get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	// SDL_SetRenderDrawColor(renderer);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -49,6 +72,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "getError"), Napi::Function::New<sdl_get_error>(env));
 	exports.Set(Napi::String::New(env, "createWindow"), Napi::Function::New<sdl_create_window>(env));
 	exports.Set(Napi::String::New(env, "createRenderer"), Napi::Function::New<sdl_create_renderer>(env));
+	exports.Set(Napi::String::New(env, "showWindow"), Napi::Function::New<sdl_show_window>(env));
+	exports.Set(Napi::String::New(env, "hideWindow"), Napi::Function::New<sdl_hide_window>(env));
 	return exports;
 }
 

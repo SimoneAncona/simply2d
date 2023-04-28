@@ -19,13 +19,13 @@ export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
 	return sdl2bind.createRenderer(window, index, flag);
 }
 
-// export function showWindow(window: Pointer<void>) {
-// 	sdl.SDL2.SDL_ShowWindow(window);
-// }
+export function showWindow(window: ArrayBuffer) {
+	sdl2bind.showWindow(window);
+}
 
-// export function hideWindow(window: Pointer<void>) {
-// 	sdl.SDL2.SDL_HideWindow(window);
-// }
+export function hideWindow(window: ArrayBuffer) {
+	sdl2bind.hideWindow(window);
+}
 
 // export function clearWithColor(renderer: Pointer<void>, r: number, g: number, b: number, alpha: number) {
 // 	sdl.SDL2.SDL_SetRenderDrawColor(renderer, r, g, b, alpha);

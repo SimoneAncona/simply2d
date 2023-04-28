@@ -11,7 +11,7 @@
   "homepage": "https://github.com/SimoneAncona/simply2d#readme",
   "type": "module",
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc --build && node-gyp rebuild",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

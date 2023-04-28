@@ -34,6 +34,21 @@
     <Filter Include="..">
       <UniqueIdentifier>{739DB09A-CC57-A953-A6CF-F64FA08E4FA7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="C:">
+      <UniqueIdentifier>{7B735499-E5DD-1C2B-6C26-70023832A1CF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\SDL">
+      <UniqueIdentifier>{DE979B4A-6302-439A-35D3-4D042400203B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\SDL\SDL2-2.26.5">
+      <UniqueIdentifier>{E96A4125-5D71-2F3F-271C-FA1C0FCD9CDF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\SDL\SDL2-2.26.5\lib">
+      <UniqueIdentifier>{2739B19F-16DF-601C-060A-FF86F6A40045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\SDL\SDL2-2.26.5\lib\x64">
+      <UniqueIdentifier>{E075064C-529C-A4E7-0810-FB88D599C3BE}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\sdl2node.cpp">
@@ -44,6 +59,9 @@
     </ClCompile>
     <None Include="..\binding.gyp">
       <Filter>..</Filter>
+    </None>
+    <None Include="C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll">
+      <Filter>C:\SDL\SDL2-2.26.5\lib\x64</Filter>
     </None>
   </ItemGroup>
 </Project>

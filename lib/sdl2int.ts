@@ -1,23 +1,23 @@
 import { createRequire } from 'module';
+import * as sdl from "./sdlValues.js"
+import { Colors } from "./colors.js";
 const require = createRequire(import.meta.url);
 
 const sdl2bind = require("../build/Release/canvas_sdl2.node");
-console.log(sdl2bind);
-import * as sdl from "./sdlValues.js"
-import { Colors } from "./colors.js";
+
 
 export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number) {
-	if (sdl2bind.sdlInit(sdl.SDL_Init_Everything) != 0) {
+	if (sdl2bind.init(sdl.SDL_Init_Everything) != 0) {
 		throw "An error occurred while initializing SDL: " + sdl2bind.getError();
 	}
 
-	return sdl2bind.createWindow(title, xPos, yPos, width, height, flags);
+	return sdl2bind.createWindow(title, xPos, yPos, width, height, flags) as ArrayBuffer;
 
 }
 
-// export function getRenderer(window: Pointer<void>, index: number, flag: number) {
-// 	return sdl.SDL2.SDL_CreateRenderer(window, index, flag);
-// }
+export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
+	return sdl2bind.createRenderer(window, index, flag);
+}
 
 // export function showWindow(window: Pointer<void>) {
 // 	sdl.SDL2.SDL_ShowWindow(window);

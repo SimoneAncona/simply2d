@@ -28,7 +28,7 @@ export function hideWindow(window: ArrayBuffer) {
 }
 
 export function clearWithColor(renderer: ArrayBuffer, r: number, g: number, b: number, alpha: number) {
-	sdl2bind.setRenderDrawColor(renderer, r, g, b, alpha);
+	sdl2bind.setDrawColor(renderer, r, g, b, alpha);
 	sdl2bind.renderClear(renderer);
 	sdl2bind.renderPresent(renderer);
 }
@@ -38,7 +38,7 @@ export function delay(ms: number) {
 }
 
 export function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number) {
-	sdl2bind.setRenderDrawColor(renderer, r, g, b, a);
+	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawPoint(renderer, px, py);
 	sdl2bind.renderPresent(renderer);
 }
@@ -60,48 +60,39 @@ export function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number,
 // }
 
 export function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number) {
-	sdl2bind.setRenderDrawColor(renderer, r, g, b, a);
+	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawLine(renderer, px1, py1, px2, py2);
 	sdl2bind.renderPresent(renderer);
 }
 
-// export function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: number) {
-// 	if (image.SDL2_IMAGE.IMG_Init(imgInitFlag) === 0) {
-// 		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
-// 	}
-// 	let texture = image.SDL2_IMAGE.IMG_LoadTexture(renderer, filename);
-// 	if (texture.isNull()) {
-// 		throw "Cannot load texture from " + filename + ": " + sdl.SDL2.SDL_GetError();
-// 	}
-// 	//@ts-ignore
-// 	if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
-// 		throw "Cannot load the texture into the renderer";
-// 	}
-// 	sdl.SDL2.SDL_RenderPresent(renderer);
-// 	image.SDL2_IMAGE.IMG_Quit();
-// }
+export function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: number) {
+	if (sdl2bind.imgInit(imgInitFlag) === 0) {
+		throw "An error occurred while setting image: " + sdl2bind.getError();
+	}
+	let texture = sdl2bind.loadTexture(renderer, filename);
+	if (texture === undefined) {
+		throw "Cannot load texture from " + filename + ": " + sdl2bind.getError();
+	}
 
-// export function setPNG(renderer: ArrayBuffer, filename: string) {
-// 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);
-// }
+	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
+		throw "Cannot load the texture into the renderer";
+	}
+	sdl2bind.renderPresent(renderer);
+	sdl2bind.imgQuit();
+}
 
-// export function setJPG(renderer: ArrayBuffer, filename: string) {
-// 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
-// }
+export function setPNG(renderer: ArrayBuffer, filename: string) {
+	setImage(renderer, filename, sdl.IMG_Init_Flags.IMG_INIT_PNG);
+}
 
-// export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number) {
-// 	// let rect = new SDL2_Rect();
-// 	// //@ts-ignore
-// 	// rect.x = x;
-// 	// //@ts-ignore
-// 	// rect.y = y;
-// 	// //@ts-ignore
-// 	// rect.w = width;
-// 	// //@ts-ignore
-// 	// rect.h = height;
-// 	// //@ts-ignore
-// 	// sdl.SDL2.SDL_RenderDrawRect(renderer, rect.ref());
-// }
+export function setJPG(renderer: ArrayBuffer, filename: string) {
+	setImage(renderer, filename, sdl.IMG_Init_Flags.IMG_INIT_JPG);
+}
+
+export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number) {
+	sdl2bind.setDrawColor(renderer, r, g, b, a);
+	sdl2bind.drawRectangle(renderer, x, y, width, height);
+}
 
 // export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
 // 	let pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;

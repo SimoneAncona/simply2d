@@ -18,4 +18,6 @@ namespace SDL
     Napi::Value delay(const Napi::CallbackInfo&);
     Napi::Value render_draw_point(const Napi::CallbackInfo&);
     Napi::Value render_draw_line(const Napi::CallbackInfo&);
+    Napi::Value render_copy(const Napi::CallbackInfo&);
+    Napi::Value draw_rectangle(const Napi::CallbackInfo&);
 }

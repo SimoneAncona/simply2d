@@ -1,4 +1,3 @@
-#include <napi.h>
 #include "sdl2node.hh"
 #include "sdl2image_node.hh"
 
@@ -15,6 +14,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "delay"), Napi::Function::New<SDL::delay>(env));
 	exports.Set(Napi::String::New(env, "drawPoint"), Napi::Function::New<SDL::render_draw_point>(env));
 	exports.Set(Napi::String::New(env, "drawLine"), Napi::Function::New<SDL::render_draw_line>(env));
+	exports.Set(Napi::String::New(env, "renderCopy"), Napi::Function::New<SDL::render_copy>(env));
+	exports.Set(Napi::String::New(env, "renderCopy"), Napi::Function::New<SDL::draw_rectangle>(env));
+
+    exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
+    exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));
+    exports.Set(Napi::String::New(env, "imgQuit"), Napi::Function::New<SDLImage::quit>(env));
 	return exports;
 }
 

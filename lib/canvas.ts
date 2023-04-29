@@ -1,4 +1,4 @@
-import { getRenderer, getWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRectangle, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -29,76 +29,75 @@ export class Canvas {
 		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
-		console.log(this._window);
 		this._renderer = getRenderer(this._window, -1, 0);
 	}
 
-	// /**
-	//  * Show the window
-	//  * @since v0.1.0
-	//  */
-	// show() {
-	// 	showWindow(this._window);
-	// }
+	/**
+	 * Show the window
+	 * @since v0.1.0
+	 */
+	show() {
+		showWindow(this._window);
+	}
 
-	// /**
-	//  * Hide the window
-	//  * @since v0.1.0
-	//  */
-	// hide() {
-	// 	hideWindow(this._window);
-	// }
+	/**
+	 * Hide the window
+	 * @since v0.1.0
+	 */
+	hide() {
+		hideWindow(this._window);
+	}
 
-	// /**
-	//  * Change the background color
-	//  * @param {RGBAColor} color the color of the background
-	//  * @since v0.1.0
-	//  */
-	// setBackgroundColor(color: RGBAColor) {
-	// 	clearWithColor(this._renderer, color.red, color.green, color.blue, color.alpha);
-	// }
+	/**
+	 * Change the background color
+	 * @param {RGBAColor} color the color of the background
+	 * @since v0.1.0
+	 */
+	setBackgroundColor(color: RGBAColor) {
+		clearWithColor(this._renderer, color.red, color.green, color.blue, color.alpha);
+	}
 
-	// /**
-	//  * Sleep `ms` milliseconds
-	//  * @param {number} ms milliseconds 
-	//  * @since v0.1.0
-	//  */
-	// sleep(ms: number) {
-	// 	delay(ms);
-	// }
+	/**
+	 * Sleep `ms` milliseconds
+	 * @param {number} ms milliseconds 
+	 * @since v0.1.0
+	 */
+	sleep(ms: number) {
+		delay(ms);
+	}
 
-	// /**
-	//  * Draw a pixel in the canvas
-	//  * @param {RGBAColor} color the color of the pixel 
-	//  * @param {Position} position the position in the canvas
-	//  * @since v0.1.0
-	//  */
-	// drawPoint(color: RGBAColor, position: Position) {
-	// 	setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x, position.y);
-	// }
+	/**
+	 * Draw a pixel in the canvas
+	 * @param {RGBAColor} color the color of the pixel 
+	 * @param {Position} position the position in the canvas
+	 * @since v0.1.0
+	 */
+	drawPoint(color: RGBAColor, position: Position) {
+		setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x, position.y);
+	}
 
-	// /**
-	//  * Draw a line in the canvas
-	//  * @param {RGBAColor} color the color of the line
-	//  * @param {Position} from the starting position 
-	//  * @param {Position} to the ending
-	//  * @since v0.1.0
-	//  */
-	// drawLine(color: RGBAColor, from: Position, to: Position) {
-	// 	setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
-	// }
+	/**
+	 * Draw a line in the canvas
+	 * @param {RGBAColor} color the color of the line
+	 * @param {Position} from the starting position 
+	 * @param {Position} to the ending
+	 * @since v0.1.0
+	 */
+	drawLine(color: RGBAColor, from: Position, to: Position) {
+		setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
+	}
 
-	// /**
-	//  * Draw a rectangle
-	//  * @param {RGBAColor} color the border color
-	//  * @param {Position} center the center of the rectangle
-	//  * @param {number} width the width 
-	//  * @param {number} height the height
-	//  * @since v0.1.10
-	//  */
-	// drawRectangle(color: RGBAColor, center: Position, width: number, height: number) {
-	// 	setRectangle(this._renderer, center.x, center.y, width, height);
-	// }
+	/**
+	 * Draw a rectangle
+	 * @param {RGBAColor} color the border color
+	 * @param {Position} center the center of the rectangle
+	 * @param {number} width the width 
+	 * @param {number} height the height
+	 * @since v0.1.10
+	 */
+	drawRectangle(color: RGBAColor, center: Position, width: number, height: number) {
+		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha);
+	}
 
 	// /**
 	//  * Draw an image from raw data on the canvas
@@ -120,43 +119,43 @@ export class Canvas {
 	// 	_setRawData256(this._renderer, pixels, this._width, this._height);
 	// }
 
-	// /**
-	//  * Draw an image on the canvas
-	//  * @param {string} filename the name of the image file
-	//  * @since v0.1.9
-	//  */
-	// loadPNG(filename: string) {
-	// 	setPNG(this._renderer, filename);
-	// }
+	/**
+	 * Draw an image on the canvas
+	 * @param {string} filename the name of the image file
+	 * @since v0.1.9
+	 */
+	loadPNG(filename: string) {
+		setPNG(this._renderer, filename);
+	}
 
-	// /**
-	//  * Draw an image on the canvas
-	//  * @param {string} filename the name of the image file
-	//  * @since v0.1.9
-	//  */
-	// loadJPG(filename: string) {
-	// 	setJPG(this._renderer, filename);
-	// }
+	/**
+	 * Draw an image on the canvas
+	 * @param {string} filename the name of the image file
+	 * @since v0.1.9
+	 */
+	loadJPG(filename: string) {
+		setJPG(this._renderer, filename);
+	}
 
-	// /**
-	//  * Return the width of the window 
-	//  * @returns {number} the width of the window
-	//  * @since v0.1.0
-	//  */
-	// getWidth(): number { return this._width };
+	/**
+	 * Return the width of the window 
+	 * @returns {number} the width of the window
+	 * @since v0.1.0
+	 */
+	getWidth(): number { return this._width };
 
-	// /**
-	//  * Return the height of the window 
-	//  * @returns {number} the height of the window
-	//  * @since v0.1.0
-	//  */
-	// getHeight(): number { return this._height };
+	/**
+	 * Return the height of the window 
+	 * @returns {number} the height of the window
+	 * @since v0.1.0
+	 */
+	getHeight(): number { return this._height };
 
-	// /**
-	//  * Clear the canvas
-	//  * @since v0.1.3
-	//  */
-	// clear() {
-	// 	clearWithColor(this._renderer, 0, 0, 0, 255);
-	// }
+	/**
+	 * Clear the canvas
+	 * @since v0.1.3
+	 */
+	clear() {
+		clearWithColor(this._renderer, 0, 0, 0, 255);
+	}
 }

@@ -146,6 +146,9 @@
     <ClCompile Include="..\src\sdl2image_node.cpp">
       <ObjectFileName>$(IntDir)\src\sdl2image_node.obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\src\common.cpp">
+      <ObjectFileName>$(IntDir)\src\common.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="C:\Users\simon\Documents\draw2d\node_modules\node-gyp\src\win_delay_load_hook.cc"/>
   </ItemGroup>
   <ItemGroup>

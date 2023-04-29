@@ -22,7 +22,7 @@ Used to save the canvas as a JPG file
 
 ### Canvas.drawCircle
 ```js
-drawArc(radius: number, angle: number /* radians */, pos: Position): void
+drawArc(radius: number, angle: number /* radians */, center: Position): void
 ```
 Draw an arc
 
@@ -32,8 +32,16 @@ drawPath(path: Path): void
 ```
 Draw a polyline
 
+### Canvas.on
+```js
+on(event: string, callback: () => void): void
+```
+Event listener
+
 ### Path
 ```js
 import { Path } from "simply2d";
 const house = new Path();
+house.start({x: 10, y: 15});
+house.pushLine({x: 20, y: 60});
 ```

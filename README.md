@@ -1,6 +1,7 @@
 # Simply2D
 ## Introduction
-This library allows, thanks to SDL2, to create windows and draw on the screen
+This library allows, thanks to SDL2, to create windows and draw on the screen. 
+> This library is not fully implemented
 
 ## Installation
 This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross-platform library designed to provide low level access to different resources such as video. SDL2 is available for windows, linux and macos as well
@@ -74,6 +75,12 @@ drawLine(color: RGBAColor, from: Position, to: Position): void
 ```
 Draw a line from `from` coordinates to `to` coordinates
 
+### Canvas.drawRectangle
+```js
+drawRectangle(color: RGBAColor, center: Position, width: number, height: number): void
+```
+Draw a rectangle in the canvas
+
 ### Canvas.getWidth
 ```js
 getWidth(): void
@@ -91,6 +98,24 @@ Return the window height
 clear(): void
 ```
 Clear the screen
+
+### Canvas.loadRawData
+```js
+loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32): void
+```
+Write directly into the video buffer
+
+### Canvas.loadPNG
+```js
+loadPNG(filename: string)
+```
+Write an PNG image into the canvas
+
+### Canvas.loadJPG
+```js
+loadJPG(filename: string)
+```
+Write a JPG image into the canvas
 
 ### Colors
 Colors is an object that contains different standard colors and some useful function
@@ -129,6 +154,12 @@ Convert a 16 bit color into a 24 bit color
 from24bit(color: number): RGBAColor
 ```
 Convert a 24 bit color number into a 24 bit color RGBAColor object
+
+### Colors.from32bit
+```js
+from32bit(color: number): RGBAColor
+```
+Convert a 32 bit color numner into a RGBAColor object
 
 ### Position
 Is a type for storing coordinates

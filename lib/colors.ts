@@ -37,5 +37,15 @@ export const Colors = {
 			blue: color & 0x0000FF,
 			alpha: 255
 		} as RGBAColor
+	},
+
+	from32bit(color: number) {
+		if (color < 0 || color >= 2**32) throw "Color must be between 0 and 2^32";
+		return {
+			red: (color >> 24),
+			green: ((color & 0x00FF0000) >> 16),
+			blue: ((color & 0x0000FF00) >> 8),
+			alpha: (color & 0xFF)
+		} as RGBAColor
 	}
 }

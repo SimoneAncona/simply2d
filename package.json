@@ -1,9 +1,9 @@
 {
   "name": "simply2d",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Basic 2D GUI library for node.js",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/SimoneAncona/simply2d"

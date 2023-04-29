@@ -27,23 +27,23 @@ export function hideWindow(window: ArrayBuffer) {
 	sdl2bind.hideWindow(window);
 }
 
-// export function clearWithColor(renderer: Pointer<void>, r: number, g: number, b: number, alpha: number) {
-// 	sdl.SDL2.SDL_SetRenderDrawColor(renderer, r, g, b, alpha);
-// 	sdl.SDL2.SDL_RenderClear(renderer);
-// 	sdl.SDL2.SDL_RenderPresent(renderer);
-// }
+export function clearWithColor(renderer: ArrayBuffer, r: number, g: number, b: number, alpha: number) {
+	sdl2bind.setRenderDrawColor(renderer, r, g, b, alpha);
+	sdl2bind.renderClear(renderer);
+	sdl2bind.renderPresent(renderer);
+}
 
-// export function delay(ms: number) {
-// 	sdl.SDL2.SDL_Delay(ms);
-// }
+export function delay(ms: number) {
+	sdl2bind.delay(ms);
+}
 
-// export function setPoint(renderer: Pointer<void>, r: number, g: number, b: number, a: number, px: number, py: number) {
-// 	sdl.SDL2.SDL_SetRenderDrawColor(renderer, r, g, b, a);
-// 	sdl.SDL2.SDL_RenderDrawPoint(renderer, px, py);
-// 	sdl.SDL2.SDL_RenderPresent(renderer);
-// }
+export function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number) {
+	sdl2bind.setRenderDrawColor(renderer, r, g, b, a);
+	sdl2bind.drawPoint(renderer, px, py);
+	sdl2bind.renderPresent(renderer);
+}
 
-// export function _setRawData256(renderer: Pointer<void>, buffer: Uint8Array, width: number, height: number) {
+// export function _setRawData256(renderer: ArrayBuffer, buffer: Uint8Array, width: number, height: number) {
 // 	let px = 0;
 // 	let py = 0;
 // 	for (let i = 0; i < buffer.length; i++) {
@@ -59,13 +59,13 @@ export function hideWindow(window: ArrayBuffer) {
 // 	sdl.SDL2.SDL_RenderPresent(renderer);
 // }
 
-// export function setLine(renderer: Pointer<void>, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number) {
-// 	sdl.SDL2.SDL_SetRenderDrawColor(renderer, r, g, b, a);
-// 	sdl.SDL2.SDL_RenderDrawLine(renderer, px1, py1, px2, py2);
-// 	sdl.SDL2.SDL_RenderPresent(renderer);
-// }
+export function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number) {
+	sdl2bind.setRenderDrawColor(renderer, r, g, b, a);
+	sdl2bind.drawLine(renderer, px1, py1, px2, py2);
+	sdl2bind.renderPresent(renderer);
+}
 
-// export function setImage(renderer: Pointer<void>, filename: string, imgInitFlag: number) {
+// export function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: number) {
 // 	if (image.SDL2_IMAGE.IMG_Init(imgInitFlag) === 0) {
 // 		throw "An error occurred while setting image: " + sdl.SDL2.SDL_GetError();
 // 	}
@@ -81,15 +81,15 @@ export function hideWindow(window: ArrayBuffer) {
 // 	image.SDL2_IMAGE.IMG_Quit();
 // }
 
-// export function setPNG(renderer: Pointer<void>, filename: string) {
+// export function setPNG(renderer: ArrayBuffer, filename: string) {
 // 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_PNG);
 // }
 
-// export function setJPG(renderer: Pointer<void>, filename: string) {
+// export function setJPG(renderer: ArrayBuffer, filename: string) {
 // 	setImage(renderer, filename, image.IMG_Init_Flags.IMG_INIT_JPG);
 // }
 
-// export function setRectangle(renderer: Pointer<void>, x: number, y: number, width: number, height: number) {
+// export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number) {
 // 	// let rect = new SDL2_Rect();
 // 	// //@ts-ignore
 // 	// rect.x = x;
@@ -103,7 +103,7 @@ export function hideWindow(window: ArrayBuffer) {
 // 	// sdl.SDL2.SDL_RenderDrawRect(renderer, rect.ref());
 // }
 
-// export function setRawData(renderer: Pointer<void>, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
+// export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
 // 	let pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
 // 	if (bitPerPixel === 8) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
 // 	else if (bitPerPixel === 16) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;

@@ -115,7 +115,7 @@ Napi::Value SDL::render_copy(const Napi::CallbackInfo &info)
 	SDL_Texture *texture = (SDL_Texture*)get_ptr_from_js(info[1].As<Napi::ArrayBuffer>());
 	SDL_Rect *src = (SDL_Rect*)get_ptr_from_js(info[2].As<Napi::ArrayBuffer>());
 	SDL_Rect *dest = (SDL_Rect*)get_ptr_from_js(info[3].As<Napi::ArrayBuffer>());
-	return Napi::Number::New(env, SDL_RenderCopy(renderer, texture, src, dest));
+	return Napi::Number::New(env, SDL_RenderCopy(renderer, texture, NULL, NULL));
 }
 
 Napi::Value SDL::draw_rectangle(const Napi::CallbackInfo& info)

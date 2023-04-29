@@ -1,7 +1,6 @@
 # Simply2D
 ## Introduction
 This library for nodejs allows, thanks to SDL2, to create windows and draw on the screen. 
-> This library is not fully implemented
 
 ## Installation
 You can install this library using `npm i simply2d`.  

@@ -91,6 +91,7 @@ export function setJPG(renderer: ArrayBuffer, filename: string) {
 export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawRectangle(renderer, x, y, width, height);
+	sdl2bind.renderPresent(renderer);
 }
 
 export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {

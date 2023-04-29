@@ -4,7 +4,7 @@ const height = 300;
 const canvas = new Canvas("Random noise", width, height);
 while (true) {
     let buf = randomData();
-    canvas.load8bitColor(buf);
+    canvas.loadRawData(buf, 8);
 }
 
 function randomData() {

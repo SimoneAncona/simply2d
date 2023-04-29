@@ -94,28 +94,21 @@ export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width:
 	sdl2bind.drawRectangle(renderer, x, y, width, height);
 }
 
-// export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
-// 	let pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
-// 	if (bitPerPixel === 8) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
-// 	else if (bitPerPixel === 16) pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
-// 	else pixelFormat = image.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
-// 	let texture = sdl.SDL2.SDL_CreateTexture(renderer, pixelFormat, image.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_STREAMING, width, height);
+export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
+	let pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+	if (bitPerPixel === 8) pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+	else if (bitPerPixel === 16) pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+	else pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+	let texture = sdl2bind.createTexture(renderer, pixelFormat, sdl.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_STREAMING, width, height);
 
-// 	let buff = Buffer.from(buffer);
-// 	let int = Buffer.allocUnsafe(4);
-// 	int.writeInt32LE(width * bitPerPixel / 8);
-// 	//@ts-ignore
-// 	if (sdl.SDL2.SDL_LockTexture(texture, NULL, buff.ref().ref(), int.ref()) !== 0) {
-// 		throw "Cannot draw the texture";
-// 	};
-// 	sdl.SDL2.SDL_UnlockTexture(texture);
-// 	//@ts-ignore
-// 	if (sdl.SDL2.SDL_RenderCopy(renderer, texture, NULL, NULL) !== 0) {
-// 		throw "Cannot load the texture into the renderer";
-// 	};
-//     sdl.SDL2.SDL_RenderPresent(renderer);
-// }
+	let pitch = width * bitPerPixel / 8;
 
-// function _debug() {
-// 	console.log(sdl.SDL2.SDL_GetError());
-// }
+	if (sdl2bind.lockTexture(texture, buffer, pitch) !== 0) {
+		throw "Cannot draw the texture";
+	};
+	sdl2bind.unlockTexture(texture);
+	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
+		throw "Cannot load the texture into the renderer";
+	};
+    sdl2bind.renderPresent(renderer);
+}

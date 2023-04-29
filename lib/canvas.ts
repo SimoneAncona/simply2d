@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRectangle, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -99,25 +99,22 @@ export class Canvas {
 		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha);
 	}
 
-	// /**
-	//  * Draw an image from raw data on the canvas
-	//  * @param {Uint8Array} pixels the name of the image file
-	//  * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
-	//  * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
-	//  *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
-	//  *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
-	//  *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
-	//  * @since v0.1.9
-	//  */
-	// loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = 32) {
-	// 	if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
-	// 	if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
-	// 	setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
-	// }
+	/**
+	 * Draw an image from raw data on the canvas
+	 * @param {Uint8Array} pixels the name of the image file
+	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
+	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
+	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
+	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
+	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
+	 * @since v0.1.9
+	 */
+	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = 32) {
+		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
+		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
+		setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
+	}
 
-	// load8bitColor(pixels: Uint8Array) {
-	// 	_setRawData256(this._renderer, pixels, this._width, this._height);
-	// }
 
 	/**
 	 * Draw an image on the canvas

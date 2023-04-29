@@ -5,7 +5,8 @@
             'sources': [
                 'src\\init.cpp',
                 'src\\sdl2node.cpp',
-                'src\\sdl2image_node.cpp'
+                'src\\sdl2image_node.cpp',
+                'src\\common.cpp'
             ],
             'cflags!': ['-fno-exceptions'],
             'cflags_cc!': ['-fno-exceptions'],

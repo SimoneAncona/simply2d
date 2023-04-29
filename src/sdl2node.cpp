@@ -1,26 +1,19 @@
-#include <napi.h>
-#include <SDL.h>
-#include <string>
+#include "sdl2node.hh"
 
-void *get_ptr_from_js(Napi::ArrayBuffer &buffer)
-{
-	return (void *)((uint64_t *)buffer.Data());
-}
-
-Napi::Value sdl_init(const Napi::CallbackInfo &info)
+Napi::Value init(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
 	return Napi::Number::New(env, SDL_Init(flags));
 }
 
-Napi::Value sdl_get_error(const Napi::CallbackInfo &info)
+Napi::Value get_error(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	return Napi::String::New(env, SDL_GetError());
 }
 
-Napi::Value sdl_create_window(const Napi::CallbackInfo &info)
+Napi::Value create_window(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	std::string title = info[0].As<Napi::String>().Utf8Value();
@@ -30,20 +23,22 @@ Napi::Value sdl_create_window(const Napi::CallbackInfo &info)
 	int h = info[4].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[5].As<Napi::Number>().Uint32Value();
 	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+	if (window == NULL) return env.Undefined();
 	return Napi::ArrayBuffer::New(env, window, sizeof(window));
 }
 
-Napi::Value sdl_create_renderer(const Napi::CallbackInfo &info)
+Napi::Value create_renderer(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	int index = info[1].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags);
+	if (renderer == NULL) return env.Undefined();
 	return Napi::ArrayBuffer::New(env, renderer, sizeof(renderer));
 }
 
-Napi::Value sdl_show_window(const Napi::CallbackInfo &info)
+Napi::Value show_window(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
@@ -51,7 +46,7 @@ Napi::Value sdl_show_window(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value sdl_hide_window(const Napi::CallbackInfo &info)
+Napi::Value hide_window(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
@@ -59,7 +54,7 @@ Napi::Value sdl_hide_window(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value sdl_set_render_draw_color(const Napi::CallbackInfo &info)
+Napi::Value set_render_draw_color(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
@@ -70,14 +65,14 @@ Napi::Value sdl_set_render_draw_color(const Napi::CallbackInfo &info)
 	return Napi::Number::New(env, SDL_SetRenderDrawColor(renderer, red, green, blue, alpha));
 }
 
-Napi::Value sdl_render_clear(const Napi::CallbackInfo &info)
+Napi::Value render_clear(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	return Napi::Number::New(env, SDL_RenderClear(renderer));
 }
 
-Napi::Value sdl_render_present(const Napi::CallbackInfo &info)
+Napi::Value render_present(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
@@ -85,7 +80,7 @@ Napi::Value sdl_render_present(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value sdl_delay(const Napi::CallbackInfo &info)
+Napi::Value delay(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	int ms = info[0].As<Napi::Number>().Int64Value();
@@ -93,7 +88,7 @@ Napi::Value sdl_delay(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
-Napi::Value sdl_render_draw_point(const Napi::CallbackInfo &info)
+Napi::Value render_draw_point(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer*)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
@@ -102,7 +97,7 @@ Napi::Value sdl_render_draw_point(const Napi::CallbackInfo &info)
 	return Napi::Number::New(env, SDL_RenderDrawPoint(renderer, px, py));
 }
 
-Napi::Value sdl_render_draw_line(const Napi::CallbackInfo &info)
+Napi::Value render_draw_line(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer*)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());

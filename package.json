@@ -1,6 +1,6 @@
 {
   "name": "simply2d",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Basic 2D GUI library for node.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

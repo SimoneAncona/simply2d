@@ -21,6 +21,5 @@ namespace SDL
     Napi::Value render_copy(const Napi::CallbackInfo&);
     Napi::Value draw_rectangle(const Napi::CallbackInfo&);
     Napi::Value create_texture(const Napi::CallbackInfo&);
-    Napi::Value lock_texture(const Napi::CallbackInfo&);
-    Napi::Value unlock_texture(const Napi::CallbackInfo&);
+    Napi::Value write_texture(const Napi::CallbackInfo&);
 }

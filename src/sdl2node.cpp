@@ -148,19 +148,23 @@ Napi::Value SDL::create_texture(const Napi::CallbackInfo &info)
 	return Napi::ArrayBuffer::New(env, texture, sizeof(texture));
 }
 
-Napi::Value SDL::lock_texture(const Napi::CallbackInfo &info)
+Napi::Value SDL::write_texture(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-	void *data = info[1].As<Napi::Uint8Array>().Data();
-	int pitch = info[2].As<Napi::Number>().Int64Value();
-	return Napi::Number::New(env, SDL_LockTexture(texture, NULL, &data, &pitch));
-}
+	Napi::Uint8Array pixels = info[1].As<Napi::Uint8Array>();
+	uint8_t *raw_pixels = pixels.Data();
+	uint8_t *texture_data;
+	int pitch;
+	if (SDL_LockTexture(texture, NULL, (void **)&texture_data, &pitch) != 0)
+	{
+		throw Napi::Error::New(env, std::string("Unable to lock texture: ") + SDL_GetError());
+	}
+	for (size_t i = 0; i < pixels.ElementLength(); i++)
+	{
+		texture_data[i] = raw_pixels[i];
+	}
 
-Napi::Value SDL::unlock_texture(const Napi::CallbackInfo &info)
-{
-	Napi::Env env = info.Env();
-	SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	SDL_UnlockTexture(texture);
 	return env.Undefined();
 }

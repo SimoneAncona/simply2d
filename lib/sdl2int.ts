@@ -1,9 +1,8 @@
 import { createRequire } from 'module';
 import * as sdl from "./sdlValues.js"
-import { Colors } from "./colors.js";
 const require = createRequire(import.meta.url);
 
-const sdl2bind = require("../build/Debug/canvas_sdl2.node");
+const sdl2bind = require("../build/Release/canvas_sdl2.node");
 
 
 export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number) {
@@ -98,15 +97,13 @@ export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixe
 	let pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
 	if (bitPerPixel === 8) pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
 	else if (bitPerPixel === 16) pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
-	else pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+	else if (bitPerPixel === 24) pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+	else pixelFormat = sdl.SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+
 	let texture = sdl2bind.createTexture(renderer, pixelFormat, sdl.SDL_TEXTURE_ACCESS.SDL_TEXTUREACCESS_STREAMING, width, height);
 
-	let pitch = width * bitPerPixel / 8;
+	sdl2bind.writeTexture(texture, buffer);
 
-	if (sdl2bind.lockTexture(texture, buffer, pitch) !== 0) {
-		throw "Cannot draw the texture";
-	};
-	sdl2bind.unlockTexture(texture);
 	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
 		throw "Cannot load the texture into the renderer";
 	};

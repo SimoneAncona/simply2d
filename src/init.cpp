@@ -17,8 +17,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "renderCopy"), Napi::Function::New<SDL::render_copy>(env));
 	exports.Set(Napi::String::New(env, "drawRectangle"), Napi::Function::New<SDL::draw_rectangle>(env));
 	exports.Set(Napi::String::New(env, "createTexture"), Napi::Function::New<SDL::create_texture>(env));
-	exports.Set(Napi::String::New(env, "lockTexture"), Napi::Function::New<SDL::lock_texture>(env));
-	exports.Set(Napi::String::New(env, "unlockTexture"), Napi::Function::New<SDL::unlock_texture>(env));
+	exports.Set(Napi::String::New(env, "writeTexture"), Napi::Function::New<SDL::write_texture>(env));
 
     exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
     exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));

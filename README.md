@@ -22,7 +22,7 @@ sudo apt-get libsdl2-dev libsdl2-image-dev
 
 ## API
 ### Canvas
-The `Canvas` class allows you to create a canvas and to drow on it
+The `Canvas` class allows you to create a canvas and to drew on it
 ```js
 import { Canvas } from "simply2d";
 const canvas = new Canvas(
@@ -35,7 +35,7 @@ You can specify other window options
 ```js
 const canvas = new Canvas("title", 200, 400, {
 	mode: "fullscreen",
-	resizeable: false
+	resizable: false
 })
 ```
 
@@ -55,7 +55,7 @@ Hide the window
 ```js
 setBackgroundColor(color: RGBAColor): void
 ```
-Set the backgroud color
+Set the background color
 
 ### Canvas.sleep
 ```js
@@ -159,7 +159,7 @@ Convert a 24 bit color number into a 24 bit color RGBAColor object
 ```js
 from32bit(color: number): RGBAColor
 ```
-Convert a 32 bit color numner into a RGBAColor object
+Convert a 32 bit color number into a RGBAColor object
 
 ### Position
 Is a type for storing coordinates

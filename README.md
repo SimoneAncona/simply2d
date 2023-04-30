@@ -107,13 +107,13 @@ Write directly into the video buffer
 
 ### Canvas.loadPNG
 ```js
-loadPNG(filename: string)
+loadPNG(filename: string): void
 ```
 Write an PNG image into the canvas
 
 ### Canvas.loadJPG
 ```js
-loadJPG(filename: string)
+loadJPG(filename: string): void
 ```
 Write a JPG image into the canvas
 

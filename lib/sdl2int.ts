@@ -42,22 +42,6 @@ export function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number,
 	sdl2bind.renderPresent(renderer);
 }
 
-// export function _setRawData256(renderer: ArrayBuffer, buffer: Uint8Array, width: number, height: number) {
-// 	let px = 0;
-// 	let py = 0;
-// 	for (let i = 0; i < buffer.length; i++) {
-// 		let c = Colors.from8bit(buffer[i]);
-// 		sdl.SDL2.SDL_SetRenderDrawColor(renderer, c.red, c.green, c.blue, c.alpha);
-// 		sdl.SDL2.SDL_RenderDrawPoint(renderer, px, py);
-// 		px++;
-// 		if (px === width) {
-// 			px = 0;
-// 			py++;
-// 		}
-// 	}
-// 	sdl.SDL2.SDL_RenderPresent(renderer);
-// }
-
 export function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawLine(renderer, px1, py1, px2, py2);
@@ -109,4 +93,16 @@ export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixe
 		throw "Cannot load the texture into the renderer";
 	};
     sdl2bind.renderPresent(renderer);
+}
+
+export function watchRawData(renderer: ArrayBuffer, width: number, height: number): Uint8Array {
+	return new Uint8Array(sdl2bind.readData(renderer, width, height));
+}
+
+export function savePNG(renderer: ArrayBuffer, width: number, height: number, filename: string) {
+	sdl2bind.savePNG(renderer, width, height, filename);
+}
+
+export function saveJPG(renderer: ArrayBuffer, width: number, height: number, filename: string) {
+	sdl2bind.saveJPG(renderer, width, height, filename);
 }

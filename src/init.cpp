@@ -18,9 +18,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "drawRectangle"), Napi::Function::New<SDL::draw_rectangle>(env));
 	exports.Set(Napi::String::New(env, "createTexture"), Napi::Function::New<SDL::create_texture>(env));
 	exports.Set(Napi::String::New(env, "writeTexture"), Napi::Function::New<SDL::write_texture>(env));
+	exports.Set(Napi::String::New(env, "readData"), Napi::Function::New<SDL::read_render>(env));
 
     exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
     exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));
+    exports.Set(Napi::String::New(env, "saveJPG"), Napi::Function::New<SDLImage::save_jpg>(env));
+    exports.Set(Napi::String::New(env, "savePNG"), Napi::Function::New<SDLImage::save_png>(env));
     exports.Set(Napi::String::New(env, "imgQuit"), Napi::Function::New<SDLImage::quit>(env));
 	return exports;
 }

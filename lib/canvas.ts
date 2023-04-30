@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -8,6 +8,7 @@ export class Canvas {
 	_height: number;
 	_window: ArrayBuffer;
 	_renderer: ArrayBuffer;
+	_currentBitPerPixel: 8 | 16 | 24 | 32;
 
 	constructor(
 		windowTitle: string,
@@ -28,6 +29,7 @@ export class Canvas {
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
 		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
+		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
 	}
@@ -109,9 +111,10 @@ export class Canvas {
 	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v0.1.9
 	 */
-	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = 32) {
+	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = this._currentBitPerPixel) {
 		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
+		this._currentBitPerPixel = bitPerPixel;
 		setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
 	}
 
@@ -154,5 +157,54 @@ export class Canvas {
 	 */
 	clear() {
 		clearWithColor(this._renderer, 0, 0, 0, 255);
+	}
+
+	/**
+	 * Set the current pixel format
+	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
+	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
+	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
+	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
+	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
+	 * @since v1.0.4
+	 */
+	setBitPerPixel(bitPerPixel: 8 | 16 | 24 | 32) {
+		this._currentBitPerPixel = bitPerPixel;
+	}
+
+	/**
+	 * Get the current pixel format
+	 * @returns the current pixel format
+	 * @since v1.0.4
+	 */
+	getBitPerPixel(): 8 | 16 | 24 | 32 {
+		return this._currentBitPerPixel;
+	}
+
+	/**
+	 * Get the video buffer
+	 * @returns the video buffer
+	 * @since v1.0.4
+	 */
+	getRawData(): Uint8Array {
+		return watchRawData(this._renderer, this._width, this._height);
+	}
+
+	/**
+	 * Save a screenshot of the render
+	 * @param {string} filename the file 
+	 * @since v1.0.4
+	 */
+	dumpPNG(filename: string) {
+		savePNG(this._renderer, this._width, this._height, filename);
+	}
+
+	/**
+	 * Save a screenshot of the render
+	 * @param {string} filename the file 
+	 * @since v1.0.4
+	 */
+	dumpJPG(filename: string) {
+		saveJPG(this._renderer, this._width, this._height, filename);
 	}
 }

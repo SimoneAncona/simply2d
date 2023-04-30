@@ -8,18 +8,6 @@ type CanvasOptions = {
 }
 ```
 
-### Canvas.dumpPNG
-```js
-dumpPNG(filename: string): void
-```
-Used to save the canvas as a PNG file
-
-### Canvas.dumpJPG
-```js
-dumpJPG(filename: string): void
-```
-Used to save the canvas as a JPG file
-
 ### Canvas.drawCircle
 ```js
 drawArc(radius: number, angle: number /* radians */, center: Position): void
@@ -37,6 +25,12 @@ Draw a polyline
 on(event: string, callback: () => void): void
 ```
 Event listener
+
+### Canvas.getRawData
+```js
+getRawData(): Uint8Array
+```
+Get the canvas video buffer
 
 ### Path
 ```js

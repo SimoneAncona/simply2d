@@ -117,6 +117,18 @@ loadJPG(filename: string)
 ```
 Write a JPG image into the canvas
 
+### Canvas.dumpPNG
+```js
+dumpPNG(filename: string): void
+```
+Save the canvas as a PNG file
+
+### Canvas.dumpJPG
+```js
+dumpJPG(filename: string): void
+```
+Save the canvas as a JPG file
+
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```js

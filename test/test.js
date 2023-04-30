@@ -1,17 +1,23 @@
-import { Canvas } from "../index.js"
+import { Canvas, Colors } from "../index.js"
 import * as path from "path";
 
 const width = 255;
 const height = 255;
 
 const canvas = new Canvas("ciao", width, height);
-while (true) {
-    let buf = randomData();
-    canvas.loadRawData(buf, 8);
-}
 
-function randomData() {
+let buf = blueAndRed();
+canvas.loadRawData(buf, 8);
+canvas.dumpPNG("test.png");
+canvas.sleep(3000);
+
+
+function blueAndRed() {
     let buff = new Uint8Array(width * height);
-    for (let i = 0; i < buff.length; i++) buff[i] = Math.floor(Math.random() * 255);
+    let r = false;
+    for (let i = 0; i < buff.length; i++) {
+        buff[i] = r ? 0b11100000 : 0b11;
+        r = !r;
+    }
     return buff;
 }

@@ -2,7 +2,7 @@
 ### CanvasOptions.scale
 ```ts
 type CanvasOptions = {
-	mode: "fullscreen" | "minimazied" | "maximized" | "hidden" | "shown",
+	mode: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown",
 	resizable: boolean,
     scale: number  // adding a scale factor
 }

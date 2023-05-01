@@ -177,9 +177,24 @@ Napi::Value SDL::read_render(const Napi::CallbackInfo &info)
 	int height = info[2].As<Napi::Number>().Int64Value();
 	size_t size = width * height;
 	uint8_t *pixels = new uint8_t[size];
-	if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void*)pixels, width) != 0)
+	if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width) != 0)
 	{
 		throw Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError());
 	}
-	return Napi::ArrayBuffer::New(env, (void*)pixels, size);
+	return Napi::ArrayBuffer::New(env, (void *)pixels, size);
+}
+
+Napi::Value SDL::set_scale(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	int width = info[1].As<Napi::Number>().Int64Value();
+	int height = info[2].As<Napi::Number>().Int64Value();
+	int scale = info[3].As<Napi::Number>().Int64Value();
+	if (SDL_RenderSetLogicalSize(renderer, width * scale, height * scale) != 0) 
+	{
+		throw Napi::Error::New(env, std::string("Cannot set the render scale: ") + SDL_GetError());
+	}
+	return env.Undefined();
+
 }

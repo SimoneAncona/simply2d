@@ -22,7 +22,7 @@ sudo apt-get libsdl2-dev libsdl2-image-dev
 
 ## API
 ### Canvas
-The `Canvas` class allows you to create a canvas and to drew on it
+The `Canvas` class allows you to create a canvas and to draw on it
 ```js
 import { Canvas } from "simply2d";
 const canvas = new Canvas(

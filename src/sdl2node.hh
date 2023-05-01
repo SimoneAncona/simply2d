@@ -23,4 +23,5 @@ namespace SDL
 	Napi::Value create_texture(const Napi::CallbackInfo&);
 	Napi::Value write_texture(const Napi::CallbackInfo&);
 	Napi::Value read_render(const Napi::CallbackInfo&);
+	Napi::Value set_scale(const Napi::CallbackInfo&);
 }

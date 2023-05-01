@@ -4,7 +4,12 @@ import * as path from "path";
 const width = 255;
 const height = 255;
 
-const canvas = new Canvas("ciao", width, height);
+const canvas = new Canvas("ciao", width, height, 0, 0, 
+{
+    mode: "shown",
+    resizable: false,
+    scale: 2
+});
 
 let buf = blueAndRed();
 canvas.loadRawData(buf, 8);

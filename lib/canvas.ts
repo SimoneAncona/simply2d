@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, showWindow, watchRawData } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Position, RGBAColor } from "./types.js";
 
@@ -18,12 +18,19 @@ export class Canvas {
 		yPos: number = SDL_WindowPos.SDL_WINDOWPOS_CENTERED,
 		options: CanvasOptions = {
 			mode: "shown",
-			resizable: false
+			resizable: false,
+			scale: 1
 		}
 	) {
 		let flags: number;
 		this._width = width;
 		this._height = height;
+		if (xPos === 0 || xPos === undefined) {
+			xPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
+		}
+		if (yPos === 0 || yPos === undefined) {
+			yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
+		}		
 		if (options.mode === "fullscreen") flags |= SDL_Window_Flags.SDL_WINDOW_FULLSCREEN;
 		else if (options.mode === "hidden") flags |= SDL_Window_Flags.SDL_WINDOW_HIDDEN;
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
@@ -32,6 +39,7 @@ export class Canvas {
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
+		setRenderScale(this._renderer, this._width, this._height, options.scale);
 	}
 
 	/**

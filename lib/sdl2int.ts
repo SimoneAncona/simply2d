@@ -106,3 +106,7 @@ export function savePNG(renderer: ArrayBuffer, width: number, height: number, fi
 export function saveJPG(renderer: ArrayBuffer, width: number, height: number, filename: string) {
 	sdl2bind.saveJPG(renderer, width, height, filename);
 }
+
+export function setRenderScale(renderer: ArrayBuffer, width: number, height: number, scale: number) {
+	sdl2bind.setScale(renderer, width, height, scale);
+}

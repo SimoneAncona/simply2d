@@ -5,6 +5,10 @@ Napi::Value SDL::init(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
 	return Napi::Number::New(env, SDL_Init(flags));
+	SDL_Event pingStop;
+	while (SDL_PollEvent(&pingStop))
+	{
+	}
 }
 
 Napi::Value SDL::get_error(const Napi::CallbackInfo &info)
@@ -191,10 +195,9 @@ Napi::Value SDL::set_scale(const Napi::CallbackInfo &info)
 	int width = info[1].As<Napi::Number>().Int64Value();
 	int height = info[2].As<Napi::Number>().Int64Value();
 	int scale = info[3].As<Napi::Number>().Int64Value();
-	if (SDL_RenderSetLogicalSize(renderer, width * scale, height * scale) != 0) 
+	if (SDL_RenderSetLogicalSize(renderer, width * scale, height * scale) != 0)
 	{
 		throw Napi::Error::New(env, std::string("Cannot set the render scale: ") + SDL_GetError());
 	}
 	return env.Undefined();
-
 }

@@ -55,32 +55,50 @@
     <Filter Include="C:">
       <UniqueIdentifier>{7B735499-E5DD-1C2B-6C26-70023832A1CF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL">
-      <UniqueIdentifier>{DE979B4A-6302-439A-35D3-4D042400203B}</UniqueIdentifier>
+    <Filter Include="C:\Users">
+      <UniqueIdentifier>{E9F714C1-DA89-54E2-60CF-39FEB20BF756}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL\SDL2-2.26.5">
-      <UniqueIdentifier>{E96A4125-5D71-2F3F-271C-FA1C0FCD9CDF}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon">
+      <UniqueIdentifier>{835B493F-E6AF-FC34-DB67-EF57706C78BC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL\SDL2-2.26.5\lib">
-      <UniqueIdentifier>{2739B19F-16DF-601C-060A-FF86F6A40045}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon\Documents">
+      <UniqueIdentifier>{87566BA0-CA33-1144-65F5-087C5F9D6C20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL\SDL2-2.26.5\lib\x64">
-      <UniqueIdentifier>{E075064C-529C-A4E7-0810-FB88D599C3BE}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon\Documents\draw2d">
+      <UniqueIdentifier>{2AFFD512-468F-4D1F-8113-7AD95B102CE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin">
+      <UniqueIdentifier>{11CC0371-6539-7E04-3B24-030E187A74AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin\sdl">
+      <UniqueIdentifier>{3B8AD042-80FC-07EB-9526-3D7935DE0219}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin\sdl\winx64">
+      <UniqueIdentifier>{8348C776-A06E-9E56-7DA0-C60C41DB2A2A}</UniqueIdentifier>
     </Filter>
     <Filter Include="C:">
       <UniqueIdentifier>{7B735499-E5DD-1C2B-6C26-70023832A1CF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL_Image">
-      <UniqueIdentifier>{2CCFD1B5-3363-5022-DB5D-DD65D90BC2FB}</UniqueIdentifier>
+    <Filter Include="C:\Users">
+      <UniqueIdentifier>{E9F714C1-DA89-54E2-60CF-39FEB20BF756}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL_Image\SDL2_image-2.6.3">
-      <UniqueIdentifier>{FC231F8E-0E0E-5C88-537D-1E4572B49651}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon">
+      <UniqueIdentifier>{835B493F-E6AF-FC34-DB67-EF57706C78BC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL_Image\SDL2_image-2.6.3\lib">
-      <UniqueIdentifier>{2739B19F-16DF-601C-060A-FF86F6A40045}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon\Documents">
+      <UniqueIdentifier>{87566BA0-CA33-1144-65F5-087C5F9D6C20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C:\SDL_Image\SDL2_image-2.6.3\lib\x64">
-      <UniqueIdentifier>{E075064C-529C-A4E7-0810-FB88D599C3BE}</UniqueIdentifier>
+    <Filter Include="C:\Users\simon\Documents\draw2d">
+      <UniqueIdentifier>{2AFFD512-468F-4D1F-8113-7AD95B102CE0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin">
+      <UniqueIdentifier>{11CC0371-6539-7E04-3B24-030E187A74AC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin\sdlimg">
+      <UniqueIdentifier>{ABE65857-49D1-AB1F-4148-523E51BD1C3D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C:\Users\simon\Documents\draw2d\bin\sdlimg\winx64">
+      <UniqueIdentifier>{8348C776-A06E-9E56-7DA0-C60C41DB2A2A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -102,11 +120,11 @@
     <None Include="..\binding.gyp">
       <Filter>..</Filter>
     </None>
-    <None Include="C:\SDL\SDL2-2.26.5\lib\x64\SDL2.dll">
-      <Filter>C:\SDL\SDL2-2.26.5\lib\x64</Filter>
+    <None Include="C:\Users\simon\Documents\draw2d\bin\sdl\winx64\SDL2.dll">
+      <Filter>C:\Users\simon\Documents\draw2d\bin\sdl\winx64</Filter>
     </None>
-    <None Include="C:\SDL_Image\SDL2_image-2.6.3\lib\x64\SDL2_image.dll">
-      <Filter>C:\SDL_Image\SDL2_image-2.6.3\lib\x64</Filter>
+    <None Include="C:\Users\simon\Documents\draw2d\bin\sdlimg\winx64\SDL2_image.dll">
+      <Filter>C:\Users\simon\Documents\draw2d\bin\sdlimg\winx64</Filter>
     </None>
   </ItemGroup>
 </Project>

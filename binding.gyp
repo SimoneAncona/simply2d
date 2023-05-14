@@ -18,34 +18,33 @@
             'msvs_settings': {
                 'VCCLCompilerTool': {'ExceptionHandling': 1},
             },
+            'dependencies': [
+                "<!(node -p \"require('node-addon-api').gyp\")"
+            ],
+            'include_dirs': [
+                        "<(module_root_dir)\\include\\sdl\\",
+                        "<(module_root_dir)\\include\\sdlimg\\",
+                        "<!@(node -p \"require('node-addon-api').include\")",
+                    ],
             'conditions': [
                 ["OS==\"win\"", {
-                    'include_dirs': [
-                        "C:\\SDL\\SDL2-2.26.5\\include",
-                        "C:\\SDL_Image\\SDL2_image-2.6.3\\include",
-                        "<!@(node -p \"require('node-addon-api').include\")",
-                        "<(module_root_dir)\\src\\*.hh>"
-                    ],
-                    'dependencies': [
-                        "<!(node -p \"require('node-addon-api').gyp\")"
-                    ],
                     'libraries': [
-                        "C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.lib",
-                        "C:\\SDL_Image\\SDL2_image-2.6.3\\lib\\x64\\SDL2_image.lib"
+                        "<(module_root_dir)\\bin\\sdl\\winx64\\SDL2.lib",
+                        "<(module_root_dir)\\bin\\sdlimg\\winx64\\SDL2_image.lib",
                     ],
                     'copies': [
                         {
                             'destination': '<(module_root_dir)/build/Release/',
                             'files': [
-                                'C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.dll',
-                                'C:\\SDL_Image\\SDL2_image-2.6.3\\lib\\x64\\SDL2_image.dll'
+                                '<(module_root_dir)\\bin\\sdl\\winx64\\SDL2.dll',
+                                '<(module_root_dir)\\bin\\sdlimg\\winx64\\SDL2_image.dll'
                             ]
                         },
                         {
                             'destination': '<(module_root_dir)/build/Debug/',
                             'files': [
-                                'C:\\SDL\\SDL2-2.26.5\\lib\\x64\\SDL2.dll',
-                                'C:\\SDL_Image\\SDL2_image-2.6.3\\lib\\x64\\SDL2_image.dll'
+                                '<(module_root_dir)\\bin\\sdl\\winx64\\SDL2.dll',
+                                '<(module_root_dir)\\bin\\sdlimg\\winx64\\SDL2_image.dll'
                             ]
                         }
                     ]

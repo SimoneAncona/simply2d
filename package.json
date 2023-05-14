@@ -27,7 +27,7 @@
     "sdl2"
   ],
   "author": "Simone Ancona",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "dependencies": {
     "node-addon-api": "^6.1.0",
     "node-gyp": "^9.3.1",

@@ -19,9 +19,10 @@ const canvas = new Canvas(
 ```
 You can specify other window options
 ```js
-const canvas = new Canvas("title", 200, 400, {
+const canvas = new Canvas("title", 200, 400, 0, 0 {
 	mode: "fullscreen",
-	resizable: false
+	resizable: false,
+	scale: 2
 })
 ```
 
@@ -114,6 +115,12 @@ Save the canvas as a PNG file
 dumpJPG(filename: string): void
 ```
 Save the canvas as a JPG file
+
+### Canvas.getScale
+```js
+getScale(): number
+```
+Return the scale factor
 
 ### Colors
 Colors is an object that contains different standard colors and some useful function

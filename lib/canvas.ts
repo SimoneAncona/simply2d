@@ -9,6 +9,7 @@ export class Canvas {
 	_window: ArrayBuffer;
 	_renderer: ArrayBuffer;
 	_currentBitPerPixel: 8 | 16 | 24 | 32;
+	_scale: number
 
 	constructor(
 		windowTitle: string,
@@ -25,21 +26,22 @@ export class Canvas {
 		let flags: number;
 		this._width = width;
 		this._height = height;
+		this._scale = Math.floor(options.scale);
 		if (xPos === 0 || xPos === undefined) {
 			xPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
 		}
 		if (yPos === 0 || yPos === undefined) {
 			yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
-		}		
+		}
+		flags = SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		if (options.mode === "fullscreen") flags |= SDL_Window_Flags.SDL_WINDOW_FULLSCREEN;
 		else if (options.mode === "hidden") flags |= SDL_Window_Flags.SDL_WINDOW_HIDDEN;
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
 		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		this._currentBitPerPixel = 32;
-		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags);
+		this._window = getWindow(windowTitle, xPos, yPos, width * this._scale, height * this._scale, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
-		setRenderScale(this._renderer, this._width, this._height, options.scale);
 	}
 
 	/**
@@ -83,7 +85,7 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	drawPoint(color: RGBAColor, position: Position) {
-		setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x, position.y);
+		setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x * this._scale, position.y * this._scale);
 	}
 
 	/**
@@ -94,6 +96,8 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	drawLine(color: RGBAColor, from: Position, to: Position) {
+		from = this._scalePosition(from);
+		to = this._scalePosition(to);
 		setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
 	}
 
@@ -106,6 +110,9 @@ export class Canvas {
 	 * @since v0.1.10
 	 */
 	drawRectangle(color: RGBAColor, center: Position, width: number, height: number) {
+		center = this._scalePosition(center);
+		width = width * this._scale;
+		height = height * this._scale;
 		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha);
 	}
 
@@ -120,10 +127,11 @@ export class Canvas {
 	 * @since v0.1.9
 	 */
 	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = this._currentBitPerPixel) {
-		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the window resolution";
+		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the canvas resolution";
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this._currentBitPerPixel = bitPerPixel;
-		setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
+		pixels = this._scaleRawData(pixels);
+		setRawData(this._renderer, pixels, bitPerPixel, this._width * this._scale, this._height * this._scale);
 	}
 
 
@@ -182,7 +190,7 @@ export class Canvas {
 
 	/**
 	 * Get the current pixel format
-	 * @returns the current pixel format
+	 * @returns {8 | 16 | 24 | 32} the current pixel format
 	 * @since v1.0.4
 	 */
 	getBitPerPixel(): 8 | 16 | 24 | 32 {
@@ -191,7 +199,7 @@ export class Canvas {
 
 	/**
 	 * Get the video buffer
-	 * @returns the video buffer
+	 * @returns {Uint8Array} the video buffer
 	 * @since v1.0.4
 	 */
 	getRawData(): Uint8Array {
@@ -214,5 +222,49 @@ export class Canvas {
 	 */
 	dumpJPG(filename: string) {
 		saveJPG(this._renderer, this._width, this._height, filename);
+	}
+
+	/**
+	 * @since v1.0.5
+	 */
+	private _scalePosition(pos: Position) {
+		return { x: pos.x * this._scale, y: pos.y * this._scale } as Position;
+	}
+
+	/**
+	 * @since v.1.0.5
+	 */
+	private _scaleRawData(rawData: Uint8Array) {
+		let newRawData = new Uint8Array(rawData.length * this._scale ** 2);
+		for (let i = 0; i < rawData.length; i++) {
+			let indexes = this._getScaledIndexes(i);
+			console.log
+			for (let index of indexes) {
+				newRawData[index] = rawData[i];
+			}
+		}
+		return newRawData;
+	}
+
+	private _getScaledIndexes(index: number) {
+		let indexes = [];
+		index = index * this._scale + (Math.floor(index / this._width) * this._width * this._scale);
+
+		for (let i = 0; i < this._scale; i++) {
+			for (let j = 0; j < this._scale; j++) {
+				indexes.push(index + i + (j * this._width * this._scale));
+			}
+		}
+
+		return indexes;
+	}
+
+	/**
+	 * Get the scale factor
+	 * @returns {number} scale factor
+	 * @since v1.0.5
+	 */
+	getScale(): number {
+		return this._scale;
 	}
 }

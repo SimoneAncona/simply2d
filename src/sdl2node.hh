@@ -24,4 +24,5 @@ namespace SDL
 	Napi::Value write_texture(const Napi::CallbackInfo&);
 	Napi::Value read_render(const Napi::CallbackInfo&);
 	Napi::Value set_scale(const Napi::CallbackInfo&);
+	void handle_events(void);
 }

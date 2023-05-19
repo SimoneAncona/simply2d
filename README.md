@@ -42,7 +42,7 @@ Hide the window
 ```js
 setBackgroundColor(color: RGBAColor): void
 ```
-Set the background color
+Set the background color. An RGBAColor is an object that contains the `red`, `green`, `blue` and `alpha` properties.
 
 ### Canvas.sleep
 ```js
@@ -170,7 +170,7 @@ Convert a 32 bit color number into a RGBAColor object
 Is a type for storing coordinates
 ```ts
 import { Position } from "simply2d"	// only in typescript
-cord: Position = {
+let cord: Position = {
 	x: 203,
 	y: 301
 }
@@ -180,7 +180,7 @@ cord: Position = {
 Used to save RGBA color values
 ```ts
 import { RGBAColor } from "simply2d"	// only in typescript
-cord: RGBAColor = {
+let color: RGBAColor = {
 	red: 255,
 	green: 255,
 	blue: 0,

@@ -1,4 +1,9 @@
 # Change Log
+
+## 1.0.7
+
+- **`[Added]`** Linux compatibility (beta)
+
 ## 1.0.6
 
 - **`[Added]`** on click event

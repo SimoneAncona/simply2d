@@ -1,7 +1,6 @@
 import { clearWithColor, delay, getRenderer, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
-import { Colors } from "./colors.js";
 
 export class Canvas {
 

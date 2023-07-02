@@ -39,13 +39,6 @@
                                 '<(module_root_dir)/bin/sdl/winx64/SDL2.dll',
                                 '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll'
                             ]
-                        },
-                        {
-                            'destination': '<(module_root_dir)/build/Debug/',
-                            'files': [
-                                '<(module_root_dir)/bin/sdl/winx64/SDL2.dll',
-                                '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll'
-                            ]
                         }
                     ]
                 }],

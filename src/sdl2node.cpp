@@ -41,7 +41,7 @@ Napi::Value SDL::create_renderer(const Napi::CallbackInfo &info)
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	int index = info[1].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL)
 		return env.Undefined();
 	SDL::handle_events(env);

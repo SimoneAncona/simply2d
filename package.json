@@ -24,7 +24,9 @@
     "sdl",
     "images",
     "bindings",
-    "sdl2"
+    "sdl2",
+    "standalone",
+    "standalone-application"
   ],
   "author": "Simone Ancona",
   "license": "GPL-3.0",

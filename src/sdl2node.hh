@@ -28,5 +28,6 @@ namespace SDL
 	Napi::Value on_click(const Napi::CallbackInfo&);
 	Napi::Value on_keydown(const Napi::CallbackInfo&);
 	Napi::Value on_keyup(const Napi::CallbackInfo&);
+	Napi::Value get_ticks(const Napi::CallbackInfo&);
 	void handle_events(Napi::Env);
 }

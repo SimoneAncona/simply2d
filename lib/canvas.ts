@@ -1,4 +1,4 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, showWindow, watchRawData } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
 
@@ -9,7 +9,9 @@ export class Canvas {
 	_window: ArrayBuffer;
 	_renderer: ArrayBuffer;
 	_currentBitPerPixel: 8 | 16 | 24 | 32;
-	_scale: number
+	_scale: number;
+	_startFrameTime: number;
+	_frameTime: number;
 
 	constructor(
 		windowTitle: string,
@@ -42,6 +44,7 @@ export class Canvas {
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width * this._scale, height * this._scale, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
+		this._frameTime = 16;
 	}
 
 	/**
@@ -295,5 +298,32 @@ export class Canvas {
 	 */
 	onKeyUp(callback: (key: Key) => void): void {
 		onKeyUpEvent(callback);
+	}
+
+	/**
+	 * It is used to initialize the rendering sequence. 
+	 * Every drawing process will not be displayed until exposeRender is called
+	 * @since v1.0.8
+	 */
+	initRenderSequence() {
+		setRenderingSequence();
+		this._startFrameTime = getTicks();
+	}
+
+	/**
+	 * Shows the rendering
+	 * @since v1.0.8
+	 */
+	exposeRender() {
+		clearRenderingSequence();
+		renderPresent(this._renderer);
+	}
+
+	/**
+	 * Sleep for a certain time before the next frame is rendered
+	 * @since v1.0.8
+	 */
+	waitFrame() {
+		delay(this._frameTime - (this._startFrameTime - getTicks()));
 	}
 }

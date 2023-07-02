@@ -36,9 +36,11 @@ canvas.onKeyDown((key) => {
 });
 
 function update() {
+    canvas.initRenderSequence();
     canvas.clear();
     canvas.drawRectangle(Colors.BLUE, playerCurrentPos, playerSize, playerSize, true);
-    canvas.sleep(10);
+    canvas.exposeRender();
+    canvas.waitFrame();
     if (playerCurrentPos.y <= height - playerSize) {
         playerVerticalSpeed -= gravity;
         playerCurrentPos.y -= playerVerticalSpeed;

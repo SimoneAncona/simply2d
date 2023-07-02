@@ -9,7 +9,6 @@ Napi::Value SDL::init(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
-	SDL::handle_events(env);
 	return Napi::Number::New(env, SDL_Init(flags));
 }
 
@@ -31,7 +30,6 @@ Napi::Value SDL::create_window(const Napi::CallbackInfo &info)
 	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
 	if (window == NULL)
 		return env.Undefined();
-	SDL::handle_events(env);
 	return Napi::ArrayBuffer::New(env, window, sizeof(window));
 }
 
@@ -44,7 +42,6 @@ Napi::Value SDL::create_renderer(const Napi::CallbackInfo &info)
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL)
 		return env.Undefined();
-	SDL::handle_events(env);
 	return Napi::ArrayBuffer::New(env, renderer, sizeof(renderer));
 }
 
@@ -53,7 +50,6 @@ Napi::Value SDL::show_window(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	SDL_ShowWindow(window);
-	SDL::handle_events(env);
 	return env.Undefined();
 }
 
@@ -62,7 +58,6 @@ Napi::Value SDL::hide_window(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	SDL_HideWindow(window);
-	SDL::handle_events(env);
 	return env.Undefined();
 }
 
@@ -82,7 +77,6 @@ Napi::Value SDL::render_clear(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-	SDL::handle_events(env);
 	return Napi::Number::New(env, SDL_RenderClear(renderer));
 }
 
@@ -242,6 +236,12 @@ Napi::Value SDL::on_keyup(const Napi::CallbackInfo &info)
 	Napi::Env env = info.Env();
 	on_keyup_callback_ref = Napi::Persistent(info[0].As<Napi::Function>());
 	return env.Undefined();
+}
+
+Napi::Value SDL::get_ticks(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	return Napi::Number::New(env, SDL_GetTicks());
 }
 
 void SDL::handle_events(Napi::Env env)

@@ -54,6 +54,24 @@ setFont(filename: string): void
 ```
 Set the current font
 
+### Canvas.initRenderSequence
+```ts
+initRenderSequence(): void
+```
+It is used to initialize the rendering sequence. Every drawing process will not be displayed until exposeRender is called
+
+### Canvas.exposeRender
+```ts
+exposeRender(): void
+```
+Shows rendering
+
+### Canvas.waitFrame
+```ts
+waitFrame(): void
+```
+Sleep for a certain time before the next frame is rendered
+
 ### Path
 ```ts
 import { Path } from "simply2d";

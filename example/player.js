@@ -13,8 +13,6 @@ let playerLateralSpeed = 0;
 const friction = 1;
 const gravity = 1;
 
-async function loop() { while (true) { update(); } }
-
 canvas.onKeyDown((key) => {
     switch (key) {
         case "Up":
@@ -35,12 +33,8 @@ canvas.onKeyDown((key) => {
     }
 });
 
-function update() {
-    canvas.initRenderSequence();
-    canvas.clear();
-    canvas.drawRectangle(Colors.BLUE, playerCurrentPos, playerSize, playerSize, true);
-    canvas.exposeRender();
-    canvas.waitFrame();
+canvas.loop(() => {
+    canvas.drawRectangle(Colors.RED, playerCurrentPos, playerSize, playerSize, true);
     if (playerCurrentPos.y <= height - playerSize) {
         playerVerticalSpeed -= gravity;
         playerCurrentPos.y -= playerVerticalSpeed;
@@ -51,7 +45,4 @@ function update() {
         playerLateralSpeed < 0 ? playerLateralSpeed += friction : playerLateralSpeed -= friction;
         playerCurrentPos.x += playerLateralSpeed;
     }
-}
-
-
-loop();
+});

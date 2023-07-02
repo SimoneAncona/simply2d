@@ -92,7 +92,7 @@ export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width:
 }
 
 export function renderPresent(renderer: ArrayBuffer) {
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	sdl2bind.renderPresent(renderer);
 }
 
 export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixel: number, width: number, height: number) {
@@ -140,3 +140,7 @@ export function onKeyUpEvent(callback: (key: Key) => void) {
 	sdl2bind.onKeyUp(callback);
 }
 
+export function refresh(renderer: ArrayBuffer) {
+	sdl2bind.setDrawColor(renderer, 0, 0, 0, 255);
+	sdl2bind.renderClear(renderer);
+}

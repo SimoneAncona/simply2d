@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
 
@@ -325,5 +325,20 @@ export class Canvas {
 	 */
 	waitFrame() {
 		delay(this._frameTime - (this._startFrameTime - getTicks()));
+	}
+
+	/**
+	 * Start the rendering loop
+	 * @param callback a repeated drawing process
+	 * @since v1.0.8
+	 */
+	async loop(callback: () => void) {
+		while (true) {
+			setRenderingSequence();
+			refresh(this._renderer);
+			callback();
+			renderPresent(this._renderer);
+			delay(this._frameTime - (this._startFrameTime - getTicks()));
+		}
 	}
 }

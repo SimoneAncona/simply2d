@@ -421,6 +421,6 @@
     "node_gyp": "C:\\Users\\simon\\AppData\\Roaming\\npm\\node_modules\\npm\\node_modules\\node-gyp\\bin\\node-gyp.js",
     "prefix": "C:\\Users\\simon\\AppData\\Roaming\\npm",
     "userconfig": "C:\\Users\\simon\\.npmrc",
-    "user_agent": "npm/9.6.4 node/v20.0.0 win32 x64 workspaces/false"
+    "user_agent": "npm/9.7.1 node/v20.0.0 win32 x64 workspaces/false"
   }
 }

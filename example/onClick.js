@@ -7,7 +7,7 @@ canvas.onClick((x, y) => {
 });
 
 async function loop() {
-    while (true) canvas.drawPoint(Colors.BLUE, {x: 0, y: 0});
+    while (true) canvas.sleep(10);
 }
 
 loop();

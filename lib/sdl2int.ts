@@ -1,5 +1,6 @@
 import { createRequire } from 'module';
 import * as sdl from "./sdlValues.js"
+import { Key } from './types.js';
 const require = createRequire(import.meta.url);
 
 const sdl2bind = require("../build/Release/canvas_sdl2.node");
@@ -72,9 +73,9 @@ export function setJPG(renderer: ArrayBuffer, filename: string) {
 	setImage(renderer, filename, sdl.IMG_Init_Flags.IMG_INIT_JPG);
 }
 
-export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number) {
+export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number, fill: boolean) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
-	sdl2bind.drawRectangle(renderer, x, y, width, height);
+	sdl2bind.drawRectangle(renderer, x, y, width, height, fill);
 	sdl2bind.renderPresent(renderer);
 }
 
@@ -110,3 +111,16 @@ export function saveJPG(renderer: ArrayBuffer, width: number, height: number, fi
 export function setRenderScale(renderer: ArrayBuffer, width: number, height: number, scale: number) {
 	sdl2bind.setScale(renderer, width, height, scale);
 }
+
+export function onClickEvent(callback: (x: number, y: number) => void) {
+	sdl2bind.onClick(callback);
+}
+
+export function onKeyDownEvent(callback: (key: Key) => void) {
+	sdl2bind.onKeyDown(callback);
+}
+
+export function onKeyUpEvent(callback: (key: Key) => void) {
+	sdl2bind.onKeyUp(callback);
+}
+

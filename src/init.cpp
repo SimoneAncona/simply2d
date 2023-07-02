@@ -11,6 +11,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "hideWindow"), Napi::Function::New<SDL::hide_window>(env));
 	exports.Set(Napi::String::New(env, "setDrawColor"), Napi::Function::New<SDL::set_render_draw_color>(env));
 	exports.Set(Napi::String::New(env, "renderPresent"), Napi::Function::New<SDL::render_present>(env));
+	exports.Set(Napi::String::New(env, "renderClear"), Napi::Function::New<SDL::render_clear>(env));
 	exports.Set(Napi::String::New(env, "delay"), Napi::Function::New<SDL::delay>(env));
 	exports.Set(Napi::String::New(env, "drawPoint"), Napi::Function::New<SDL::render_draw_point>(env));
 	exports.Set(Napi::String::New(env, "drawLine"), Napi::Function::New<SDL::render_draw_line>(env));
@@ -20,6 +21,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "writeTexture"), Napi::Function::New<SDL::write_texture>(env));
 	exports.Set(Napi::String::New(env, "readData"), Napi::Function::New<SDL::read_render>(env));
 	exports.Set(Napi::String::New(env, "setScale"), Napi::Function::New<SDL::set_scale>(env));
+	exports.Set(Napi::String::New(env, "onClick"), Napi::Function::New<SDL::on_click>(env));
+	exports.Set(Napi::String::New(env, "onKeyDown"), Napi::Function::New<SDL::on_keydown>(env));
+	exports.Set(Napi::String::New(env, "onKeyUp"), Napi::Function::New<SDL::on_keyup>(env));
 
 	exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
 	exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));

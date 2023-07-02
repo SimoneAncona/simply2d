@@ -122,6 +122,23 @@ getScale(): number
 ```
 Return the scale factor
 
+### Canvas.onClick
+```js
+onClick(callback: (x: number, y: number) => void): void
+```
+On click event
+
+### Canvas.onKeyDown
+```js
+onKeyDown(callback: (key: Key) => void): void
+```
+On key down event
+
+### Canvas.onKeyUp
+```js
+onKeyUp(callback: (key: Key) => void): void
+```
+On key up event
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```js

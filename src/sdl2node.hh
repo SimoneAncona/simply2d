@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <napi.h>
 #include <string>
+#include <vector>
 #include "common.hh"
 
 namespace SDL
@@ -24,5 +25,8 @@ namespace SDL
 	Napi::Value write_texture(const Napi::CallbackInfo&);
 	Napi::Value read_render(const Napi::CallbackInfo&);
 	Napi::Value set_scale(const Napi::CallbackInfo&);
-	void handle_events(void);
+	Napi::Value on_click(const Napi::CallbackInfo&);
+	Napi::Value on_keydown(const Napi::CallbackInfo&);
+	Napi::Value on_keyup(const Napi::CallbackInfo&);
+	void handle_events(Napi::Env);
 }

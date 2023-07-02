@@ -1,6 +1,7 @@
-import { clearWithColor, delay, getRenderer, getWindow, hideWindow, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, showWindow, watchRawData } from "./sdl2int.js";
+import { clearWithColor, delay, getRenderer, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
-import { CanvasOptions, Position, RGBAColor } from "./types.js";
+import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
+import { Colors } from "./colors.js";
 
 export class Canvas {
 
@@ -107,13 +108,14 @@ export class Canvas {
 	 * @param {Position} center the center of the rectangle
 	 * @param {number} width the width 
 	 * @param {number} height the height
-	 * @since v0.1.10
+	 * @since v0.1.10 (updated in v1.0.6)
+	 * 
 	 */
-	drawRectangle(color: RGBAColor, center: Position, width: number, height: number) {
+	drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill: boolean = false) {
 		center = this._scalePosition(center);
 		width = width * this._scale;
 		height = height * this._scale;
-		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha);
+		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha, fill);
 	}
 
 	/**
@@ -266,5 +268,32 @@ export class Canvas {
 	 */
 	getScale(): number {
 		return this._scale;
+	}
+
+	/**
+	 * On click event
+	 * @param {function} callback a function that takes x and y coordinates
+	 * @since v1.0.6
+	 */
+	onClick(callback: (x: number, y: number) => void): void {
+		onClickEvent(callback);
+	}
+
+	/**
+	 * On key down event
+	 * @param {function} callback a function that takes the pressed key
+	 * @since v1.0.6
+	 */
+	onKeyDown(callback: (key: Key) => void): void {
+		onKeyDownEvent(callback);
+	}
+
+	/**
+	 * On key up event
+	 * @param {function} callback a function that takes the pressed key
+	 * @since v1.0.6
+	 */
+	onKeyUp(callback: (key: Key) => void): void {
+		onKeyUpEvent(callback);
 	}
 }

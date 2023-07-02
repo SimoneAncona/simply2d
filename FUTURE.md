@@ -54,23 +54,17 @@ setFont(filename: string): void
 ```
 Set the current font
 
-### Canvas.initRenderSequence
+### Canvas.onKeysDown
 ```ts
-initRenderSequence(): void
+onKeysDown(callback: (keys: Key[]) => void): void
 ```
-It is used to initialize the rendering sequence. Every drawing process will not be displayed until exposeRender is called
+On keys down event
 
-### Canvas.exposeRender
+### Canvas.onKeysUp
 ```ts
-exposeRender(): void
+onKeysUp(callback: (keys: Key[]) => void): void
 ```
-Shows rendering
-
-### Canvas.waitFrame
-```ts
-waitFrame(): void
-```
-Sleep for a certain time before the next frame is rendered
+On keys up event
 
 ### Path
 ```ts

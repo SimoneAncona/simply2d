@@ -13,7 +13,7 @@ To use Simply2D you must have installed SDL2. To install it you can use the foll
 ## API
 ### Canvas
 The `Canvas` class allows you to create a canvas and to draw on it
-```js
+```ts
 import { Canvas } from "simply2d";
 const canvas = new Canvas(
 	"my canvas",	// window title
@@ -22,7 +22,7 @@ const canvas = new Canvas(
 );
 ```
 You can specify other window options
-```js
+```ts
 const canvas = new Canvas("title", 200, 400, 0, 0 {
 	mode: "fullscreen",
 	resizable: false,
@@ -31,121 +31,146 @@ const canvas = new Canvas("title", 200, 400, 0, 0 {
 ```
 
 ### Canvas.show
-```js
+```ts
 show(): void
 ```
 Show the window
 
 ### Canvas.hide
-```js
+```ts
 hide(): void
 ```
 Hide the window
 
 ### Canvas.setBackgroundColor
-```js
+```ts
 setBackgroundColor(color: RGBAColor): void
 ```
 Set the background color. An RGBAColor is an object that contains the `red`, `green`, `blue` and `alpha` properties.
 
 ### Canvas.sleep
-```js
+```ts
 sleep(ms: number): void
 ```
 Sleep `ms` milliseconds
 
 ### Canvas.drawPoint
-```js
+```ts
 drawPoint(color: RGBAColor, position: Position): void
 ```
 Draw a point on the screen
 
 ### Canvas.drawLine
-```js
+```ts
 drawLine(color: RGBAColor, from: Position, to: Position): void
 ```
 Draw a line from `from` coordinates to `to` coordinates
 
 ### Canvas.drawRectangle
-```js
+```ts
 drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill?: boolean): void
 ```
 Draw a rectangle in the canvas
 
 ### Canvas.getWidth
-```js
+```ts
 getWidth(): void
 ```
 Return the window width
 
 ### Canvas.getHeight
-```js
+```ts
 getHeight(): void
 ```
 Return the window height
 
 ### Canvas.clear
-```js
+```ts
 clear(): void
 ```
 Clear the screen
 
 ### Canvas.loadRawData
-```js
+```ts
 loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32): void
 ```
 Write directly into the video buffer
 
 ### Canvas.loadPNG
-```js
+```ts
 loadPNG(filename: string): void
 ```
 Write an PNG image into the canvas
 
 ### Canvas.loadJPG
-```js
+```ts
 loadJPG(filename: string): void
 ```
 Write a JPG image into the canvas
 
 ### Canvas.dumpPNG
-```js
+```ts
 dumpPNG(filename: string): void
 ```
 Save the canvas as a PNG file
 
 ### Canvas.dumpJPG
-```js
+```ts
 dumpJPG(filename: string): void
 ```
 Save the canvas as a JPG file
 
 ### Canvas.getScale
-```js
+```ts
 getScale(): number
 ```
 Return the scale factor
 
 ### Canvas.onClick
-```js
+```ts
 onClick(callback: (x: number, y: number) => void): void
 ```
 On click event
 
 ### Canvas.onKeyDown
-```js
+```ts
 onKeyDown(callback: (key: Key) => void): void
 ```
 On key down event
 
 ### Canvas.onKeyUp
-```js
+```ts
 onKeyUp(callback: (key: Key) => void): void
 ```
 On key up event
+
+### Canvas.initRenderSequence
+```ts
+initRenderSequence(): void
+```
+It is used to initialize the rendering sequence. Every drawing process will not be displayed until exposeRender is called
+
+### Canvas.exposeRender
+```ts
+exposeRender(): void
+```
+Shows rendering
+
+### Canvas.waitFrame
+```ts
+waitFrame(): void
+```
+Sleep for a certain time before the next frame is rendered
+
+### Canvas.loop
+```ts
+loop(callback: (() => void)): void
+```
+Start the rendering loop
+
 ### Colors
 Colors is an object that contains different standard colors and some useful function
-```js
+```ts
 import { Canvas, Colors } from "simply2d";
 const canvas = new Canvas("title", 100, 100);
 canvas.setBackgroundColor(Colors.RED);	// #FF0000 hex color
@@ -164,25 +189,25 @@ canvas.drawLine(
 
 
 ### Colors.from8bit
-```js
+```ts
 from8bit(color256: number): RGBAColor
 ```
 Convert an 8 bit color into a 24 bit color
 
 ### Colors.from16bit
-```js
+```ts
 from16bit(color: number): RGBAColor
 ```
 Convert a 16 bit color into a 24 bit color
 
 ### Colors.from24bit
-```js
+```ts
 from24bit(color: number): RGBAColor
 ```
 Convert a 24 bit color number into a 24 bit color RGBAColor object
 
 ### Colors.from32bit
-```js
+```ts
 from32bit(color: number): RGBAColor
 ```
 Convert a 32 bit color number into a RGBAColor object

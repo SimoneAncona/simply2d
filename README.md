@@ -164,7 +164,7 @@ Sleep for a certain time before the next frame is rendered
 
 ### Canvas.loop
 ```ts
-loop(callback: (() => void)): void
+loop(callback: () => void): void
 ```
 Start the rendering loop
 

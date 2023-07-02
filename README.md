@@ -64,7 +64,7 @@ Draw a line from `from` coordinates to `to` coordinates
 
 ### Canvas.drawRectangle
 ```js
-drawRectangle(color: RGBAColor, center: Position, width: number, height: number): void
+drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill?: boolean): void
 ```
 Draw a rectangle in the canvas
 

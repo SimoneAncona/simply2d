@@ -108,6 +108,7 @@ export class Canvas {
 	 * @param {Position} center the center of the rectangle
 	 * @param {number} width the width 
 	 * @param {number} height the height
+	 * @param {boolean} fill fill the rectangle
 	 * @since v0.1.10 (updated in v1.0.6)
 	 * 
 	 */

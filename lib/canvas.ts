@@ -1,17 +1,19 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
 
 export class Canvas {
 
-	_width: number;
-	_height: number;
-	_window: ArrayBuffer;
-	_renderer: ArrayBuffer;
-	_currentBitPerPixel: 8 | 16 | 24 | 32;
-	_scale: number;
-	_startFrameTime: number;
-	_frameTime: number;
+	private _width: number;
+	private _height: number;
+	private _window: ArrayBuffer;
+	private _renderer: ArrayBuffer;
+	private _currentBitPerPixel: 8 | 16 | 24 | 32;
+	private _scale: number;
+	private _startFrameTime: number;
+	private _frameTime: number;
+	private _loop: boolean;
+	private _attached: boolean
 
 	constructor(
 		windowTitle: string,
@@ -123,7 +125,7 @@ export class Canvas {
 
 	/**
 	 * Draw an image from raw data on the canvas
-	 * @param {Uint8Array} pixels the name of the image file
+	 * @param {Uint8Array} pixels the array of pixels
 	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
 	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
 	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
@@ -333,12 +335,31 @@ export class Canvas {
 	 * @since v1.0.8
 	 */
 	async loop(callback: () => void) {
-		while (true) {
+		this._loop = true;
+		this._attached = false;
+		while (this._loop) {
 			setRenderingSequence();
 			refresh(this._renderer);
 			callback();
 			renderPresent(this._renderer);
-			delay(this._frameTime - (this._startFrameTime - getTicks()));
 		}
+	}
+
+	/**
+	 * On keys down event
+	 * @param {function} callback a function that takes the pressed key
+	 * @since v1.0.8
+	 */
+	onKeysDown(callback: (keys: Key[]) => void): void {
+		onKeysDownEvent(callback);
+	}
+
+	/**
+	 * On keys up event
+	 * @param {function} callback a function that takes the pressed key
+	 * @since v1.0.8
+	 */
+	onKeysUp(callback: (keys: Key[]) => void): void {
+		onKeysUpEvent(callback);
 	}
 }

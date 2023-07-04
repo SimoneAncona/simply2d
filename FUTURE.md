@@ -24,18 +24,6 @@ loadTexture(filename: string, center: Position): void
 ```
 Load a texture from a file
 
-### Canvas.attach
-```ts
-attach(array: Uint8Array, bitsPerPixel: 8 | 16 | 24 | 32): void
-```
-Attach an array to the video memory. Every change to the array will be reflected in the video memory.
-
-### Canvas.detach
-```ts
-detach(): void
-```
-Detach the array
-
 ### Canvas.loadSVG
 ```ts
 loadSVG(filename: string): void
@@ -65,6 +53,18 @@ On keys down event
 onKeysUp(callback: (keys: Key[]) => void): void
 ```
 On keys up event
+
+### Canvas.attach
+```ts
+attach(array: Uint8Array, bitsPerPixel: 8 | 16 | 24 | 32): void
+```
+Attach an array to the video memory. Every change to the array will be reflected in the video memory.
+
+### Canvas.detach
+```ts
+detach(): void
+```
+Detach the array
 
 ### Path
 ```ts

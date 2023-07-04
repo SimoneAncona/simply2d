@@ -2,12 +2,14 @@ import { Canvas, Colors } from "../index.js"
 
 const canvas = new Canvas("click here", 500, 500);
 
+let clicks = [];
+
 canvas.onClick((x, y) => {
-    canvas.drawRectangle(Colors.RED, {x: x, y: y}, 10, 10);
+    clicks.push({ x: x, y: y });
 });
 
-async function loop() {
-    while (true) canvas.sleep(10);
-}
-
-loop();
+canvas.loop(() => {
+    for (let pos of clicks) {
+        canvas.drawRectangle(Colors.RED, pos, 10, 10);
+    }
+});

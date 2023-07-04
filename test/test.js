@@ -1,13 +1,43 @@
-import { Canvas, Colors } from "../index.js"
+import { Canvas, Colors } from "../index.js";
 
-const canvas = new Canvas("click here", 500, 500);
+const height = 500;
+const width = 500;
+const playerSize = 10;
 
-canvas.onClick((x, y) => {
-    canvas.drawRectangle(Colors.RED, {x: x, y: y}, 10, 10);
+const canvas = new Canvas("title", height, width);
+
+let playerCurrentPos = { x: 20, y: height - playerSize };
+let playerVerticalSpeed = 0;
+let playerLateralSpeed = 0;
+
+const friction = 1;
+const gravity = 1;
+
+canvas.onKeysDown((keys) => {
+    if (keys.includes("Up")) {
+        if (playerCurrentPos.y === height - playerSize) {
+            playerVerticalSpeed = 10;
+            playerCurrentPos.y -= 1;
+        }
+    }
+    if (keys.includes("Left")) {
+        playerLateralSpeed = -10;
+    }
+    if (keys.includes("Right")) {
+        playerLateralSpeed = 10;
+    }
 });
 
-async function loop() {
-    while (true) canvas.drawPoint(Colors.BLUE, {x: 0, y: 0});
-}
-
-loop();
+canvas.loop(() => {
+    canvas.drawRectangle(Colors.RED, playerCurrentPos, playerSize, playerSize, true);
+    if (playerCurrentPos.y <= height - playerSize) {
+        playerVerticalSpeed -= gravity;
+        playerCurrentPos.y -= playerVerticalSpeed;
+    } else {
+        playerCurrentPos.y = height - playerSize;
+    }
+    if (playerLateralSpeed !== 0) {
+        playerLateralSpeed < 0 ? playerLateralSpeed += friction : playerLateralSpeed -= friction;
+        playerCurrentPos.x += playerLateralSpeed;
+    }
+});

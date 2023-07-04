@@ -140,6 +140,14 @@ export function onKeyUpEvent(callback: (key: Key) => void) {
 	sdl2bind.onKeyUp(callback);
 }
 
+export function onKeysDownEvent(callback: (key: Key[]) => void) {
+	sdl2bind.onKeysDown(callback);
+}
+
+export function onKeysUpEvent(callback: (key: Key[]) => void) {
+	sdl2bind.onKeysUp(callback);
+}
+
 export function refresh(renderer: ArrayBuffer) {
 	sdl2bind.setDrawColor(renderer, 0, 0, 0, 255);
 	sdl2bind.renderClear(renderer);

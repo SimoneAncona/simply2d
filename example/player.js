@@ -13,23 +13,18 @@ let playerLateralSpeed = 0;
 const friction = 1;
 const gravity = 1;
 
-canvas.onKeyDown((key) => {
-    switch (key) {
-        case "Up":
-            if (playerCurrentPos.y === height - playerSize) {
-                playerVerticalSpeed = 10;
-                playerCurrentPos.y -= 1;
-            }
-            break;
-        case "Down":
-
-            break;
-        case "Left":
-            playerLateralSpeed = -10;
-            break;
-        case "Right":
-            playerLateralSpeed = 10;
-            break;
+canvas.onKeysDown((keys) => {
+    if (keys.includes("Up")) {
+        if (playerCurrentPos.y === height - playerSize) {
+            playerVerticalSpeed = 10;
+            playerCurrentPos.y -= 1;
+        }
+    }
+    if (keys.includes("Left")) {
+        playerLateralSpeed = -10;
+    }
+    if (keys.includes("Right")) {
+        playerLateralSpeed = 10;
     }
 });
 

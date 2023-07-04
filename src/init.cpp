@@ -24,6 +24,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "onClick"), Napi::Function::New<SDL::on_click>(env));
 	exports.Set(Napi::String::New(env, "onKeyDown"), Napi::Function::New<SDL::on_keydown>(env));
 	exports.Set(Napi::String::New(env, "onKeyUp"), Napi::Function::New<SDL::on_keyup>(env));
+	exports.Set(Napi::String::New(env, "onKeysDown"), Napi::Function::New<SDL::on_keysdown>(env));
+	exports.Set(Napi::String::New(env, "onKeysUp"), Napi::Function::New<SDL::on_keysup>(env));
 	exports.Set(Napi::String::New(env, "getTicks"), Napi::Function::New<SDL::get_ticks>(env));
 
 	exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));

@@ -4,6 +4,8 @@
 Napi::FunctionReference on_click_callback_ref;
 Napi::FunctionReference on_keydown_callback_ref;
 Napi::FunctionReference on_keyup_callback_ref;
+Napi::FunctionReference on_keysdown_callback_ref;
+Napi::FunctionReference on_keysup_callback_ref;
 
 Napi::Value SDL::init(const Napi::CallbackInfo &info)
 {
@@ -238,10 +240,41 @@ Napi::Value SDL::on_keyup(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
+Napi::Value SDL::on_keysdown(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	on_keysdown_callback_ref = Napi::Persistent(info[0].As<Napi::Function>());
+	return env.Undefined();
+}
+
+Napi::Value SDL::on_keysup(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	on_keysup_callback_ref = Napi::Persistent(info[0].As<Napi::Function>());
+	return env.Undefined();
+}
+
 Napi::Value SDL::get_ticks(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	return Napi::Number::New(env, SDL_GetTicks());
+}
+
+Napi::Array get_pressed_keys(Napi::Env env)
+{
+	int length;
+	const Uint8 *sdl_keys = SDL_GetKeyboardState(&length);
+	Napi::Array keys = Napi::Array::New(env);
+	uint32_t index = 0;
+	for (int i = 0; i < length; i++)
+	{	
+		if (sdl_keys[i])
+		{
+			keys.Set<Napi::String>(index, Napi::String::New(env, SDL_GetScancodeName(SDL_Scancode(i))));
+			index++;
+		}
+	}
+	return keys;
 }
 
 void SDL::handle_events(Napi::Env env)
@@ -264,14 +297,16 @@ void SDL::handle_events(Napi::Env env)
 		on_click_callback_ref.Call({Napi::Number::New(env, x_mouse), Napi::Number::New(env, y_mouse)});
 		break;
 	case SDL_KEYDOWN:
-		if (on_keydown_callback_ref.IsEmpty())
-			break;
-		on_keydown_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+		if (!on_keydown_callback_ref.IsEmpty())
+			on_keydown_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+		if (!on_keysdown_callback_ref.IsEmpty())
+			on_keysdown_callback_ref.Call({get_pressed_keys(env)});
 		break;
 	case SDL_KEYUP:
-	if (on_keyup_callback_ref.IsEmpty())
-			break;
-		on_keyup_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+		if (!on_keyup_callback_ref.IsEmpty())
+			on_keyup_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+		if (!on_keysup_callback_ref.IsEmpty())
+			on_keysup_callback_ref.Call({get_pressed_keys(env)});
 		break;
 	default:
 		break;

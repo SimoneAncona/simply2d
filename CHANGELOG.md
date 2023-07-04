@@ -4,7 +4,7 @@
 
 - **`[Added]`** loop event
 - **`[Added]`** optimization
-- **`[Added]`** on keys events
+- **`[Added]`** on keys up/down events
 - **`[Fixed]`** general optimization
 
 ## 1.0.7

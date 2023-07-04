@@ -42,18 +42,6 @@ setFont(filename: string): void
 ```
 Set the current font
 
-### Canvas.onKeysDown
-```ts
-onKeysDown(callback: (keys: Key[]) => void): void
-```
-On keys down event
-
-### Canvas.onKeysUp
-```ts
-onKeysUp(callback: (keys: Key[]) => void): void
-```
-On keys up event
-
 ### Canvas.attach
 ```ts
 attach(array: Uint8Array, bitsPerPixel: 8 | 16 | 24 | 32): void

@@ -15,7 +15,7 @@ export const Colors = {
 	GRAY: { red: 192, green: 192, blue: 192, alpha: 255 } as RGBAColor,
 	GREY: { red: 192, green: 192, blue: 192, alpha: 255 } as RGBAColor,
 	ORANGE: { red: 255, green: 165, blue: 0, alpha: 255 } as RGBAColor,
-	AQUAMARINE: { red: 127, green: 255, blue: 212 } as RGBAColor,
+	AQUAMARINE: { red: 127, green: 255, blue: 212, alpha: 255 } as RGBAColor,
 	TRANSPARENT: { red: 0, green: 0, blue: 0, alpha: 0 } as RGBAColor,
 
 	from8bit(color256: number) {

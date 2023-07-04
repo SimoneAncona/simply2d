@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.0.8
+
+- **`[Added]`** loop event
+- **`[Added]`** optimization
+- **`[Added]`** on keys events
+- **`[Fixed]`** general optimization
+
 ## 1.0.7
 
 - **`[Added]`** Linux compatibility (beta)

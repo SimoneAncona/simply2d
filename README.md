@@ -168,6 +168,18 @@ loop(callback: () => void): void
 ```
 Start the rendering loop
 
+### Canvas.onKeysDown
+```ts
+onKeysDown(callback: (key: Key[]) => void): void
+```
+On keys down event
+
+### Canvas.onKeysUp
+```ts
+onKeysUp(callback: (key: Key[]) => void): void
+```
+On keys up event
+
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```ts

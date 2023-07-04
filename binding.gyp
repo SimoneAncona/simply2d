@@ -44,8 +44,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "/lib/x86_64-linux-gnu/libSDL2-2.0.so.0",
-                        "/lib/x86_64-linux-gnu/libSDL2_image-2.0.so.0",
+                        "-lSDL2"
                     ]
                 }]
             ]

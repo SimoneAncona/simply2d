@@ -44,7 +44,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "-lSDL2"
+                        "-L$(LIB)", "-lSDL2"
                     ]
                 }]
             ]

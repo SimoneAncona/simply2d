@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.9
+
+- **`[Updated]`** Linux compatibility (stable)
+
 ## 1.0.8
 
 - **`[Added]`** loop event

@@ -54,6 +54,36 @@ detach(): void
 ```
 Detach the array
 
+### Canvas.addLayer
+```ts
+addLayer(layerId: string): void
+```
+Add a new layer
+
+### Canvas.removeLayer
+```ts
+removeLayer(layerId: string): void
+```
+Remove layer
+
+### Canvas.changeLayer
+```ts
+changeLayer(layerId: string): void
+```
+Change current layer
+
+### Canvas.getLayers
+```ts
+getLayers(): Layer[]
+```
+Get layers in order of appearance
+
+### Canvas.moveLayer
+```ts
+moveLayer(layerId: string, direction: "top" | "bottom", steps: number): void
+```
+Change layer rendering priority
+
 ### Path
 ```ts
 import { Path } from "simply2d";

@@ -1,6 +1,6 @@
 # Simply2D
 ## Introduction
-This library for nodejs allows, thanks to SDL2, to create windows and draw on the screen. 
+This library for nodejs allows you, thanks to SDL2, to create windows and draw on the screen. 
 
 ## Installation
 You can install this library using `npm i simply2d`.  
@@ -24,7 +24,7 @@ const canvas = new Canvas(
 ```
 You can specify other window options
 ```ts
-const canvas = new Canvas("title", 200, 400, 0, 0 {
+const canvas = new Canvas("title", 200, 400, 0, 0, {
 	mode: "fullscreen",
 	resizable: false,
 	scale: 2
@@ -47,7 +47,7 @@ Hide the window
 ```ts
 setBackgroundColor(color: RGBAColor): void
 ```
-Set the background color. An RGBAColor is an object that contains the `red`, `green`, `blue` and `alpha` properties.
+Set the background color. An RGBAColor is an object that contains `red`, `green`, `blue` and `alpha` properties.
 
 ### Canvas.sleep
 ```ts
@@ -59,7 +59,7 @@ Sleep `ms` milliseconds
 ```ts
 drawPoint(color: RGBAColor, position: Position): void
 ```
-Draw a point on the screen
+Draw a point on the screen. Position is an object with the x and y properties.
 
 ### Canvas.drawLine
 ```ts

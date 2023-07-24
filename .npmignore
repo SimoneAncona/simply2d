@@ -4,3 +4,7 @@ build/
 
 FUTURE.md
 test/
+
+examples/
+.github/
+node_modules/

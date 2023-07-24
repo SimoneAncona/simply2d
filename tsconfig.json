@@ -5,6 +5,7 @@
 		"removeComments": true,
 		"preserveConstEnums": true,
 		"sourceMap": false,
+		"declaration": true
 	},
 	"include": [
 		"index.ts",

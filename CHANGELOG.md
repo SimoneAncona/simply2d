@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.1.1
+
+- **`[Fixed]`** Linux compatibility
+
+## 1.1.0
+
+- **`[Updated]`** removed unnecessary files for the release
+
 ## 1.0.9
 
 - **`[Updated]`** Linux compatibility (stable)

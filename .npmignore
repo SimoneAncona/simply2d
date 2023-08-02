@@ -3,6 +3,8 @@
 build/
 
 FUTURE.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
 test/
 
 examples/

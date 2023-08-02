@@ -22,10 +22,10 @@
                 "<!(node -p \"require('node-addon-api').gyp\")"
             ],
             'include_dirs': [
-                        "<(module_root_dir)/include/sdl/",
-                        "<(module_root_dir)/include/sdlimg/",
-                        "<!@(node -p \"require('node-addon-api').include\")",
-                    ],
+                "<(module_root_dir)/include/sdl/",
+                "<(module_root_dir)/include/sdlimg/",
+                "<!@(node -p \"require('node-addon-api').include\")",
+            ],
             'conditions': [
                 ["OS==\"win\"", {
                     'libraries': [
@@ -44,7 +44,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "-L$(LIB)", "-lSDL2"
+                        "-lSDL2"
                     ]
                 }]
             ]

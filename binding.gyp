@@ -44,7 +44,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "-lSDL2"
+                        "<!@(node tools/locate_libs.js) <!@(node tools/locate_libs.js -i)"
                     ]
                 }]
             ]

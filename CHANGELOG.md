@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.2
+
+- **`[Fixed]`** Linux compatibility
+
 ## 1.1.1
 
 - **`[Fixed]`** Linux compatibility

@@ -181,6 +181,27 @@ onKeysUp(callback: (key: Key[]) => void): void
 ```
 On keys up event
 
+### Canvas.loadFont
+```ts
+loadFont(fontName: string, filePath: string): void
+```
+Load a new font
+
+### Canvas.drawText
+```ts
+drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void
+```
+Draw text on the canvas 
+
+### Canvas constant positions
+It is possible to access constant positions relative to the size of the canvas. Example:
+```ts
+import { Canvas, Colors } from "simply2d"
+
+const canvas = new Canvas("myCanvas", 200, 200);
+canvas.drawLine(Colors.BLUE, Canvas.TOP_LEFT /* the top left corner */, Canvas.BOTTOM_RIGHT /* the bottom right corner */);
+```
+
 ### Colors
 Colors is an object that contains different standard colors and some useful function
 ```ts

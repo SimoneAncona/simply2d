@@ -16,6 +16,17 @@ export class Canvas {
 	private _loop: boolean;
 	private _attached: boolean;
 	private _fonts: { fontName: string, file: string }[];
+	TOP_LEFT: Position;
+	TOP_RIGHT: Position;
+	TOP_CENTER: Position;
+	CENTER_LEFT: Position;
+	CENTER_RIGHT: Position;
+	CENTER: Position;
+	BOTTOM_LEFT: Position;
+	BOTTOM_RIGHT: Position;
+	BOTTOM_CENTER: Position;
+
+
 
 	constructor(
 		windowTitle: string,
@@ -58,6 +69,16 @@ export class Canvas {
 		this._renderer = getRenderer(this._window, -1, 0);
 		this._frameTime = 16;
 		this._fonts = [];
+
+		this.TOP_LEFT = { x: 0, y: 0 };
+		this.TOP_CENTER = { x: width / 2, y: 0 };
+		this.TOP_RIGHT = { x: width, y: 0 };
+		this.CENTER_LEFT = { x: 0, y: height / 2 };
+		this.CENTER = { x: width / 2, y: height / 2 };
+		this.CENTER_RIGHT = { x: width, y: height / 2 };
+		this.BOTTOM_LEFT = { x: 0, y: height };
+		this.BOTTOM_CENTER = { x: width / 2, y: height };
+		this.BOTTOM_RIGHT = { x: width, y: height };
 	}
 
 	/**

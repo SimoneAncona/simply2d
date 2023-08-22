@@ -8,7 +8,7 @@ Draw a polyline
 
 ### `static` Canvas.getScreenResolution
 ```ts
-static grtScreenResolution(): Resolution
+static getScreenResolution(): Resolution
 ```
 Get the screen resolution 
 

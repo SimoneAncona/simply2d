@@ -10,6 +10,7 @@ export declare class Canvas {
     private _frameTime;
     private _loop;
     private _attached;
+    private _fonts;
     constructor(windowTitle: string, width: number, height: number, xPos?: number, yPos?: number, options?: CanvasOptions);
     show(): void;
     hide(): void;
@@ -42,4 +43,8 @@ export declare class Canvas {
     loop(callback: () => void): Promise<void>;
     onKeysDown(callback: (keys: Key[]) => void): void;
     onKeysUp(callback: (keys: Key[]) => void): void;
+    drawArc(radius: number, startingAngle: number, endingAngle: number, center: Position): void;
+    drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void;
+    loadFont(fontName: string, filePath: string): void;
+    private _searchFont;
 }

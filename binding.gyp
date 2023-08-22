@@ -31,6 +31,7 @@
                     'libraries': [
                         "<(module_root_dir)/bin/sdl/winx64/SDL2.lib",
                         "<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.lib",
+                        '<(module_root_dir)/bin/sdlttf/winx64/SDL2_ttf.lib',
                     ],
                     'copies': [
                         {

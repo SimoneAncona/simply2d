@@ -305,16 +305,16 @@ Napi::Value SDL::draw_text(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-	SDL_Color color = {info[2].As<Napi::Number>().Int32Value(), info[3].As<Napi::Number>().Int32Value(), info[4].As<Napi::Number>().Int32Value()};
+	SDL_Color color = {info[2].As<Napi::Number>().Uint32Value(), info[3].As<Napi::Number>().Uint32Value(), info[4].As<Napi::Number>().Uint32Value()};
 	SDL_Surface *surface = TTF_RenderText_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
 
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 	int texW = 0;
 	int texH = 0;
-	int offsetX = info[4].As<Napi::Number>().Int32Value();
-	int offsetY = info[5].As<Napi::Number>().Int32Value();
+	int x = info[5].As<Napi::Number>().Int32Value();
+	int y = info[6].As<Napi::Number>().Int32Value();
 	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-	SDL_Rect dstrect = {0 + offsetX, 0 + offsetY, texW + offsetX, texH + offsetY};
+	SDL_Rect dstrect = {x, y, texW, texH};
 	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 	handle_events(env);
 	return env.Undefined();

@@ -27,3 +27,5 @@ export declare function onKeyUpEvent(callback: (key: Key) => void): void;
 export declare function onKeysDownEvent(callback: (key: Key[]) => void): void;
 export declare function onKeysUpEvent(callback: (key: Key[]) => void): void;
 export declare function refresh(renderer: ArrayBuffer): void;
+export declare function setFont(fileName: string, size: number): void;
+export declare function setText(renderer: ArrayBuffer, text: string, r: number, g: number, b: number, x: number, y: number): void;

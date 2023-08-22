@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.2
+
+- **`[Added]`** text drawing
+- **`[Added]`** arc drawing
+- **`[Added]`** constant positions relative to the canvas
+- **`[Added]`** new colors
+
 ## 1.1.2
 
 - **`[Fixed]`** Linux compatibility

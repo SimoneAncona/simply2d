@@ -11,8 +11,8 @@ const SDL_imagePaths = [
 ];
 
 const SDL_ttfPaths = [
-    "/lib/x86_64-linux-gnu/libSDL2_ttf.so",
-    "/lib64/libSDL2_ttf.so"
+    "/lib/x86_64-linux-gnu/libSDL2_ttf-2.0.so",
+    "/lib64/libSDL2_ttf-2.0.so.0"
 ]
 
 

@@ -8,7 +8,7 @@ This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross
 
 ### For Linux
 To use Simply2D you must have installed SDL2. To install it you can use the following command:
-- For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-dev`
+- For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0`
 - For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`
 
 ## API

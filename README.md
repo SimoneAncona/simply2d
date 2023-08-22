@@ -205,7 +205,7 @@ It is possible to access constant positions relative to the size of the canvas. 
 import { Canvas, Colors } from "simply2d"
 
 const canvas = new Canvas("myCanvas", 200, 200);
-canvas.drawLine(Colors.BLUE, Canvas.TOP_LEFT /* the top left corner */, Canvas.BOTTOM_RIGHT /* the bottom right corner */);
+canvas.drawLine(Colors.BLUE, canvas.TOP_LEFT /* the top left corner */, canvas.BOTTOM_RIGHT /* the bottom right corner */);
 ```
 
 ### Colors

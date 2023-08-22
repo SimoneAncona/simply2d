@@ -5,8 +5,12 @@ build/
 FUTURE.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
+CHANGELOG.md
 test/
 
 examples/
 .github/
 node_modules/
+.gitignore
+
+bin/sdlttf/winx64/*.txt

@@ -29,7 +29,14 @@ Napi::Value SDL::create_window(const Napi::CallbackInfo &info)
 	int w = info[3].As<Napi::Number>().Int64Value();
 	int h = info[4].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[5].As<Napi::Number>().Uint32Value();
-	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags | SDL_WINDOW_OPENGL);
 	if (window == NULL)
 		return env.Undefined();
 	return Napi::ArrayBuffer::New(env, window, sizeof(window));
@@ -267,7 +274,7 @@ Napi::Array get_pressed_keys(Napi::Env env)
 	Napi::Array keys = Napi::Array::New(env);
 	uint32_t index = 0;
 	for (int i = 0; i < length; i++)
-	{	
+	{
 		if (sdl_keys[i])
 		{
 			keys.Set<Napi::String>(index, Napi::String::New(env, SDL_GetScancodeName(SDL_Scancode(i))));
@@ -275,6 +282,13 @@ Napi::Array get_pressed_keys(Napi::Env env)
 		}
 	}
 	return keys;
+}
+
+Napi::Value SDL::set_antialias(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	return env.Undefined();
 }
 
 void SDL::handle_events(Napi::Env env)

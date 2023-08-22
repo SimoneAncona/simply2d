@@ -31,5 +31,6 @@ namespace SDL
 	Napi::Value on_keysdown(const Napi::CallbackInfo&);
 	Napi::Value on_keysup(const Napi::CallbackInfo&);
 	Napi::Value get_ticks(const Napi::CallbackInfo&);
+	Napi::Value set_antialias(const Napi::CallbackInfo&);
 	void handle_events(Napi::Env);
 }

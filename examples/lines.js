@@ -1,6 +1,6 @@
 import { Canvas, Colors } from "../index.js"
 
-const canvas = new Canvas("lines", 500, 500);
+const canvas = new Canvas("lines", 500, 500, 0, 0, { antiAliasing: false });
 const TOPL = { x: 0, y: 0 };
 const TOPR = { x: canvas.getWidth(), y: 0 };
 const BOTTOML = { x: 0, y: canvas.getHeight() };

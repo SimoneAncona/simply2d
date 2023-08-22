@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
 
@@ -13,7 +13,7 @@ export class Canvas {
 	private _startFrameTime: number;
 	private _frameTime: number;
 	private _loop: boolean;
-	private _attached: boolean
+	private _attached: boolean;
 
 	constructor(
 		windowTitle: string,
@@ -24,9 +24,14 @@ export class Canvas {
 		options: CanvasOptions = {
 			mode: "shown",
 			resizable: false,
-			scale: 1
+			scale: 1,
+			antiAliasing: true
 		}
 	) {
+		if (options.mode === undefined) options.mode = "shown";
+		if (options.resizable === undefined) options.resizable = false;
+		if (options.scale === undefined) options.scale = 1;
+		if (options.antiAliasing === undefined) options.antiAliasing = true;
 		let flags: number;
 		this._width = width;
 		this._height = height;
@@ -38,6 +43,9 @@ export class Canvas {
 			yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
 		}
 		flags = SDL_Window_Flags.SDL_WINDOW_SHOWN;
+		if (options.antiAliasing) {
+			setAntialias();
+		}
 		if (options.mode === "fullscreen") flags |= SDL_Window_Flags.SDL_WINDOW_FULLSCREEN;
 		else if (options.mode === "hidden") flags |= SDL_Window_Flags.SDL_WINDOW_HIDDEN;
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;

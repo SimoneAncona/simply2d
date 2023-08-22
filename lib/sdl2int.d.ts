@@ -10,6 +10,7 @@ export declare function clearWithColor(renderer: ArrayBuffer, r: number, g: numb
 export declare function delay(ms: number): void;
 export declare function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number): void;
 export declare function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number): void;
+export declare function setAntialias(): void;
 export declare function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: number): void;
 export declare function setPNG(renderer: ArrayBuffer, filename: string): void;
 export declare function setJPG(renderer: ArrayBuffer, filename: string): void;

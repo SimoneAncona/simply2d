@@ -61,6 +61,10 @@ export function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, 
 	if (!renderingSequence) sdl2bind.renderPresent(renderer);
 }
 
+export function setAntialias() {
+	sdl2bind.setAntialias();
+}
+
 export function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: number) {
 	if (sdl2bind.imgInit(imgInitFlag) === 0) {
 		throw "An error occurred while setting image: " + sdl2bind.getError();
@@ -109,7 +113,7 @@ export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixe
 	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
 		throw "Cannot load the texture into the renderer";
 	};
-    if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	if (!renderingSequence) sdl2bind.renderPresent(renderer);
 }
 
 export function watchRawData(renderer: ArrayBuffer, width: number, height: number): Uint8Array {

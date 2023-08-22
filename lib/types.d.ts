@@ -1,7 +1,8 @@
 export type CanvasOptions = {
-    mode: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown";
-    resizable: boolean;
-    scale: number;
+    mode?: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown";
+    resizable?: boolean;
+    scale?: number;
+    antiAliasing?: boolean;
 };
 export type RGBAColor = {
     red: number;

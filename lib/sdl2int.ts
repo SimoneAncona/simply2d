@@ -165,3 +165,9 @@ export function setText(renderer: ArrayBuffer, text: string, r: number, g: numbe
 	sdl2bind.drawText(renderer, text, r, g, b, x, y);
 	if (!renderingSequence) sdl2bind.renderPresent(renderer);
 }
+
+export function setArc(renderer: ArrayBuffer, x: number, y: number, radius: number, angle1: number, angle2: number, r: number, g: number, b: number, a: number) {
+	sdl2bind.setDrawColor(renderer, r, g, b, a);
+	sdl2bind.drawArc(renderer, x, y, radius, angle1, angle2);
+	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+}

@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setFont } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setFont, setArc } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
 import fs from "fs";
@@ -16,17 +16,15 @@ export class Canvas {
 	private _loop: boolean;
 	private _attached: boolean;
 	private _fonts: { fontName: string, file: string }[];
-	TOP_LEFT: Position;
-	TOP_RIGHT: Position;
-	TOP_CENTER: Position;
-	CENTER_LEFT: Position;
-	CENTER_RIGHT: Position;
-	CENTER: Position;
-	BOTTOM_LEFT: Position;
-	BOTTOM_RIGHT: Position;
-	BOTTOM_CENTER: Position;
-
-
+	public TOP_LEFT: Position;
+	public TOP_RIGHT: Position;
+	public TOP_CENTER: Position;
+	public CENTER_LEFT: Position;
+	public CENTER_RIGHT: Position;
+	public CENTER: Position;
+	public BOTTOM_LEFT: Position;
+	public BOTTOM_RIGHT: Position;
+	public BOTTOM_CENTER: Position;
 
 	constructor(
 		windowTitle: string,
@@ -403,8 +401,8 @@ export class Canvas {
 	 * @param {Position} center the position of the arc
 	 * @since v1.2
 	 */
-	drawArc(radius: number, startingAngle: number, endingAngle: number, center: Position): void {
-
+	drawArc(radius: number, startingAngle: number, endingAngle: number, color: RGBAColor, center: Position): void {
+		setArc(this._renderer, center.x, center.y, radius, startingAngle, endingAngle, color.red, color.green, color.blue, color.alpha);
 	}
 
 	/**

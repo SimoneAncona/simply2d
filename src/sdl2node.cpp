@@ -320,6 +320,34 @@ Napi::Value SDL::draw_text(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
+Napi::Value SDL::draw_arc(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	const float precision = (float)0.1;
+	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	int x = info[1].As<Napi::Number>().Int32Value();
+	int y = info[2].As<Napi::Number>().Int32Value();
+	int radius = info[3].As<Napi::Number>().Int32Value();
+	float angle1 = info[4].As<Napi::Number>().FloatValue();
+	float angle2 = info[5].As<Napi::Number>().FloatValue();
+	Position pos = from_angle(x, y, angle1, radius), temp;
+	while (angle1 < angle2)
+	{
+		angle1 += precision;
+		temp = from_angle(x, y, angle1, radius);
+		SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+		pos = temp;
+	}
+	return env.Undefined();
+}
+
+SDL::Position SDL::from_angle(int center_x, int center_y, float angle, int radius)
+{
+	float sin = static_cast<float>(std::sin(angle));
+	float cos = static_cast<float>(std::cos(angle));
+	return Position{static_cast<int>(center_x + cos * radius), static_cast<int>(center_y + sin * radius)};
+}
+
 void SDL::handle_events(Napi::Env env)
 {
 	SDL_Event event;

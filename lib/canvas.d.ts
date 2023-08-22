@@ -52,7 +52,7 @@ export declare class Canvas {
     loop(callback: () => void): Promise<void>;
     onKeysDown(callback: (keys: Key[]) => void): void;
     onKeysUp(callback: (keys: Key[]) => void): void;
-    drawArc(radius: number, startingAngle: number, endingAngle: number, center: Position): void;
+    drawArc(radius: number, startingAngle: number, endingAngle: number, color: RGBAColor, center: Position): void;
     drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void;
     loadFont(fontName: string, filePath: string): void;
     private _searchFont;

@@ -4,10 +4,15 @@
 #include <napi.h>
 #include <string>
 #include <vector>
+#include <cmath>
 #include "common.hh"
 
 namespace SDL
 {
+	struct Position
+	{
+		int x, y;
+	};
 	Napi::Value init(const Napi::CallbackInfo &);
 	Napi::Value get_error(const Napi::CallbackInfo &);
 	Napi::Value create_window(const Napi::CallbackInfo &);
@@ -35,5 +40,7 @@ namespace SDL
 	Napi::Value set_antialias(const Napi::CallbackInfo &);
 	Napi::Value set_font(const Napi::CallbackInfo &);
 	Napi::Value draw_text(const Napi::CallbackInfo &);
+	Napi::Value draw_arc(const Napi::CallbackInfo &);
 	void handle_events(Napi::Env);
+	Position from_angle(int, int, float, int);
 }

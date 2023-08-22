@@ -31,14 +31,8 @@ Napi::Value SDL::create_window(const Napi::CallbackInfo &info)
 	int w = info[3].As<Napi::Number>().Int64Value();
 	int h = info[4].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[5].As<Napi::Number>().Uint32Value();
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
-
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
-	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags | SDL_WINDOW_OPENGL);
+	SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
 	if (window == NULL)
 		return env.Undefined();
 	return Napi::ArrayBuffer::New(env, window, sizeof(window));

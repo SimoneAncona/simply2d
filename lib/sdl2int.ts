@@ -24,10 +24,12 @@ export function getWindow(title: string, xPos: number, yPos: number, width: numb
 	}
 
 	return sdl2bind.createWindow(title, xPos, yPos, width, height, flags) as ArrayBuffer;
-
 }
 
 export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
+	if (window === undefined) {
+		throw "Cannot create a window";
+	}
 	return sdl2bind.createRenderer(window, index, flag);
 }
 

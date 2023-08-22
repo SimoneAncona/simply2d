@@ -11,6 +11,15 @@ export declare class Canvas {
     private _loop;
     private _attached;
     private _fonts;
+    TOP_LEFT: Position;
+    TOP_RIGHT: Position;
+    TOP_CENTER: Position;
+    CENTER_LEFT: Position;
+    CENTER_RIGHT: Position;
+    CENTER: Position;
+    BOTTOM_LEFT: Position;
+    BOTTOM_RIGHT: Position;
+    BOTTOM_CENTER: Position;
     constructor(windowTitle: string, width: number, height: number, xPos?: number, yPos?: number, options?: CanvasOptions);
     show(): void;
     hide(): void;

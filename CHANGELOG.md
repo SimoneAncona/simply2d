@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2
+## 1.2.0
 
 - **`[Added]`** text drawing
 - **`[Added]`** arc drawing

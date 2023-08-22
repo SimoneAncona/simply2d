@@ -1,6 +1,6 @@
 {
   "name": "simply2d",
-  "version": "1.2",
+  "version": "1.2.0",
   "description": "Basic 2D graphics library for node.js",
   "main": "index.js",
   "types": "index.d.ts",

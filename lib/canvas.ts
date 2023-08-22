@@ -401,7 +401,7 @@ export class Canvas {
 	 * @param {Position} center the position of the arc
 	 * @since v1.2
 	 */
-	drawArc(radius: number, startingAngle: number, endingAngle: number, color: RGBAColor, center: Position): void {
+	drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: number, endingAngle: number): void {
 		setArc(this._renderer, center.x, center.y, radius, startingAngle, endingAngle, color.red, color.green, color.blue, color.alpha);
 	}
 

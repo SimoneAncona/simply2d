@@ -193,6 +193,12 @@ drawText(text: string, fontName: string, size: number, color: RGBAColor, start: 
 ```
 Draw text on the canvas 
 
+### Canvas.drawArc
+```ts
+drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: number, endingAngle: number): void
+```
+Draw an arc
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts

@@ -156,3 +156,12 @@ export function refresh(renderer: ArrayBuffer) {
 	sdl2bind.setDrawColor(renderer, 0, 0, 0, 255);
 	sdl2bind.renderClear(renderer);
 }
+
+export function setFont(fileName: string, size: number) {
+	sdl2bind.setFont(fileName, size);
+}
+
+export function setText(renderer: ArrayBuffer, text: string, r: number, g: number, b: number, x: number, y: number) {
+	sdl2bind.drawText(renderer, text, r, g, b, x, y);
+	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+}

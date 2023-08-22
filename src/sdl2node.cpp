@@ -6,8 +6,10 @@ Napi::FunctionReference on_keydown_callback_ref;
 Napi::FunctionReference on_keyup_callback_ref;
 Napi::FunctionReference on_keysdown_callback_ref;
 Napi::FunctionReference on_keysup_callback_ref;
+TTF_Font *current_font;
 
-Napi::Value SDL::init(const Napi::CallbackInfo &info)
+Napi::Value
+SDL::init(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
@@ -48,6 +50,7 @@ Napi::Value SDL::create_renderer(const Napi::CallbackInfo &info)
 	SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 	int index = info[1].As<Napi::Number>().Int64Value();
 	Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
+	TTF_Init();
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 	if (renderer == NULL)
 		return env.Undefined();
@@ -291,6 +294,32 @@ Napi::Value SDL::set_antialias(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
+Napi::Value SDL::set_font(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	current_font = TTF_OpenFont(info[0].As<Napi::String>().Utf8Value().c_str(), info[1].As<Napi::Number>().Int32Value());
+	return env.Undefined();
+}
+
+Napi::Value SDL::draw_text(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+	SDL_Color color = {info[2].As<Napi::Number>().Int32Value(), info[3].As<Napi::Number>().Int32Value(), info[4].As<Napi::Number>().Int32Value()};
+	SDL_Surface *surface = TTF_RenderText_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
+
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+	int texW = 0;
+	int texH = 0;
+	int offsetX = info[4].As<Napi::Number>().Int32Value();
+	int offsetY = info[5].As<Napi::Number>().Int32Value();
+	SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+	SDL_Rect dstrect = {0 + offsetX, 0 + offsetY, texW + offsetX, texH + offsetY};
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+	handle_events(env);
+	return env.Undefined();
+}
+
 void SDL::handle_events(Napi::Env env)
 {
 	SDL_Event event;
@@ -302,6 +331,8 @@ void SDL::handle_events(Napi::Env env)
 	switch (event.type)
 	{
 	case SDL_QUIT:
+		SDL_Quit();
+		TTF_Quit();
 		exit(0);
 		break;
 	case SDL_MOUSEBUTTONDOWN:

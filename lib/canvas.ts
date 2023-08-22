@@ -1,6 +1,7 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setFont } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
+import fs from "fs";
 
 export class Canvas {
 
@@ -14,6 +15,7 @@ export class Canvas {
 	private _frameTime: number;
 	private _loop: boolean;
 	private _attached: boolean;
+	private _fonts: { fontName: string, file: string }[];
 
 	constructor(
 		windowTitle: string,
@@ -55,6 +57,7 @@ export class Canvas {
 		this._window = getWindow(windowTitle, xPos, yPos, width * this._scale, height * this._scale, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
 		this._frameTime = 16;
+		this._fonts = [];
 	}
 
 	/**
@@ -369,5 +372,51 @@ export class Canvas {
 	 */
 	onKeysUp(callback: (keys: Key[]) => void): void {
 		onKeysUpEvent(callback);
+	}
+
+	/**
+	 * Draw an arc
+	 * @param {number} radius the radius of the arc
+	 * @param {number} startingAngle the starting angle (in radians) of the arc
+	 * @param {number} endingAngle the ending angle (in radians) of the arc
+	 * @param {Position} center the position of the arc
+	 * @since v1.2
+	 */
+	drawArc(radius: number, startingAngle: number, endingAngle: number, center: Position): void {
+
+	}
+
+	/**
+	 * Draw text on the canvas
+	 * @param {string} text the message 
+	 * @param {string} fontName the font name (use loadFont to load a font from a tff file) 
+	 * @param {number} size the size of the font 
+	 * @param {Position} start the position of the text 
+	 * @since v1.2
+	 */
+	drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void {
+		setFont(this._searchFont(fontName), size);
+		setText(this._renderer, text, color.red, color.green, color.blue, start.x, start.y);
+	}
+
+	/**
+	 * Load a new font from a TFF file
+	 * @param {string} fontName the name of the font
+	 * @param {string} filePath the file path
+	 * @since v1.2
+	 */
+	loadFont(fontName: string, filePath: string): void {
+		if (!fs.existsSync(filePath)) {
+			throw "Cannot find the font file";
+		}
+		this._fonts.push({ fontName: fontName, file: filePath });
+	}
+
+	private _searchFont(fontName: string): string {
+		for (let font of this._fonts) {
+			if (font.fontName == fontName) {
+				return font.file;
+			}
+		}
 	}
 }

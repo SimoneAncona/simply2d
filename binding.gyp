@@ -37,7 +37,8 @@
                             'destination': '<(module_root_dir)/build/Release/',
                             'files': [
                                 '<(module_root_dir)/bin/sdl/winx64/SDL2.dll',
-                                '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll'
+                                '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll',
+                                '<(module_root_dir)/bin/sdlttf/winx64/SDL2_ttf.dll',
                             ]
                         }
                     ]

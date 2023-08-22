@@ -1,11 +1,5 @@
 # Future implementations
 
-### Canvas.drawCircle
-```ts
-drawArc(radius: number, angle: number /* radians */, center: Position): void
-```
-Draw an arc
-
 ### Canvas.drawPath
 ```ts
 drawPath(path: Path): void
@@ -30,17 +24,6 @@ loadSVG(filename: string): void
 ```
 Load SVG file
 
-### Canvas.drawText
-```ts
-drawText(text: string, font?: string): void
-```
-Draw text on the screen
-
-### Canvas.setFont
-```ts
-setFont(filename: string): void
-```
-Set the current font
 
 ### Canvas.attach
 ```ts

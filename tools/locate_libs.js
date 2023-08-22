@@ -10,11 +10,20 @@ const SDL_imagePaths = [
     "/lib64/libSDL2_image-2.0.so.0"
 ];
 
-let searchPathArray = SDL_paths;
+const SDL_ttfPaths = [
+    "/lib/x86_64-linux-gnu/libSDL2_ttf.so",
+    "/lib64/libSDL2_ttf.so"
+]
 
-if (process.argv[2] == "-i")
-    searchPathArray = SDL_imagePaths;
 
-for (let path of searchPathArray) {
-    if (fs.existsSync(path)) console.log(path)
+for (let path of SDL_paths) {
+    if (fs.existsSync(path)) process.stdout.write(path + " ")
+}
+
+for (let path of SDL_imagePaths) {
+    if (fs.existsSync(path)) process.stdout.write(path + " ")
+}
+
+for (let path of SDL_ttfPaths) {
+    if (fs.existsSync(path)) process.stdout.write(path + " ")
 }

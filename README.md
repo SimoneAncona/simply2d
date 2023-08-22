@@ -69,7 +69,7 @@ Draw a line from `from` coordinates to `to` coordinates
 
 ### Canvas.drawRectangle
 ```ts
-drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill?: boolean): void
+drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill?: boolean): void
 ```
 Draw a rectangle in the canvas
 

@@ -14,7 +14,7 @@ export type RGBAColor = {
 
 export type Position = {
 	x: number,
-	y: number
+	y: number,
 };
 
 export type Key =

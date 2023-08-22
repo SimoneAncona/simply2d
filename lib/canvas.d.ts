@@ -27,7 +27,7 @@ export declare class Canvas {
     sleep(ms: number): void;
     drawPoint(color: RGBAColor, position: Position): void;
     drawLine(color: RGBAColor, from: Position, to: Position): void;
-    drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill?: boolean): void;
+    drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill?: boolean): void;
     loadRawData(pixels: Uint8Array, bitPerPixel?: 8 | 16 | 24 | 32): void;
     loadPNG(filename: string): void;
     loadJPG(filename: string): void;
@@ -52,8 +52,9 @@ export declare class Canvas {
     loop(callback: () => void): Promise<void>;
     onKeysDown(callback: (keys: Key[]) => void): void;
     onKeysUp(callback: (keys: Key[]) => void): void;
-    drawArc(radius: number, startingAngle: number, endingAngle: number, color: RGBAColor, center: Position): void;
+    drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: number, endingAngle: number): void;
     drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void;
     loadFont(fontName: string, filePath: string): void;
     private _searchFont;
+    convertPolarCoords(center: Position, angle: number, radius: number): Position;
 }

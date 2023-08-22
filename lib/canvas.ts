@@ -16,15 +16,15 @@ export class Canvas {
 	private _loop: boolean;
 	private _attached: boolean;
 	private _fonts: { fontName: string, file: string }[];
-	public TOP_LEFT: Position;
-	public TOP_RIGHT: Position;
-	public TOP_CENTER: Position;
-	public CENTER_LEFT: Position;
-	public CENTER_RIGHT: Position;
-	public CENTER: Position;
-	public BOTTOM_LEFT: Position;
-	public BOTTOM_RIGHT: Position;
-	public BOTTOM_CENTER: Position;
+	TOP_LEFT: Position;
+	TOP_RIGHT: Position;
+	TOP_CENTER: Position;
+	CENTER_LEFT: Position;
+	CENTER_RIGHT: Position;
+	CENTER: Position;
+	BOTTOM_LEFT: Position;
+	BOTTOM_RIGHT: Position;
+	BOTTOM_CENTER: Position;
 
 	constructor(
 		windowTitle: string,
@@ -68,15 +68,24 @@ export class Canvas {
 		this._frameTime = 16;
 		this._fonts = [];
 
-		this.TOP_LEFT = { x: 0, y: 0 };
-		this.TOP_CENTER = { x: width / 2, y: 0 };
-		this.TOP_RIGHT = { x: width, y: 0 };
-		this.CENTER_LEFT = { x: 0, y: height / 2 };
-		this.CENTER = { x: width / 2, y: height / 2 };
-		this.CENTER_RIGHT = { x: width, y: height / 2 };
-		this.BOTTOM_LEFT = { x: 0, y: height };
-		this.BOTTOM_CENTER = { x: width / 2, y: height };
-		this.BOTTOM_RIGHT = { x: width, y: height };
+		this.TOP_LEFT = {} as Position;
+		this.TOP_CENTER = {} as Position;
+		this.TOP_RIGHT = {} as Position;
+		this.CENTER_LEFT = {} as Position;
+		this.CENTER = {} as Position;
+		this.CENTER_RIGHT = {} as Position;
+		this.BOTTOM_LEFT = {} as Position;
+		this.BOTTOM_CENTER = {} as Position;
+		this.BOTTOM_RIGHT = {} as Position;
+		Object.defineProperties(this.TOP_LEFT, { x: { value: 0, writable: false }, y: { value: 0, writable: false } });
+		Object.defineProperties(this.TOP_CENTER, { x: { value: width / 2, writable: false }, y: { value: 0, writable: false } });
+		Object.defineProperties(this.TOP_RIGHT, { x: { value: width, writable: false }, y: { value: 0, writable: false } });
+		Object.defineProperties(this.CENTER_LEFT, { x: { value: 0, writable: false }, y: { value: height / 2, writable: false } });
+		Object.defineProperties(this.CENTER, { x: { value: width / 2, writable: false }, y: { value: height / 2, writable: false } });
+		Object.defineProperties(this.CENTER_RIGHT, { x: { value: width, writable: false }, y: { value: height / 2, writable: false } });
+		Object.defineProperties(this.BOTTOM_LEFT, { x: { value: 0, writable: false }, y: { value: height, writable: false } });
+		Object.defineProperties(this.BOTTOM_CENTER, { x: { value: width / 2, writable: false }, y: { value: height, writable: false } });
+		Object.defineProperties(this.BOTTOM_RIGHT, { x: { value: width, writable: false }, y: { value: height, writable: false } });
 	}
 
 	/**
@@ -139,18 +148,18 @@ export class Canvas {
 	/**
 	 * Draw a rectangle
 	 * @param {RGBAColor} color the border color
-	 * @param {Position} center the center of the rectangle
+	 * @param {Position} pos the top left corner of the rectangle
 	 * @param {number} width the width 
 	 * @param {number} height the height
 	 * @param {boolean} fill fill the rectangle
 	 * @since v0.1.10 (updated in v1.0.6)
 	 * 
 	 */
-	drawRectangle(color: RGBAColor, center: Position, width: number, height: number, fill: boolean = false) {
-		center = this._scalePosition(center);
+	drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill: boolean = false) {
+		pos = this._scalePosition(pos);
 		width = width * this._scale;
 		height = height * this._scale;
-		setRectangle(this._renderer, center.x, center.y, width, height, color.red, color.green, color.blue, color.alpha, fill);
+		setRectangle(this._renderer, pos.x, pos.y, width, height, color.red, color.green, color.blue, color.alpha, fill);
 	}
 
 	/**
@@ -399,7 +408,7 @@ export class Canvas {
 	 * @param {number} startingAngle the starting angle (in radians) of the arc
 	 * @param {number} endingAngle the ending angle (in radians) of the arc
 	 * @param {Position} center the position of the arc
-	 * @since v1.2
+	 * @since v1.2.0
 	 */
 	drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: number, endingAngle: number): void {
 		setArc(this._renderer, center.x, center.y, radius, startingAngle, endingAngle, color.red, color.green, color.blue, color.alpha);
@@ -411,7 +420,7 @@ export class Canvas {
 	 * @param {string} fontName the font name (use loadFont to load a font from a tff file) 
 	 * @param {number} size the size of the font 
 	 * @param {Position} start the position of the text 
-	 * @since v1.2
+	 * @since v1.2.0
 	 */
 	drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void {
 		setFont(this._searchFont(fontName), size);
@@ -422,7 +431,7 @@ export class Canvas {
 	 * Load a new font from a TFF file
 	 * @param {string} fontName the name of the font
 	 * @param {string} filePath the file path
-	 * @since v1.2
+	 * @since v1.2.0
 	 */
 	loadFont(fontName: string, filePath: string): void {
 		if (!fs.existsSync(filePath)) {
@@ -437,5 +446,16 @@ export class Canvas {
 				return font.file;
 			}
 		}
+	}
+
+	/**
+	 * Convert polar coordinates into x, y coordinates
+	 * @param {number} center 
+	 * @param {number} angle 
+	 * @param {number} radius 
+	 * @returns {Position} converted coordinates
+	 */
+	convertPolarCoords(center: Position, angle: number, radius: number): Position {
+		return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
 	}
 }

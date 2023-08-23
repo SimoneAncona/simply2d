@@ -10,11 +10,6 @@ drawPath(path: Path): void
 ```
 Draw a polyline
 
-### `static` Canvas.getScreenResolution
-```ts
-static getScreenResolution(): Resolution
-```
-Get the screen resolution 
 
 ### Canvas.getRawData
 ```ts

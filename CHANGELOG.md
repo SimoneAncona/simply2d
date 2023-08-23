@@ -6,6 +6,7 @@
 - **`[Added]`** polar coordinates conversion
 - **`[Added]`** the possibility to get the screen resolution
 - **`[Added]`** the possibility to get the resolution of a texture
+- **`[Added]`** the Resolution type
 
 ## 1.2.0
 

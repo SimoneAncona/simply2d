@@ -199,6 +199,36 @@ drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: numbe
 ```
 Draw an arc
 
+### Canvas.convertPolarCords
+```ts
+convertPolarCoords(center: Position, angle: number, radius: number): Position
+```
+Convert polar coordinates into x, y coordinates
+
+### Canvas.loadTexture
+```ts
+loadTexture(textureID: string, filePath: string): void
+```
+Load a new texture from the specified file
+
+### Canvas.drawTexture
+```ts
+drawTexture(textureID: string, pos: Position): void
+```
+Draw a previously loaded texture
+
+### Canvas.getScreenResolution
+```ts
+static getScreenResolution(): Resolution
+```
+Get the screen resolution
+
+### Canvas.getTextureResolution
+```ts
+getTextureResolution(textureID: string): Resolution
+```
+Get the resolution of a previously loaded texture
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts
@@ -226,7 +256,6 @@ canvas.drawLine(
 	}
 );
 ```
-
 
 ### Colors.from8bit
 ```ts
@@ -271,5 +300,15 @@ let color: RGBAColor = {
 	green: 255,
 	blue: 0,
 	alpha: 255
+}
+```
+
+### Resolution
+Used to save a pair of width and height values
+```ts
+import { Resolution } from "simply2d"
+let res: Resolution = {
+	w: 1920,
+	h: 1080
 }
 ```

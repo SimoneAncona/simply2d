@@ -7,6 +7,7 @@ Napi::FunctionReference on_keyup_callback_ref;
 Napi::FunctionReference on_keysdown_callback_ref;
 Napi::FunctionReference on_keysup_callback_ref;
 TTF_Font *current_font;
+bool antialiasing = false;
 
 Napi::Value
 SDL::init(const Napi::CallbackInfo &info)
@@ -123,6 +124,10 @@ Napi::Value SDL::render_draw_line(const Napi::CallbackInfo &info)
 	int x2 = info[3].As<Napi::Number>().Int64Value();
 	int y2 = info[4].As<Napi::Number>().Int64Value();
 	SDL::handle_events(env);
+	if (antialiasing)
+	{
+		return Napi::Number::New(env, SDL_RenderDrawLine(renderer, x1, y1, x2, y2));
+	}
 	return Napi::Number::New(env, SDL_RenderDrawLine(renderer, x1, y1, x2, y2));
 }
 
@@ -284,7 +289,7 @@ Napi::Array get_pressed_keys(Napi::Env env)
 Napi::Value SDL::set_antialias(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	antialiasing = true;
 	return env.Undefined();
 }
 
@@ -295,11 +300,25 @@ Napi::Value SDL::set_font(const Napi::CallbackInfo &info)
 	return env.Undefined();
 }
 
+Napi::Value SDL::get_screen_resolution(const Napi::CallbackInfo &info)
+{
+	Napi::Env env = info.Env();
+	SDL_DisplayMode mode;
+	SDL_GetDesktopDisplayMode(0, &mode);
+	Napi::Object res = Napi::Object::New(env);
+	res.Set(Napi::String::New(env, "w"), Napi::Number::New(env, mode.w));
+	res.Set(Napi::String::New(env, "h"), Napi::Number::New(env, mode.h));
+	return res;
+}
+
 Napi::Value SDL::draw_text(const Napi::CallbackInfo &info)
 {
 	Napi::Env env = info.Env();
 	SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-	SDL_Color color = {info[2].As<Napi::Number>().Uint32Value(), info[3].As<Napi::Number>().Uint32Value(), info[4].As<Napi::Number>().Uint32Value()};
+	SDL_Color color = {
+		static_cast<Uint8>(info[2].As<Napi::Number>().Uint32Value()),
+		static_cast<Uint8>(info[3].As<Napi::Number>().Uint32Value()),
+		static_cast<Uint8>(info[4].As<Napi::Number>().Uint32Value())};
 	SDL_Surface *surface = TTF_RenderText_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
 
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -329,7 +348,14 @@ Napi::Value SDL::draw_arc(const Napi::CallbackInfo &info)
 	{
 		angle1 += precision;
 		temp = from_angle(x, y, angle1, radius);
-		SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+		if (antialiasing)
+		{
+			SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+		}
+		else
+		{
+			SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+		}
 		pos = temp;
 	}
 	return env.Undefined();

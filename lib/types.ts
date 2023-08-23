@@ -22,3 +22,8 @@ export type Key =
 	"Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "0" | "1" | "2" | "3" | "4" | "5" |
 	"6" | "7" | "8" | "9" | "Left Ctrl" | "Right Ctrl" | "Left Shift" | "Right Shift" | "Left Alt" |
 	"Right Alt" | "Tab" | "Return" | "Escape" | "Backspace" | "Space" | "Up" | "Down" | "Left" | "Right";
+
+export type Resolution = {
+	w: number;
+	h: number;
+}

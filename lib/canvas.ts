@@ -1,6 +1,6 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderScale, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setFont, setArc } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
-import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
+import { CanvasOptions, Key, Position, RGBAColor, Resolution } from "./types.js";
 import fs from "fs";
 
 export class Canvas {
@@ -14,8 +14,8 @@ export class Canvas {
 	private _startFrameTime: number;
 	private _frameTime: number;
 	private _loop: boolean;
-	private _attached: boolean;
 	private _fonts: { fontName: string, file: string }[];
+	private _textures: { textureID: string, file: string }[];
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -67,6 +67,7 @@ export class Canvas {
 		this._renderer = getRenderer(this._window, -1, 0);
 		this._frameTime = 16;
 		this._fonts = [];
+		this._textures = [];
 
 		this.TOP_LEFT = {} as Position;
 		this.TOP_CENTER = {} as Position;
@@ -375,7 +376,6 @@ export class Canvas {
 	 */
 	async loop(callback: () => void) {
 		this._loop = true;
-		this._attached = false;
 		while (this._loop) {
 			setRenderingSequence();
 			refresh(this._renderer);
@@ -423,7 +423,7 @@ export class Canvas {
 	 * @since v1.2.0
 	 */
 	drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void {
-		setFont(this._searchFont(fontName), size);
+		sdl2bind.setFont(this._searchFont(fontName), size);
 		setText(this._renderer, text, color.red, color.green, color.blue, start.x, start.y);
 	}
 
@@ -454,8 +454,58 @@ export class Canvas {
 	 * @param {number} angle 
 	 * @param {number} radius 
 	 * @returns {Position} converted coordinates
+	 * @since v1.2.1
 	 */
 	convertPolarCoords(center: Position, angle: number, radius: number): Position {
 		return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+	}
+
+	/**
+	 * Load a texture from a file
+	 * @param {string} textureID 
+	 * @param {string} filePath 
+	 * @since v1.2.1
+	 */
+	loadTexture(textureID: string, filePath: string): void {
+		if (!fs.existsSync(filePath)) {
+			throw "Cannot find the texture image file";
+		}
+		this._textures.push({ textureID: textureID, file: filePath });
+	}
+
+	/**
+	 * Draw a texture on the screen
+	 * @param {string} textureID 
+	 * @param {Position} pos top left corner of the box 
+	 * @since v1.2.1
+	 */
+	drawTexture(textureID: string, pos: Position): void {
+		setTexture(this._renderer, pos.x, pos.y, this._searchTexture(textureID));
+	}
+
+	private _searchTexture(textureID: string): string {
+		for (let texture of this._textures) {
+			if (texture.textureID == textureID) {
+				return texture.file;
+			}
+		}
+	}
+
+	/**
+	 * Get the screen resolution
+	 * @returns {Resolution} the screen resolution
+	 * @since v1.2.1
+	 */
+	static getScreenResolution(): Resolution {
+		return sdl2bind.getScreenRes() as Resolution;
+	}
+
+	/**
+	 * Get the texture resolution
+	 * @param {string} textureID the texture ID
+	 * @since v1.2.1
+	 */
+	getTextureResolution(textureID: string): Resolution {
+		return sdl2bind.getTextureRes(this._renderer, this._searchTexture(textureID)) as Resolution;
 	}
 }

@@ -3,7 +3,7 @@ import * as sdl from "./sdlValues.js"
 import { Key } from './types.js';
 const require = createRequire(import.meta.url);
 
-const sdl2bind = require("../build/Release/canvas_sdl2.node");
+export const sdl2bind = require("../build/Release/canvas_sdl2.node");
 let renderingSequence = false;
 
 export function getTicks() {
@@ -159,10 +159,6 @@ export function refresh(renderer: ArrayBuffer) {
 	sdl2bind.renderClear(renderer);
 }
 
-export function setFont(fileName: string, size: number) {
-	sdl2bind.setFont(fileName, size);
-}
-
 export function setText(renderer: ArrayBuffer, text: string, r: number, g: number, b: number, x: number, y: number) {
 	sdl2bind.drawText(renderer, text, r, g, b, x, y);
 	if (!renderingSequence) sdl2bind.renderPresent(renderer);
@@ -171,5 +167,10 @@ export function setText(renderer: ArrayBuffer, text: string, r: number, g: numbe
 export function setArc(renderer: ArrayBuffer, x: number, y: number, radius: number, angle1: number, angle2: number, r: number, g: number, b: number, a: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawArc(renderer, x, y, radius, angle1, angle2);
+	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+}
+
+export function setTexture(renderer: ArrayBuffer, x: number, y: number, textureFile: string) {
+	sdl2bind.drawTexture(renderer, x, y, textureFile);
 	if (!renderingSequence) sdl2bind.renderPresent(renderer);
 }

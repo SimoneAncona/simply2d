@@ -1,4 +1,5 @@
 import { Key } from './types.js';
+export declare const sdl2bind: any;
 export declare function getTicks(): any;
 export declare function setRenderingSequence(): void;
 export declare function clearRenderingSequence(): void;
@@ -27,6 +28,6 @@ export declare function onKeyUpEvent(callback: (key: Key) => void): void;
 export declare function onKeysDownEvent(callback: (key: Key[]) => void): void;
 export declare function onKeysUpEvent(callback: (key: Key[]) => void): void;
 export declare function refresh(renderer: ArrayBuffer): void;
-export declare function setFont(fileName: string, size: number): void;
 export declare function setText(renderer: ArrayBuffer, text: string, r: number, g: number, b: number, x: number, y: number): void;
 export declare function setArc(renderer: ArrayBuffer, x: number, y: number, radius: number, angle1: number, angle2: number, r: number, g: number, b: number, a: number): void;
+export declare function setTexture(renderer: ArrayBuffer, x: number, y: number, textureFile: string): void;

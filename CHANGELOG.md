@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+- **`[Added]`** texture drawing
+- **`[Added]`** polar coordinates conversion
+- **`[Added]`** the possibility to get the screen resolution
+- **`[Added]`** the possibility to get the resolution of a texture
+
 ## 1.2.0
 
 - **`[Added]`** text drawing

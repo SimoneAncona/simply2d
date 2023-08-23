@@ -31,12 +31,15 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "setFont"), Napi::Function::New<SDL::set_font>(env));
 	exports.Set(Napi::String::New(env, "drawText"), Napi::Function::New<SDL::draw_text>(env));
 	exports.Set(Napi::String::New(env, "drawArc"), Napi::Function::New<SDL::draw_arc>(env));
+	exports.Set(Napi::String::New(env, "getScreenRes"), Napi::Function::New<SDL::get_screen_resolution>(env));
 
 	exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
 	exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));
 	exports.Set(Napi::String::New(env, "saveJPG"), Napi::Function::New<SDLImage::save_jpg>(env));
 	exports.Set(Napi::String::New(env, "savePNG"), Napi::Function::New<SDLImage::save_png>(env));
 	exports.Set(Napi::String::New(env, "imgQuit"), Napi::Function::New<SDLImage::quit>(env));
+	exports.Set(Napi::String::New(env, "drawTexture"), Napi::Function::New<SDLImage::draw_texture>(env));
+	exports.Set(Napi::String::New(env, "getTextureRes"), Napi::Function::New<SDLImage::get_texture_res>(env));
 	return exports;
 }
 

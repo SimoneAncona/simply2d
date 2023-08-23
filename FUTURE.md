@@ -1,5 +1,9 @@
 # Future implementations
 
+### Optimization
+- Texture loading optimization (pointer to texture buffer)
+- Same thing for fonts
+
 ### Canvas.drawPath
 ```ts
 drawPath(path: Path): void
@@ -12,18 +16,11 @@ getRawData(): Uint8Array
 ```
 Get the canvas video buffer
 
-### Canvas.loadTexture
-```ts
-loadTexture(filename: string, center: Position): void
-```
-Load a texture from a file
-
 ### Canvas.loadSVG
 ```ts
 loadSVG(filename: string): void
 ```
 Load SVG file
-
 
 ### Canvas.attach
 ```ts

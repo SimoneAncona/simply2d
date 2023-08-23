@@ -39,8 +39,9 @@ namespace SDL
 	Napi::Value get_ticks(const Napi::CallbackInfo &);
 	Napi::Value set_antialias(const Napi::CallbackInfo &);
 	Napi::Value set_font(const Napi::CallbackInfo &);
+	Napi::Value get_screen_resolution(const Napi::CallbackInfo &info);
 	Napi::Value draw_text(const Napi::CallbackInfo &);
 	Napi::Value draw_arc(const Napi::CallbackInfo &);
-	void handle_events(Napi::Env);
+	inline void handle_events(Napi::Env);
 	Position from_angle(int, int, float, int);
 }

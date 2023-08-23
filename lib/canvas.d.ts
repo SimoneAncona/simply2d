@@ -1,4 +1,4 @@
-import { CanvasOptions, Key, Position, RGBAColor } from "./types.js";
+import { CanvasOptions, Key, Position, RGBAColor, Resolution } from "./types.js";
 export declare class Canvas {
     private _width;
     private _height;
@@ -9,8 +9,8 @@ export declare class Canvas {
     private _startFrameTime;
     private _frameTime;
     private _loop;
-    private _attached;
     private _fonts;
+    private _textures;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -57,4 +57,9 @@ export declare class Canvas {
     loadFont(fontName: string, filePath: string): void;
     private _searchFont;
     convertPolarCoords(center: Position, angle: number, radius: number): Position;
+    loadTexture(textureID: string, filePath: string): void;
+    drawTexture(textureID: string, pos: Position): void;
+    private _searchTexture;
+    static getScreenResolution(): Resolution;
+    getTextureResolution(textureID: string): Resolution;
 }

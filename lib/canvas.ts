@@ -5,17 +5,17 @@ import fs from "fs";
 
 export class Canvas {
 
-	private _width: number;
-	private _height: number;
-	private _window: ArrayBuffer;
-	private _renderer: ArrayBuffer;
-	private _currentBitPerPixel: 8 | 16 | 24 | 32;
-	private _scale: number;
-	private _startFrameTime: number;
-	private _frameTime: number;
-	private _loop: boolean;
-	private _fonts: { fontName: string, file: string }[];
-	private _textures: { textureID: string, file: string }[];
+	protected _width: number;
+	protected _height: number;
+	protected _window: ArrayBuffer;
+	protected _renderer: ArrayBuffer;
+	protected _currentBitPerPixel: 8 | 16 | 24 | 32;
+	protected _scale: number;
+	protected _startFrameTime: number;
+	protected _frameTime: number;
+	protected _loop: boolean;
+	protected _fonts: { fontName: string, file: string }[];
+	protected _textures: { textureID: string, file: string }[];
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;

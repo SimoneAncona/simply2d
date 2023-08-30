@@ -10,13 +10,6 @@ drawPath(path: Path): void
 ```
 Draw a polyline
 
-
-### Canvas.getRawData
-```ts
-getRawData(): Uint8Array
-```
-Get the canvas video buffer
-
 ### Canvas.loadSVG
 ```ts
 loadSVG(filename: string): void

@@ -10,13 +10,6 @@ drawPath(path: Path): void
 ```
 Draw a polyline
 
-
-### Canvas.getRawData
-```ts
-getRawData(): Uint8Array
-```
-Get the canvas video buffer
-
 ### Canvas.loadSVG
 ```ts
 loadSVG(filename: string): void
@@ -73,23 +66,3 @@ house.start({ x: 10, y: 15 });
 house.pushLine({ x: 20, y: 60 });
 ```
 
-### Entity
-```ts
-import { Entity } from "simply2d";
-import { Canvas } from "simply2d";
-
-const canvas = new Canvas("title", 100, 100);
-
-const player = new Entity("player");
-player.physics = {
-	gravity: true,
-	collision: true
-};
-
-player.setTexture("assets/file.png");
-
-player.onKeyDown((key: Key) => { /* ... */ });
-
-canvas.addEntity(player);
-canvas.removeEntity("player");
-```

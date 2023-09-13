@@ -41,6 +41,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "drawTexture"), Napi::Function::New<SDLImage::draw_texture>(env));
 	exports.Set(Napi::String::New(env, "loadTextureBuffer"), Napi::Function::New<SDLImage::save_single_texture>(env));
 	exports.Set(Napi::String::New(env, "getTextureRes"), Napi::Function::New<SDLImage::get_texture_res>(env));
+	exports.Set(Napi::String::New(env, "addLayer"), Napi::Function::New<SDLImage::add_layer>(env));
+	exports.Set(Napi::String::New(env, "changeCurrentLayer"), Napi::Function::New<SDLImage::set_current_layer>(env));
+	exports.Set(Napi::String::New(env, "focusOutCurrentLayer"), Napi::Function::New<SDLImage::clear_current_layer>(env));
 	return exports;
 }
 

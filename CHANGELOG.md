@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3
+
+- **`[Added]`** layers
+- **`[Fixed]`** general optimization
+
 ## 1.2.1
 
 - **`[Added]`** texture drawing

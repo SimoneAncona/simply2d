@@ -144,7 +144,7 @@ namespace SDL
 	Napi::Value set_render_draw_color(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int red = info[1].As<Napi::Number>().Int64Value();
 		int green = info[2].As<Napi::Number>().Int64Value();
 		int blue = info[3].As<Napi::Number>().Int64Value();
@@ -156,14 +156,14 @@ namespace SDL
 	inline Napi::Value render_clear(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		return Napi::Number::New(env, SDL_RenderClear(renderer));
 	}
 
 	Napi::Value render_present(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_RenderPresent(renderer);
 		handle_events(env);
 		return env.Undefined();
@@ -181,7 +181,7 @@ namespace SDL
 	Napi::Value render_draw_point(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int px = info[1].As<Napi::Number>().Int64Value();
 		int py = info[2].As<Napi::Number>().Int64Value();
 		handle_events(env);
@@ -191,7 +191,7 @@ namespace SDL
 	Napi::Value render_draw_line(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int x1 = info[1].As<Napi::Number>().Int64Value();
 		int y1 = info[2].As<Napi::Number>().Int64Value();
 		int x2 = info[3].As<Napi::Number>().Int64Value();
@@ -207,7 +207,7 @@ namespace SDL
 	Napi::Value render_copy(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[1].As<Napi::ArrayBuffer>());
 		SDL_Rect *src = (SDL_Rect *)get_ptr_from_js(info[2].As<Napi::ArrayBuffer>());
 		SDL_Rect *dest = (SDL_Rect *)get_ptr_from_js(info[3].As<Napi::ArrayBuffer>());
@@ -218,7 +218,7 @@ namespace SDL
 	Napi::Value draw_rectangle(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int x = info[1].As<Napi::Number>().Int64Value();
 		int y = info[2].As<Napi::Number>().Int64Value();
 		int w = info[3].As<Napi::Number>().Int64Value();
@@ -238,7 +238,7 @@ namespace SDL
 	Napi::Value create_texture(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		Uint32 flags = info[1].As<Napi::Number>().Uint32Value();
 		int access = info[2].As<Napi::Number>().Int64Value();
 		int w = info[3].As<Napi::Number>().Int64Value();
@@ -273,7 +273,7 @@ namespace SDL
 	Napi::Value read_render(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int width = info[1].As<Napi::Number>().Int64Value();
 		int height = info[2].As<Napi::Number>().Int64Value();
 		size_t size = width * height;
@@ -289,7 +289,7 @@ namespace SDL
 	Napi::Value set_scale(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int width = info[1].As<Napi::Number>().Int64Value();
 		int height = info[2].As<Napi::Number>().Int64Value();
 		int scale = info[3].As<Napi::Number>().Int64Value();
@@ -370,7 +370,7 @@ namespace SDL
 	Napi::Value draw_text(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_Color color = {
 			static_cast<Uint8>(info[2].As<Napi::Number>().Uint32Value()),
 			static_cast<Uint8>(info[3].As<Napi::Number>().Uint32Value()),
@@ -393,7 +393,7 @@ namespace SDL
 	{
 		Napi::Env env = info.Env();
 		const float precision = (float)0.1;
-		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Renderer *renderer = GET_RENDERER;
 		int x = info[1].As<Napi::Number>().Int32Value();
 		int y = info[2].As<Napi::Number>().Int32Value();
 		int radius = info[3].As<Napi::Number>().Int32Value();

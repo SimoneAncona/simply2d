@@ -25,8 +25,8 @@ export const Colors = {
 	TOMATO: { red: 255, green: 99, blue: 71, alpha: 255 } as RGBAColor,
 	GOLD: { red: 255, green: 215, blue: 0, alpha: 255 } as RGBAColor,
 	DARK_GREEN: { red: 0, green: 100, blue: 0, alpha: 255 } as RGBAColor,
+	INDIGO: { red: 75, green: 0, blue: 130, alpha: 255 } as RGBAColor,
 	TRANSPARENT: { red: 0, green: 0, blue: 0, alpha: 0 } as RGBAColor,
-	INDIGO: { red: 75, green: 0, blue: 130, alpha: 0 } as RGBAColor,
 
 	from8bit(color256: number) {
 		if (color256 < 0 || color256 >= 256) throw "Color256 must be between 0 and 255"

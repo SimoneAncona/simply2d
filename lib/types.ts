@@ -27,3 +27,5 @@ export type Resolution = {
 	w: number;
 	h: number;
 }
+
+export type PixelFormat = 8 | 16 | 24 | 32;

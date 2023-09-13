@@ -1,6 +1,6 @@
 import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
 import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
-import { CanvasOptions, Key, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import fs from "fs";
 
 export class Canvas {
@@ -9,7 +9,7 @@ export class Canvas {
 	protected _height: number;
 	protected _window: ArrayBuffer;
 	protected _renderer: ArrayBuffer;
-	protected _currentBitPerPixel: 8 | 16 | 24 | 32;
+	protected _currentBitPerPixel: PixelFormat;
 	protected _scale: number;
 	protected _startFrameTime: number;
 	protected _frameTime: number;
@@ -153,7 +153,7 @@ export class Canvas {
 	 * @param {number} width the width 
 	 * @param {number} height the height
 	 * @param {boolean} fill fill the rectangle
-	 * @since v0.1.10 (updated in v1.0.6)
+	 * @since v0.1.10 (last update in v1.0.6)
 	 * 
 	 */
 	drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill: boolean = false) {
@@ -166,14 +166,14 @@ export class Canvas {
 	/**
 	 * Draw an image from raw data on the canvas
 	 * @param {Uint8Array} pixels the array of pixels
-	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
+	 * @param {PixelFormat} bitPerPixel the bit size of the color
 	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
 	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
 	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
 	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v0.1.9
 	 */
-	loadRawData(pixels: Uint8Array, bitPerPixel: 8 | 16 | 24 | 32 = this._currentBitPerPixel) {
+	loadRawData(pixels: Uint8Array, bitPerPixel: PixelFormat = this._currentBitPerPixel) {
 		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the canvas resolution";
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this._currentBitPerPixel = bitPerPixel;
@@ -224,23 +224,23 @@ export class Canvas {
 
 	/**
 	 * Set the current pixel format
-	 * @param {8 | 16 | 24 | 32} bitPerPixel the bit size of the color
+	 * @param {PixelFormat} bitPerPixel the bit size of the color
 	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
 	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
 	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
 	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v1.0.4
 	 */
-	setBitPerPixel(bitPerPixel: 8 | 16 | 24 | 32) {
+	setBitPerPixel(bitPerPixel: PixelFormat) {
 		this._currentBitPerPixel = bitPerPixel;
 	}
 
 	/**
 	 * Get the current pixel format
-	 * @returns {8 | 16 | 24 | 32} the current pixel format
+	 * @returns {PixelFormat} the current pixel format
 	 * @since v1.0.4
 	 */
-	getBitPerPixel(): 8 | 16 | 24 | 32 {
+	getBitPerPixel(): PixelFormat {
 		return this._currentBitPerPixel;
 	}
 
@@ -465,7 +465,7 @@ export class Canvas {
 	 * Load a texture from a file
 	 * @param {string} textureID 
 	 * @param {string} filePath 
-	 * @since v1.2.1
+	 * @since v1.2.1 (last update in v1.3)
 	 */
 	loadTexture(textureID: string, filePath: string): void {
 		sdl2bind.loadTextureBuffer(this._renderer, textureID, filePath);
@@ -475,7 +475,7 @@ export class Canvas {
 	 * Draw a texture on the screen
 	 * @param {string} textureID 
 	 * @param {Position} pos top left corner of the box 
-	 * @since v1.2.1
+	 * @since v1.2.1 (last update in v1.3)
 	 */
 	drawTexture(textureID: string, pos: Position): void {
 		setTexture(this._renderer, pos.x, pos.y, textureID);
@@ -494,9 +494,18 @@ export class Canvas {
 	/**
 	 * Get the texture resolution
 	 * @param {string} textureID the texture ID
-	 * @since v1.2.1
+	 * @since v1.2.1 (last update in v1.3)
 	 */
 	getTextureResolution(textureID: string): Resolution {
 		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
+	}
+
+	/**
+	 * Add a new layer to the scene
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3
+	 */
+	addLayer(layerID: string): void {
+		sdl2bind.addLayer(this._renderer, layerID)
 	}
 }

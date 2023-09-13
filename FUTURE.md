@@ -1,9 +1,5 @@
 # Future implementations
 
-### Optimization
-- Texture loading optimization (pointer to texture buffer)
-- Same thing for fonts
-
 ### Canvas.drawPath
 ```ts
 drawPath(path: Path): void

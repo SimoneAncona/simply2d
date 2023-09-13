@@ -381,6 +381,7 @@ export class Canvas {
 			refresh(this._renderer);
 			callback();
 			renderPresent(this._renderer);
+			this.waitFrame();
 		}
 	}
 

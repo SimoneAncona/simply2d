@@ -1,16 +1,22 @@
 import { CanvasOptions, Key, Position, RGBAColor, Resolution } from "./types.js";
 export declare class Canvas {
-    private _width;
-    private _height;
-    private _window;
-    private _renderer;
-    private _currentBitPerPixel;
-    private _scale;
-    private _startFrameTime;
-    private _frameTime;
-    private _loop;
-    private _fonts;
-    private _textures;
+    protected _width: number;
+    protected _height: number;
+    protected _window: ArrayBuffer;
+    protected _renderer: ArrayBuffer;
+    protected _currentBitPerPixel: 8 | 16 | 24 | 32;
+    protected _scale: number;
+    protected _startFrameTime: number;
+    protected _frameTime: number;
+    protected _loop: boolean;
+    protected _fonts: {
+        fontName: string;
+        file: string;
+    }[];
+    protected _textures: {
+        textureID: string;
+        file: string;
+    }[];
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;

@@ -523,4 +523,30 @@ export class Canvas {
 		}
 		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
 	}
+
+	/**
+	 * Change the layer to draw
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3
+	 */
+	changeLayer(layerID: string) {
+		sdl2bind.changeCurrentLayer(this._renderer, layerID);
+	}
+
+	/**
+	 * Draw on the main layer (the canvas)
+	 * @since v1.3
+	 */
+	useMainLayer() {
+		sdl2bind.focusOutCurrentLayer(this._renderer);
+	}
+
+	/**
+	 * Remove a layer
+	 * @param {string} layerID
+	 * @since v1.3 
+	 */
+	removeLayer(layerID: string) {
+		sdl2bind.removeLayer(layerID);
+	}
 }

@@ -1,10 +1,10 @@
-import { CanvasOptions, Key, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 export declare class Canvas {
     protected _width: number;
     protected _height: number;
     protected _window: ArrayBuffer;
     protected _renderer: ArrayBuffer;
-    protected _currentBitPerPixel: 8 | 16 | 24 | 32;
+    protected _currentBitPerPixel: PixelFormat;
     protected _scale: number;
     protected _startFrameTime: number;
     protected _frameTime: number;
@@ -34,14 +34,14 @@ export declare class Canvas {
     drawPoint(color: RGBAColor, position: Position): void;
     drawLine(color: RGBAColor, from: Position, to: Position): void;
     drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill?: boolean): void;
-    loadRawData(pixels: Uint8Array, bitPerPixel?: 8 | 16 | 24 | 32): void;
+    loadRawData(pixels: Uint8Array, bitPerPixel?: PixelFormat): void;
     loadPNG(filename: string): void;
     loadJPG(filename: string): void;
     getWidth(): number;
     getHeight(): number;
     clear(): void;
-    setBitPerPixel(bitPerPixel: 8 | 16 | 24 | 32): void;
-    getBitPerPixel(): 8 | 16 | 24 | 32;
+    setBitPerPixel(bitPerPixel: PixelFormat): void;
+    getBitPerPixel(): PixelFormat;
     getRawData(): Uint8Array;
     dumpPNG(filename: string): void;
     dumpJPG(filename: string): void;
@@ -67,4 +67,8 @@ export declare class Canvas {
     drawTexture(textureID: string, pos: Position): void;
     static getScreenResolution(): Resolution;
     getTextureResolution(textureID: string): Resolution;
+    addLayer(layerID: string, bitPerPixel: PixelFormat): void;
+    changeLayer(layerID: string): void;
+    useMainLayer(): void;
+    removeLayer(layerID: string): void;
 }

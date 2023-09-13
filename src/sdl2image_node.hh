@@ -117,6 +117,15 @@ namespace SDLImage
 		return env.Undefined();
 	}
 
+	Napi::Value remove_layer(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		std::string id = info[0].As<Napi::String>().Utf8Value();
+		SDL_DestroyTexture(layers.at(id));
+		layers.erase(id);
+		return env.Undefined();
+	}
+
 	Napi::Value get_texture_res(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();

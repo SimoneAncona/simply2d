@@ -39,6 +39,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "savePNG"), Napi::Function::New<SDLImage::save_png>(env));
 	exports.Set(Napi::String::New(env, "imgQuit"), Napi::Function::New<SDLImage::quit>(env));
 	exports.Set(Napi::String::New(env, "drawTexture"), Napi::Function::New<SDLImage::draw_texture>(env));
+	exports.Set(Napi::String::New(env, "loadTextureBuffer"), Napi::Function::New<SDLImage::save_single_texture>(env));
 	exports.Set(Napi::String::New(env, "getTextureRes"), Napi::Function::New<SDLImage::get_texture_res>(env));
 	return exports;
 }

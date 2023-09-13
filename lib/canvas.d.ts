@@ -65,7 +65,6 @@ export declare class Canvas {
     convertPolarCoords(center: Position, angle: number, radius: number): Position;
     loadTexture(textureID: string, filePath: string): void;
     drawTexture(textureID: string, pos: Position): void;
-    private _searchTexture;
     static getScreenResolution(): Resolution;
     getTextureResolution(textureID: string): Resolution;
 }

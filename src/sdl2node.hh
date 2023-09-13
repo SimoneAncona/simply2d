@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <map>
 #include "common.hh"
 
 namespace SDL

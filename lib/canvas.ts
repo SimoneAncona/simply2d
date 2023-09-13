@@ -468,10 +468,7 @@ export class Canvas {
 	 * @since v1.2.1
 	 */
 	loadTexture(textureID: string, filePath: string): void {
-		if (!fs.existsSync(filePath)) {
-			throw "Cannot find the texture image file";
-		}
-		this._textures.push({ textureID: textureID, file: filePath });
+		sdl2bind.loadTextureBuffer(this._renderer, textureID, filePath);
 	}
 
 	/**
@@ -481,16 +478,9 @@ export class Canvas {
 	 * @since v1.2.1
 	 */
 	drawTexture(textureID: string, pos: Position): void {
-		setTexture(this._renderer, pos.x, pos.y, this._searchTexture(textureID));
+		setTexture(this._renderer, pos.x, pos.y, textureID);
 	}
 
-	private _searchTexture(textureID: string): string {
-		for (let texture of this._textures) {
-			if (texture.textureID == textureID) {
-				return texture.file;
-			}
-		}
-	}
 
 	/**
 	 * Get the screen resolution
@@ -507,6 +497,6 @@ export class Canvas {
 	 * @since v1.2.1
 	 */
 	getTextureResolution(textureID: string): Resolution {
-		return sdl2bind.getTextureRes(this._renderer, this._searchTexture(textureID)) as Resolution;
+		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
 	}
 }

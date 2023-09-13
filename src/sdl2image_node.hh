@@ -1,9 +1,12 @@
 #pragma once
 #include <SDL_image.h>
+#include <map>
+#include <string>
 #include "common.hh"
 
 namespace SDLImage
 {
+	std::map<std::string, SDL_Texture *> textures;
 
 	Napi::Value init(const Napi::CallbackInfo &info)
 	{
@@ -55,6 +58,19 @@ namespace SDLImage
 		return env.Undefined();
 	}
 
+	Napi::Value save_single_texture(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		std::string id = info[1].As<Napi::String>().Utf8Value();
+		std::string filename = info[2].As<Napi::String>().Utf8Value();
+		SDL_Texture *texture = IMG_LoadTexture(renderer, filename.c_str());
+		if (texture == NULL)
+			return env.Undefined();
+		textures.insert_or_assign(id, texture);
+		return env.Undefined();
+	}
+
 	Napi::Value draw_texture(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
@@ -63,10 +79,8 @@ namespace SDLImage
 		int y = info[2].As<Napi::Number>().Int32Value();
 		int texW = 0;
 		int texH = 0;
-		std::string filename = info[3].As<Napi::String>().Utf8Value();
-		SDL_Texture *texture = IMG_LoadTexture(renderer, filename.c_str());
-		if (texture == NULL)
-			return env.Undefined();
+		std::string id = info[3].As<Napi::String>().Utf8Value();
+		SDL_Texture *texture = textures.at(id);
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
 		SDL_Rect dstrect = {x, y, texW, texH};
 		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
@@ -79,8 +93,8 @@ namespace SDLImage
 		int texW = 0;
 		int texH = 0;
 		SDL_Renderer *renderer = (SDL_Renderer *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-		std::string filename = info[1].As<Napi::String>().Utf8Value();
-		SDL_Texture *texture = IMG_LoadTexture(renderer, filename.c_str());
+		std::string id = info[1].As<Napi::String>().Utf8Value();
+		SDL_Texture *texture = textures.at(id);
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
 		Napi::Object res = Napi::Object::New(env);
 		res.Set(Napi::String::New(env, "w"), Napi::Number::New(env, texW));

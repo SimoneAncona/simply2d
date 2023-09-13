@@ -3,5 +3,6 @@ import { Canvas } from "../index.js";
 const canvas = new Canvas("Mario", 500, 500);
 canvas.loadTexture("mario", "assets/mario.png");
 const marioRes = canvas.getTextureResolution("mario");
-canvas.drawTexture("mario", { x: 20, y: canvas.getHeight() - marioRes.h });
-canvas.sleep(1000);
+canvas.loop(() => {
+    canvas.drawTexture("mario", { x: 20, y: canvas.getHeight() - marioRes.h });
+});

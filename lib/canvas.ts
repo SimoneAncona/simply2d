@@ -1,5 +1,5 @@
 import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
-import { SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
+import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import fs from "fs";
 
@@ -505,7 +505,22 @@ export class Canvas {
 	 * @param {string} layerID ID of the layer
 	 * @since v1.3
 	 */
-	addLayer(layerID: string): void {
-		sdl2bind.addLayer(this._renderer, layerID)
+	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
+		let format;
+		switch (bitPerPixel) {
+			case 8:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+				break;
+			case 16:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+				break;
+			case 24:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				break;
+			case 32:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+				break;
+		}
+		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
 	}
 }

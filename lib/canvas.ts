@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, getCurrentLayer } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import fs from "fs";
@@ -531,6 +531,7 @@ export class Canvas {
 	 */
 	changeLayer(layerID: string) {
 		sdl2bind.changeCurrentLayer(this._renderer, layerID);
+		getCurrentLayer();
 	}
 
 	/**

@@ -5,6 +5,7 @@ const require = createRequire(import.meta.url);
 
 export const sdl2bind = require("../build/Release/canvas_sdl2.node");
 let renderingSequence = false;
+let currentLayer: ArrayBuffer = null;
 
 export function getTicks() {
 	return sdl2bind.getTicks();
@@ -41,10 +42,21 @@ export function hideWindow(window: ArrayBuffer) {
 	sdl2bind.hideWindow(window);
 }
 
+function render(renderer: ArrayBuffer) {
+	if (renderingSequence)
+		return;
+	sdl2bind.renderLayers(renderer);
+	sdl2bind.renderPresent(renderer);
+}
+
 export function clearWithColor(renderer: ArrayBuffer, r: number, g: number, b: number, alpha: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, alpha);
 	sdl2bind.renderClear(renderer);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
+}
+
+export function getCurrentLayer() {
+	currentLayer = sdl2bind.getCurrentLayer();
 }
 
 export function delay(ms: number) {
@@ -54,13 +66,13 @@ export function delay(ms: number) {
 export function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawPoint(renderer, px, py);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawLine(renderer, px1, py1, px2, py2);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function setAntialias() {
@@ -79,7 +91,7 @@ export function setImage(renderer: ArrayBuffer, filename: string, imgInitFlag: n
 	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
 		throw "Cannot load the texture into the renderer";
 	}
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 	sdl2bind.imgQuit();
 }
 
@@ -94,10 +106,11 @@ export function setJPG(renderer: ArrayBuffer, filename: string) {
 export function setRectangle(renderer: ArrayBuffer, x: number, y: number, width: number, height: number, r: number, g: number, b: number, a: number, fill: boolean) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawRectangle(renderer, x, y, width, height, fill);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function renderPresent(renderer: ArrayBuffer) {
+	sdl2bind.renderLayers(renderer);
 	sdl2bind.renderPresent(renderer);
 }
 
@@ -115,7 +128,7 @@ export function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitPerPixe
 	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
 		throw "Cannot load the texture into the renderer";
 	};
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function watchRawData(renderer: ArrayBuffer, width: number, height: number): Uint8Array {
@@ -161,16 +174,16 @@ export function refresh(renderer: ArrayBuffer) {
 
 export function setText(renderer: ArrayBuffer, text: string, r: number, g: number, b: number, x: number, y: number) {
 	sdl2bind.drawText(renderer, text, r, g, b, x, y);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function setArc(renderer: ArrayBuffer, x: number, y: number, radius: number, angle1: number, angle2: number, r: number, g: number, b: number, a: number) {
 	sdl2bind.setDrawColor(renderer, r, g, b, a);
 	sdl2bind.drawArc(renderer, x, y, radius, angle1, angle2);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }
 
 export function setTexture(renderer: ArrayBuffer, x: number, y: number, textureFile: string) {
 	sdl2bind.drawTexture(renderer, x, y, textureFile);
-	if (!renderingSequence) sdl2bind.renderPresent(renderer);
+	render(renderer);
 }

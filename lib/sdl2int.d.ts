@@ -8,6 +8,7 @@ export declare function getRenderer(window: ArrayBuffer, index: number, flag: nu
 export declare function showWindow(window: ArrayBuffer): void;
 export declare function hideWindow(window: ArrayBuffer): void;
 export declare function clearWithColor(renderer: ArrayBuffer, r: number, g: number, b: number, alpha: number): void;
+export declare function getCurrentLayer(): void;
 export declare function delay(ms: number): void;
 export declare function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number): void;
 export declare function setLine(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px1: number, py1: number, px2: number, py2: number): void;

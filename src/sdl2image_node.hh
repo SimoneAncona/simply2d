@@ -8,10 +8,12 @@ namespace SDLImage
 {
 	std::map<std::string, SDL_Texture *> textures;
 	std::map<std::string, SDL_Texture *> layers;
+	std::string current_layer;
 
 	Napi::Value init(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
+		current_layer = "";
 		int flags = info[0].As<Napi::Number>().Int64Value();
 		return Napi::Number::New(env, IMG_Init(flags));
 	}
@@ -105,8 +107,17 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
-		SDL_SetRenderTarget(renderer, layers.at(info[1].As<Napi::String>().Utf8Value().c_str()));
+		current_layer = info[1].As<Napi::String>().Utf8Value();
+		SDL_SetRenderTarget(renderer, layers.at(current_layer));
 		return env.Undefined();
+	}
+
+	Napi::Value get_current_layer(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		if (current_layer == "")
+			return env.Null();
+		return Napi::ArrayBuffer::New(env, layers.at(current_layer), sizeof(SDL_Texture *));
 	}
 
 	Napi::Value clear_current_layer(const Napi::CallbackInfo &info)
@@ -114,6 +125,18 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_SetRenderTarget(renderer, NULL);
+		current_layer = "";
+		return env.Undefined();
+	}
+
+	Napi::Value render_layers(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Renderer *renderer = GET_RENDERER;
+		for (auto layer : layers)
+		{
+			SDL_RenderCopy(renderer, layer.second, NULL, NULL);
+		}
 		return env.Undefined();
 	}
 
@@ -123,6 +146,8 @@ namespace SDLImage
 		std::string id = info[0].As<Napi::String>().Utf8Value();
 		SDL_DestroyTexture(layers.at(id));
 		layers.erase(id);
+		if (id == current_layer)
+			current_layer = "";
 		return env.Undefined();
 	}
 

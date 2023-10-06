@@ -3,6 +3,9 @@
 #include <map>
 #include <string>
 #include "common.hh"
+#ifdef _DEBUG
+	#include <iostream>
+#endif
 
 namespace SDLImage
 {
@@ -99,6 +102,12 @@ namespace SDLImage
 		int w = info[3].As<Napi::Number>().Int32Value();
 		int h = info[4].As<Napi::Number>().Int32Value();
 		SDL_Texture *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
+
+		std::cout << SDL_SetRenderTarget(renderer, texture);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		SDL_RenderFillRect(renderer, NULL);
+        SDL_RenderClear(renderer);
+		SDL_RenderPresent(renderer);
 		layers.insert_or_assign(layer_id, texture);
 		return env.Undefined();
 	}
@@ -112,7 +121,7 @@ namespace SDLImage
 		SDL_GetRendererInfo(renderer, &r_info);
 		if (!(r_info.flags & SDL_RENDERER_TARGETTEXTURE))
 		{
-			exit(123);
+			return env.Undefined();
 		}
 		SDL_SetRenderTarget(renderer, layers.at(current_layer));
 		return env.Undefined();

@@ -2,8 +2,13 @@ import { createRequire } from 'module';
 import * as sdl from "./sdlValues.js"
 import { Key } from './types.js';
 const require = createRequire(import.meta.url);
-
-export const sdl2bind = require("../build/Release/canvas_sdl2.node");
+let sdl2bind: any;
+try {
+	sdl2bind = require("../build/Release/canvas_sdl2.node");
+} catch {
+	sdl2bind = require("../build/Debug/canvas_sdl2.node");
+}
+export { sdl2bind }
 let renderingSequence = false;
 let currentLayer: ArrayBuffer = null;
 

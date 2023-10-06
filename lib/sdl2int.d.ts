@@ -1,5 +1,6 @@
 import { Key } from './types.js';
-export declare const sdl2bind: any;
+declare let sdl2bind: any;
+export { sdl2bind };
 export declare function getTicks(): any;
 export declare function setRenderingSequence(): void;
 export declare function clearRenderingSequence(): void;

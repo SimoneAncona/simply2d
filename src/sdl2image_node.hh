@@ -107,7 +107,13 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
+		SDL_RendererInfo r_info;
 		current_layer = info[1].As<Napi::String>().Utf8Value();
+		SDL_GetRendererInfo(renderer, &r_info);
+		if (!(r_info.flags & SDL_RENDERER_TARGETTEXTURE))
+		{
+			exit(123);
+		}
 		SDL_SetRenderTarget(renderer, layers.at(current_layer));
 		return env.Undefined();
 	}

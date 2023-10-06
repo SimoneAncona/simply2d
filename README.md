@@ -229,6 +229,12 @@ getTextureResolution(textureID: string): Resolution
 ```
 Get the resolution of a previously loaded texture
 
+### Canvas.drawPath
+```ts
+drawPath(path: Path, pos?: Position, color?: RGBAColor)
+```
+Draw a path
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts
@@ -311,4 +317,14 @@ let res: Resolution = {
 	w: 1920,
 	h: 1080
 }
+```
+
+### Path
+A path is an object used to represent a polyline
+```ts
+import { Path } from "simply2d";
+const p = new Path();
+p.setStart({ x: 10, y: 15 });
+p.pushLine({ x: 20, y: 60 });
+p.close();
 ```

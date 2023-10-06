@@ -53,12 +53,3 @@ Get layers in order of appearance
 moveLayer(layerId: string, direction: "top" | "bottom", steps: number): void
 ```
 Change layer rendering priority
-
-### Path
-```ts
-import { Path } from "simply2d";
-const house = new Path();
-house.start({ x: 10, y: 15 });
-house.pushLine({ x: 20, y: 60 });
-```
-

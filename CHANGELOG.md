@@ -1,8 +1,8 @@
 # Changelog
 
-## 1.3
+## 1.2.2
 
-- **`[Added]`** layers
+- **`[Added]`** path
 - **`[Fixed]`** general optimization
 
 ## 1.2.1

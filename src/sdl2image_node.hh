@@ -103,11 +103,6 @@ namespace SDLImage
 		int h = info[4].As<Napi::Number>().Int32Value();
 		SDL_Texture *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
 
-		std::cout << SDL_SetRenderTarget(renderer, texture);
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderFillRect(renderer, NULL);
-        SDL_RenderClear(renderer);
-		SDL_RenderPresent(renderer);
 		layers.insert_or_assign(layer_id, texture);
 		return env.Undefined();
 	}

@@ -1,4 +1,5 @@
 import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { Path } from "./path.js";
 export declare class Canvas {
     protected _width: number;
     protected _height: number;
@@ -67,8 +68,5 @@ export declare class Canvas {
     drawTexture(textureID: string, pos: Position): void;
     static getScreenResolution(): Resolution;
     getTextureResolution(textureID: string): Resolution;
-    addLayer(layerID: string, bitPerPixel: PixelFormat): void;
-    changeLayer(layerID: string): void;
-    useMainLayer(): void;
-    removeLayer(layerID: string): void;
+    drawPath(path: Path, pos?: Position, color?: RGBAColor): void;
 }

@@ -1,6 +1,7 @@
 import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, getCurrentLayer } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { Path } from "./path.js";
 import fs from "fs";
 
 export class Canvas {
@@ -500,54 +501,68 @@ export class Canvas {
 		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
 	}
 
+	// /**
+	//  * Add a new layer to the scene
+	//  * @param {string} layerID ID of the layer
+	//  * @since v1.3
+	//  */
+	// addLayer(layerID: string, bitPerPixel: PixelFormat): void {
+	// 	let format;
+	// 	switch (bitPerPixel) {
+	// 		case 8:
+	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+	// 			break;
+	// 		case 16:
+	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+	// 			break;
+	// 		case 24:
+	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+	// 			break;
+	// 		case 32:
+	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+	// 			break;
+	// 	}
+	// 	sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
+	// }
+
+	// /**
+	//  * Change the layer to draw
+	//  * @param {string} layerID ID of the layer
+	//  * @since v1.3
+	//  */
+	// changeLayer(layerID: string) {
+	// 	sdl2bind.changeCurrentLayer(this._renderer, layerID);
+	// 	getCurrentLayer();
+	// }
+
+	// /**
+	//  * Draw on the main layer (the canvas)
+	//  * @since v1.3
+	//  */
+	// useMainLayer() {
+	// 	sdl2bind.focusOutCurrentLayer(this._renderer);
+	// }
+
+	// /**
+	//  * Remove a layer
+	//  * @param {string} layerID
+	//  * @since v1.3 
+	//  */
+	// removeLayer(layerID: string) {
+	// 	sdl2bind.removeLayer(layerID);
+	// }
+
 	/**
-	 * Add a new layer to the scene
-	 * @param {string} layerID ID of the layer
-	 * @since v1.3
+	 * Draw a path
+	 * @param {Path} path
+	 * @param {Position} pos
+	 * @param {RGBAColor} color
+ 	 * @since v1.2.2
 	 */
-	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
-		let format;
-		switch (bitPerPixel) {
-			case 8:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
-				break;
-			case 16:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
-				break;
-			case 24:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
-				break;
-			case 32:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
-				break;
+	drawPath(path: Path, pos: Position = {x: 0, y: 0}, color?: RGBAColor) {
+		const p = path._getPath();
+		for (let i = 0; i < p.length - 1; i++) {
+			this.drawLine(color === undefined ? p[i + 1].color : color, {x: p[i].pos.x + pos.x, y: p[i].pos.y + pos.y}, {x: p[i + 1].pos.x + pos.x, y: p[i + 1].pos.y + pos.y});
 		}
-		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
-	}
-
-	/**
-	 * Change the layer to draw
-	 * @param {string} layerID ID of the layer
-	 * @since v1.3
-	 */
-	changeLayer(layerID: string) {
-		sdl2bind.changeCurrentLayer(this._renderer, layerID);
-		getCurrentLayer();
-	}
-
-	/**
-	 * Draw on the main layer (the canvas)
-	 * @since v1.3
-	 */
-	useMainLayer() {
-		sdl2bind.focusOutCurrentLayer(this._renderer);
-	}
-
-	/**
-	 * Remove a layer
-	 * @param {string} layerID
-	 * @since v1.3 
-	 */
-	removeLayer(layerID: string) {
-		sdl2bind.removeLayer(layerID);
 	}
 }

@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, getCurrentLayer } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import { Path } from "./path.js";
@@ -17,6 +17,7 @@ export class Canvas {
 	protected _loop: boolean;
 	protected _fonts: { fontName: string, file: string }[];
 	protected _textures: { textureID: string, file: string }[];
+	private _currentFrametime: number;
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -66,7 +67,7 @@ export class Canvas {
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width * this._scale, height * this._scale, flags);
 		this._renderer = getRenderer(this._window, -1, 0);
-		this._frameTime = 16;
+		this._frameTime = 2;
 		this._fonts = [];
 		this._textures = [];
 
@@ -378,12 +379,31 @@ export class Canvas {
 	async loop(callback: () => void) {
 		this._loop = true;
 		while (this._loop) {
+			let loopStartTime = new Date().getTime();
 			setRenderingSequence();
 			refresh(this._renderer);
 			callback();
 			renderPresent(this._renderer);
-			this.waitFrame();
+			this._currentFrametime = new Date().getTime() - loopStartTime;
 		}
+	}
+
+	/**
+	 * Get frame time
+	 * @since v1.3.0
+	 */
+	get frameTime() {
+		if (!this._loop) throw "Must render the scene with the loop function to get frametime";
+		return this._currentFrametime;
+	}
+
+	/**
+	 * Get fps
+	 * @since v1.3.0
+	 */
+	get fps() {
+		if (!this._loop) throw "Must render the scene with the loop function to get frametime";
+		return 1000 / this._currentFrametime;
 	}
 
 	/**
@@ -501,56 +521,55 @@ export class Canvas {
 		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
 	}
 
-	// /**
-	//  * Add a new layer to the scene
-	//  * @param {string} layerID ID of the layer
-	//  * @since v1.3
-	//  */
-	// addLayer(layerID: string, bitPerPixel: PixelFormat): void {
-	// 	let format;
-	// 	switch (bitPerPixel) {
-	// 		case 8:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
-	// 			break;
-	// 		case 16:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
-	// 			break;
-	// 		case 24:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
-	// 			break;
-	// 		case 32:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
-	// 			break;
-	// 	}
-	// 	sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
-	// }
+	/**
+	 * Add a new layer to the scene
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3.0
+	 */
+	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
+		let format;
+		switch (bitPerPixel) {
+			case 8:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+				break;
+			case 16:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+				break;
+			case 24:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				break;
+			case 32:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+				break;
+		}
+		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
+	}
 
-	// /**
-	//  * Change the layer to draw
-	//  * @param {string} layerID ID of the layer
-	//  * @since v1.3
-	//  */
-	// changeLayer(layerID: string) {
-	// 	sdl2bind.changeCurrentLayer(this._renderer, layerID);
-	// 	getCurrentLayer();
-	// }
+	/**
+	 * Change the layer to draw
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3.0
+	 */
+	changeLayer(layerID: string) {
+		sdl2bind.changeCurrentLayer(this._renderer, layerID);
+	}
 
-	// /**
-	//  * Draw on the main layer (the canvas)
-	//  * @since v1.3
-	//  */
-	// useMainLayer() {
-	// 	sdl2bind.focusOutCurrentLayer(this._renderer);
-	// }
+	/**
+	 * Draw on the main layer (the canvas)
+	 * @since v1.3.0
+	 */
+	useMainLayer() {
+		sdl2bind.focusOutCurrentLayer(this._renderer);
+	}
 
-	// /**
-	//  * Remove a layer
-	//  * @param {string} layerID
-	//  * @since v1.3 
-	//  */
-	// removeLayer(layerID: string) {
-	// 	sdl2bind.removeLayer(layerID);
-	// }
+	/**
+	 * Remove a layer
+	 * @param {string} layerID
+	 * @since v1.3.0
+	 */
+	removeLayer(layerID: string) {
+		sdl2bind.removeLayer(layerID);
+	}
 
 	/**
 	 * Draw a path

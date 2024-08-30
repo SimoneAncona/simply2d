@@ -18,6 +18,7 @@ export declare class Canvas {
         textureID: string;
         file: string;
     }[];
+    private _currentFrametime;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -57,6 +58,8 @@ export declare class Canvas {
     exposeRender(): void;
     waitFrame(): void;
     loop(callback: () => void): Promise<void>;
+    get frameTime(): number;
+    get fps(): number;
     onKeysDown(callback: (keys: Key[]) => void): void;
     onKeysUp(callback: (keys: Key[]) => void): void;
     drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: number, endingAngle: number): void;

@@ -16,4 +16,5 @@ canvas.loop(() => {
     if (frames % 20 == 0)
         canvas.clear();
     frames++;
+    console.log(canvas.fps);
 });

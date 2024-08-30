@@ -145,7 +145,10 @@ namespace SDLImage
 		SDL_Renderer *renderer = GET_RENDERER;
 		for (auto layer : layers)
 		{
+			SDL_SetRenderTarget(renderer, NULL);
 			SDL_RenderCopy(renderer, layer.second, NULL, NULL);
+			SDL_SetRenderTarget(renderer, layers.at(current_layer));
+
 		}
 		return env.Undefined();
 	}

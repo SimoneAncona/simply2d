@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+- **`[Added]`** layers
+- **`[Changed]`** project compilation
+
 ## 1.2.2
 
 - **`[Added]`** path

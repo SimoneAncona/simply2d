@@ -1,5 +1,7 @@
 # Future implementations
 
+### Path optimization
+
 ### Canvas.drawPath
 ```ts
 drawPath(path: Path): void

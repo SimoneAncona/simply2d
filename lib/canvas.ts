@@ -501,56 +501,56 @@ export class Canvas {
 		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
 	}
 
-	// /**
-	//  * Add a new layer to the scene
-	//  * @param {string} layerID ID of the layer
-	//  * @since v1.3
-	//  */
-	// addLayer(layerID: string, bitPerPixel: PixelFormat): void {
-	// 	let format;
-	// 	switch (bitPerPixel) {
-	// 		case 8:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
-	// 			break;
-	// 		case 16:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
-	// 			break;
-	// 		case 24:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
-	// 			break;
-	// 		case 32:
-	// 			format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
-	// 			break;
-	// 	}
-	// 	sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
-	// }
+	/**
+	 * Add a new layer to the scene
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3
+	 */
+	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
+		let format;
+		switch (bitPerPixel) {
+			case 8:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+				break;
+			case 16:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+				break;
+			case 24:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				break;
+			case 32:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+				break;
+		}
+		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
+	}
 
-	// /**
-	//  * Change the layer to draw
-	//  * @param {string} layerID ID of the layer
-	//  * @since v1.3
-	//  */
-	// changeLayer(layerID: string) {
-	// 	sdl2bind.changeCurrentLayer(this._renderer, layerID);
-	// 	getCurrentLayer();
-	// }
+	/**
+	 * Change the layer to draw
+	 * @param {string} layerID ID of the layer
+	 * @since v1.3
+	 */
+	changeLayer(layerID: string) {
+		sdl2bind.changeCurrentLayer(this._renderer, layerID);
+		getCurrentLayer();
+	}
 
-	// /**
-	//  * Draw on the main layer (the canvas)
-	//  * @since v1.3
-	//  */
-	// useMainLayer() {
-	// 	sdl2bind.focusOutCurrentLayer(this._renderer);
-	// }
+	/**
+	 * Draw on the main layer (the canvas)
+	 * @since v1.3
+	 */
+	useMainLayer() {
+		sdl2bind.focusOutCurrentLayer(this._renderer);
+	}
 
-	// /**
-	//  * Remove a layer
-	//  * @param {string} layerID
-	//  * @since v1.3 
-	//  */
-	// removeLayer(layerID: string) {
-	// 	sdl2bind.removeLayer(layerID);
-	// }
+	/**
+	 * Remove a layer
+	 * @param {string} layerID
+	 * @since v1.3 
+	 */
+	removeLayer(layerID: string) {
+		sdl2bind.removeLayer(layerID);
+	}
 
 	/**
 	 * Draw a path

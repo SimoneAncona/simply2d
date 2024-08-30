@@ -1,12 +1,17 @@
 import { Canvas, Colors } from "../index.js";
 
-const width = 600;
-const height = 400;
-const canvas = new Canvas("layers", width, height);
+const canvas = new Canvas("layers", 600, 400);
 
-canvas.addLayer("layer1", 32);
-// canvas.addLayer("layer2", 32);
+canvas.addLayer("layer1", 32)
+canvas.addLayer("layer2", 32)
+let frames = 0;
 
-canvas.changeLayer("layer1");
-canvas.drawArc(Colors.RED, canvas.CENTER, 10, 0, Math.PI * 2);
-canvas.sleep(1000);
+canvas.loop(() => {
+    canvas.changeLayer("layer1");
+    canvas.drawArc(Colors.INDIGO, canvas.CENTER, 30, 0, Math.PI * 2);
+    canvas.changeLayer("layer2");
+    canvas.drawRectangle(Colors.DARK_BLUE, canvas.TOP_LEFT, 30, 50, true);
+    if (frames % 20 == 0)
+        canvas.clear();
+    frames++;
+});

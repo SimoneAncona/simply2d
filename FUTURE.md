@@ -1,10 +1,6 @@
 # Future implementations
 
-### Canvas.drawPath
-```ts
-drawPath(path: Path): void
-```
-Draw a polyline
+### Path optimization
 
 ### Canvas.loadSVG
 ```ts
@@ -23,24 +19,6 @@ Attach an array to the video memory. Every change to the array will be reflected
 detach(): void
 ```
 Detach the array
-
-### Canvas.addLayer
-```ts
-addLayer(layerId: string): void
-```
-Add a new layer
-
-### Canvas.removeLayer
-```ts
-removeLayer(layerId: string): void
-```
-Remove layer
-
-### Canvas.changeLayer
-```ts
-changeLayer(layerId: string): void
-```
-Change current layer
 
 ### Canvas.getLayers
 ```ts

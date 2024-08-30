@@ -6,10 +6,15 @@ This library for nodejs allows you, thanks to SDL2, to create windows and draw o
 You can install this library using `npm i simply2d`.  
 This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross-platform library designed to provide low level access to different resources such as video. SDL2 is available for windows, linux and macos as well.
 
+### Fow Windows
+Visual Studio is required
+
 ### For Linux
 To use Simply2D you must have installed SDL2. To install it you can use the following command:
 - For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0`
 - For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`
+
+> If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
 
 ## API
 ### Canvas
@@ -234,6 +239,42 @@ Get the resolution of a previously loaded texture
 drawPath(path: Path, pos?: Position, color?: RGBAColor)
 ```
 Draw a path
+
+### Canvas.addLayer
+```ts
+addLayer(layerId: string): void
+```
+Add a new layer
+
+### Canvas.removeLayer
+```ts
+removeLayer(layerId: string): void
+```
+Remove layer
+
+### Canvas.changeLayer
+```ts
+changeLayer(layerId: string): void
+```
+Change current layer
+
+### Canvas.useMainLayer
+```ts
+useMainLayer(): void
+```
+Change to the main default layer
+
+### get Canvas.frameTime
+```ts
+get frameTime(): number
+```
+Get current frame time, only if the scene is rendered with loop
+
+### get Canvas.fps
+```ts
+get fps(): number
+```
+Get current frame time, only if the scene is rendered with loop
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:

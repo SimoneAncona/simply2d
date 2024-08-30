@@ -2,12 +2,6 @@
 
 ### Path optimization
 
-### Canvas.drawPath
-```ts
-drawPath(path: Path): void
-```
-Draw a polyline
-
 ### Canvas.loadSVG
 ```ts
 loadSVG(filename: string): void

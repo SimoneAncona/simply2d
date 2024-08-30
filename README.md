@@ -264,6 +264,18 @@ useMainLayer(): void
 ```
 Change to the main default layer
 
+### get Canvas.frameTime
+```ts
+get frameTime(): number
+```
+Get current frame time, only if the scene is rendered with loop
+
+### get Canvas.fps
+```ts
+get fps(): number
+```
+Get current frame time, only if the scene is rendered with loop
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts

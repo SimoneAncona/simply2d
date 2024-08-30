@@ -146,6 +146,7 @@ namespace SDLImage
 		for (auto layer : layers)
 		{
 			SDL_SetRenderTarget(renderer, NULL);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 			SDL_RenderCopy(renderer, layer.second, NULL, NULL);
 			SDL_SetRenderTarget(renderer, layers.at(current_layer));
 

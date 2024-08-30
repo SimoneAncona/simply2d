@@ -504,7 +504,7 @@ export class Canvas {
 	/**
 	 * Add a new layer to the scene
 	 * @param {string} layerID ID of the layer
-	 * @since v1.3
+	 * @since v1.3.0
 	 */
 	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
 		let format;
@@ -528,7 +528,7 @@ export class Canvas {
 	/**
 	 * Change the layer to draw
 	 * @param {string} layerID ID of the layer
-	 * @since v1.3
+	 * @since v1.3.0
 	 */
 	changeLayer(layerID: string) {
 		sdl2bind.changeCurrentLayer(this._renderer, layerID);
@@ -537,7 +537,7 @@ export class Canvas {
 
 	/**
 	 * Draw on the main layer (the canvas)
-	 * @since v1.3
+	 * @since v1.3.0
 	 */
 	useMainLayer() {
 		sdl2bind.focusOutCurrentLayer(this._renderer);
@@ -546,7 +546,7 @@ export class Canvas {
 	/**
 	 * Remove a layer
 	 * @param {string} layerID
-	 * @since v1.3 
+	 * @since v1.3.0
 	 */
 	removeLayer(layerID: string) {
 		sdl2bind.removeLayer(layerID);

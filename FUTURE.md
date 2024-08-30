@@ -26,24 +26,6 @@ detach(): void
 ```
 Detach the array
 
-### Canvas.addLayer
-```ts
-addLayer(layerId: string): void
-```
-Add a new layer
-
-### Canvas.removeLayer
-```ts
-removeLayer(layerId: string): void
-```
-Remove layer
-
-### Canvas.changeLayer
-```ts
-changeLayer(layerId: string): void
-```
-Change current layer
-
 ### Canvas.getLayers
 ```ts
 getLayers(): Layer[]

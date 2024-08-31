@@ -2,16 +2,15 @@ import { Canvas, Colors } from "../index.js";
 
 const canvas = new Canvas("clock", 600, 600);
 canvas.loadFont("roboto", "assets/Roboto-Regular.ttf")
-
 function drawHands() {
     const date = new Date();
     const seconds = date.getSeconds() / 60 * Math.PI * 2 - Math.PI / 2;
     const minutes = date.getMinutes() / 60 * Math.PI * 2 - Math.PI / 2;
     const hours = date.getHours() / 12 * Math.PI * 2 - Math.PI / 2;
 
-    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, canvas.convertPolarCoords(canvas.CENTER, seconds, 170));
-    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, canvas.convertPolarCoords(canvas.CENTER, minutes, 150));
-    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, canvas.convertPolarCoords(canvas.CENTER, hours, 130));
+    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, Canvas.convertPolarCoords(canvas.CENTER, seconds, 170));
+    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, Canvas.convertPolarCoords(canvas.CENTER, minutes, 150));
+    canvas.drawLine(Colors.AQUAMARINE, canvas.CENTER, Canvas.convertPolarCoords(canvas.CENTER, hours, 130));
 
     let pos = { x: canvas.CENTER.x, y: canvas.CENTER.y };
     const width = 100;

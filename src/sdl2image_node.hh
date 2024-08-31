@@ -126,6 +126,7 @@ namespace SDLImage
 			return env.Undefined();
 		}
 		SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		return env.Undefined();
 	}
 
@@ -217,6 +218,20 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		auto layer = info[0].As<Napi::String>().Utf8Value();
 		layers.at(layer).is_active = false;
+		return env.Undefined();
+	}
+
+	Napi::Value clear_all(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Renderer *renderer = GET_RENDERER;
+		SDL_RenderClear(renderer);
+		for (auto layer : layers)
+		{
+			SDL_SetRenderTarget(renderer, layer.second.texture);
+			SDL_RenderClear(renderer);
+		}
+		if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
 		return env.Undefined();
 	}
 }

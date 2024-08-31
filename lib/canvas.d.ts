@@ -1,4 +1,4 @@
-import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import { Path } from "./path.js";
 export declare class Canvas {
     protected _width: number;
@@ -19,6 +19,7 @@ export declare class Canvas {
         file: string;
     }[];
     private _currentFrametime;
+    protected _antialias: boolean;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -78,7 +79,10 @@ export declare class Canvas {
     useMainLayer(): void;
     removeLayer(layerID: string): void;
     drawPath(path: Path, pos?: Position, color?: RGBAColor): void;
-    getLayers(): any;
+    getLayers(): Layer[];
     activateLayer(layerID: string): void;
     deactivateLayer(layerID: string): void;
+    clearAll(): void;
+    set antialiasing(set: boolean);
+    get antialiasing(): boolean;
 }

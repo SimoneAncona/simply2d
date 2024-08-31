@@ -28,6 +28,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "onKeysUp"), Napi::Function::New<SDL::on_keysup>(env));
 	exports.Set(Napi::String::New(env, "getTicks"), Napi::Function::New<SDL::get_ticks>(env));
 	exports.Set(Napi::String::New(env, "setAntialias"), Napi::Function::New<SDL::set_antialias>(env));
+	exports.Set(Napi::String::New(env, "clearAntialias"), Napi::Function::New<SDL::clear_antialias>(env));
 	exports.Set(Napi::String::New(env, "setFont"), Napi::Function::New<SDL::set_font>(env));
 	exports.Set(Napi::String::New(env, "drawText"), Napi::Function::New<SDL::draw_text>(env));
 	exports.Set(Napi::String::New(env, "drawArc"), Napi::Function::New<SDL::draw_arc>(env));
@@ -49,6 +50,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "getLayers"), Napi::Function::New<SDLImage::get_layers>(env));
 	exports.Set(Napi::String::New(env, "activateLayer"), Napi::Function::New<SDLImage::activate_layer>(env));
 	exports.Set(Napi::String::New(env, "deactivateLayer"), Napi::Function::New<SDLImage::deactivate_layer>(env));
+	exports.Set(Napi::String::New(env, "clearAll"), Napi::Function::New<SDLImage::clear_all>(env));
 	return exports;
 }
 

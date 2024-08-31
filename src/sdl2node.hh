@@ -5,6 +5,7 @@
 #include <cmath>
 #include <map>
 #include "common.hh"
+#include "antialiasing.hh"
 
 namespace SDL
 {
@@ -87,7 +88,19 @@ namespace SDL
 	{
 		Napi::Env env = info.Env();
 		Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
-		return Napi::Number::New(env, SDL_Init(flags));
+		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+
+		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	}
 
 	inline Napi::Value get_error(const Napi::CallbackInfo &info)
@@ -122,6 +135,7 @@ namespace SDL
 		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		if (renderer == NULL)
 			return env.Undefined();
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		return Napi::ArrayBuffer::New(env, renderer, sizeof(renderer));
 	}
 
@@ -199,7 +213,8 @@ namespace SDL
 		handle_events(env);
 		if (antialiasing)
 		{
-			return Napi::Number::New(env, SDL_RenderDrawLine(renderer, x1, y1, x2, y2));
+			AA::draw_line_aa(renderer, x1, y1, x2, y2);
+			return Napi::Number::New(env, 0);
 		}
 		return Napi::Number::New(env, SDL_RenderDrawLine(renderer, x1, y1, x2, y2));
 	}
@@ -349,6 +364,13 @@ namespace SDL
 		return env.Undefined();
 	}
 
+	Napi::Value clear_antialias(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		antialiasing = false;
+		return env.Undefined();
+	}
+
 	inline Napi::Value set_font(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
@@ -392,13 +414,13 @@ namespace SDL
 	Napi::Value draw_arc(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		const float precision = (float)0.1;
+		const float precision = (float)0.05f;
 		SDL_Renderer *renderer = GET_RENDERER;
 		int x = info[1].As<Napi::Number>().Int32Value();
 		int y = info[2].As<Napi::Number>().Int32Value();
 		int radius = info[3].As<Napi::Number>().Int32Value();
-		float angle1 = info[4].As<Napi::Number>().FloatValue();
-		float angle2 = info[5].As<Napi::Number>().FloatValue();
+		double angle1 = info[4].As<Napi::Number>().DoubleValue();
+		double angle2 = info[5].As<Napi::Number>().DoubleValue();
 		Position pos = from_angle(x, y, angle1, radius), temp;
 		while (angle1 < angle2)
 		{
@@ -406,7 +428,7 @@ namespace SDL
 			temp = from_angle(x, y, angle1, radius);
 			if (antialiasing)
 			{
-				SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+				AA::draw_line_aa(renderer, pos.x, pos.y, temp.x, temp.y);
 			}
 			else
 			{

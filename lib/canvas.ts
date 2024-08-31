@@ -19,6 +19,7 @@ export class Canvas {
 	protected _fonts: { fontName: string, file: string }[];
 	protected _textures: { textureID: string, file: string }[];
 	private _currentFrametime: number;
+	protected _antialias: boolean;
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -57,6 +58,7 @@ export class Canvas {
 			yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
 		}
 		flags = SDL_Window_Flags.SDL_WINDOW_SHOWN;
+		this._antialias = options.antiAliasing == true;
 		if (options.antiAliasing) {
 			setAntialias();
 		}
@@ -642,4 +644,23 @@ export class Canvas {
 	deactivateLayer(layerID: string) {
 		sdl2bind.deactivateLayer(layerID);
 	}
+
+	/**
+	 * Clear all layers, including the main layer
+	 * @since v1.3.2
+	 */
+	clearAll() {
+		sdl2bind.clearAll(this._renderer);
+	}
+
+	set antialiasing(set: boolean) {
+		this._antialias = set;
+		if (set) {
+			sdl2bind.setAntialias();
+			return;
+		}
+		sdl2bind.clearAntialias();
+	}
+
+	get antialiasing() { return this._antialias; }
 }

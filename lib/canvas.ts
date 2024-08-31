@@ -653,6 +653,10 @@ export class Canvas {
 		sdl2bind.clearAll(this._renderer);
 	}
 
+	/**
+	 * Enable or disable antialiasing
+	 * @since v1.3.2
+	 */
 	set antialiasing(set: boolean) {
 		this._antialias = set;
 		if (set) {
@@ -662,5 +666,10 @@ export class Canvas {
 		sdl2bind.clearAntialias();
 	}
 
+	/**
+	 * Get antialiasing flag
+	 * @returns {boolean}
+	 * @since v1.3.2
+	 */
 	get antialiasing() { return this._antialias; }
 }

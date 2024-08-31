@@ -32,7 +32,8 @@ You can specify other window options
 const canvas = new Canvas("title", 200, 400, 0, 0, {
 	mode: "fullscreen",
 	resizable: false,
-	scale: 2
+	scale: 2,
+	antiAliasing: true
 })
 ```
 
@@ -293,6 +294,24 @@ Activate a layer
 deactivateLayer(layerID: string): void
 ```
 Deactivate a layer
+
+### get Canvas.antialiasing
+```ts
+get antialiasing(): boolean
+```
+Get antialiasing flag
+
+### set Canvas.antialiasing
+```ts
+set antialiasing(): void
+```
+Set antialiasing flag
+
+### Canvas.clearAll
+```ts
+clearAll(): void
+```
+Clear all layers, including the main layer
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:

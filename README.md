@@ -206,7 +206,7 @@ Draw an arc
 
 ### Canvas.convertPolarCords
 ```ts
-convertPolarCoords(center: Position, angle: number, radius: number): Position
+static convertPolarCoords(center: Position, angle: number, radius: number): Position
 ```
 Convert polar coordinates into x, y coordinates
 

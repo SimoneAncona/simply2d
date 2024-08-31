@@ -4,6 +4,7 @@
 
 - **`[Added]`** activate / deactivate layers
 - **`[Changed]`** get width and height
+- **`[Changed]`** convert to polar coordinates static
 - **`[Fixed]`** layer bland mode
 
 ## 1.3.0

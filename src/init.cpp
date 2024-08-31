@@ -45,8 +45,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "changeCurrentLayer"), Napi::Function::New<SDLImage::set_current_layer>(env));
 	exports.Set(Napi::String::New(env, "focusOutCurrentLayer"), Napi::Function::New<SDLImage::clear_current_layer>(env));
 	exports.Set(Napi::String::New(env, "removeLayer"), Napi::Function::New<SDLImage::remove_layer>(env));
-	exports.Set(Napi::String::New(env, "getCurrentLayer"), Napi::Function::New<SDLImage::get_current_layer>(env));
 	exports.Set(Napi::String::New(env, "renderLayers"), Napi::Function::New<SDLImage::render_layers>(env));
+	exports.Set(Napi::String::New(env, "getLayers"), Napi::Function::New<SDLImage::get_layers>(env));
+	exports.Set(Napi::String::New(env, "activateLayer"), Napi::Function::New<SDLImage::activate_layer>(env));
+	exports.Set(Napi::String::New(env, "deactivateLayer"), Napi::Function::New<SDLImage::deactivate_layer>(env));
 	return exports;
 }
 

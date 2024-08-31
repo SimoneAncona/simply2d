@@ -17,6 +17,11 @@ export type Position = {
 	y: number,
 };
 
+export type Layer = {
+	id: string,
+	isActive: boolean
+}
+
 export type Key =
 	"A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" |
 	"Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "0" | "1" | "2" | "3" | "4" | "5" |

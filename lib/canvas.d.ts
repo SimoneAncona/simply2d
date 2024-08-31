@@ -40,7 +40,9 @@ export declare class Canvas {
     loadPNG(filename: string): void;
     loadJPG(filename: string): void;
     getWidth(): number;
+    get width(): number;
     getHeight(): number;
+    get height(): number;
     clear(): void;
     setBitPerPixel(bitPerPixel: PixelFormat): void;
     getBitPerPixel(): PixelFormat;
@@ -66,14 +68,17 @@ export declare class Canvas {
     drawText(text: string, fontName: string, size: number, color: RGBAColor, start: Position): void;
     loadFont(fontName: string, filePath: string): void;
     private _searchFont;
-    convertPolarCoords(center: Position, angle: number, radius: number): Position;
+    static convertPolarCoords(center: Position, angle: number, radius: number): Position;
     loadTexture(textureID: string, filePath: string): void;
     drawTexture(textureID: string, pos: Position): void;
     static getScreenResolution(): Resolution;
     getTextureResolution(textureID: string): Resolution;
-    addLayer(layerID: string, bitPerPixel: PixelFormat): void;
+    addLayer(layerID: string, bitPerPixel: PixelFormat, backgroundColor?: RGBAColor): void;
     changeLayer(layerID: string): void;
     useMainLayer(): void;
     removeLayer(layerID: string): void;
     drawPath(path: Path, pos?: Position, color?: RGBAColor): void;
+    getLayers(): any;
+    activateLayer(layerID: string): void;
+    deactivateLayer(layerID: string): void;
 }

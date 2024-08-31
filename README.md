@@ -78,15 +78,15 @@ drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fi
 ```
 Draw a rectangle in the canvas
 
-### Canvas.getWidth
+### get Canvas.width
 ```ts
-getWidth(): void
+get width(): number
 ```
 Return the window width
 
-### Canvas.getHeight
+### get Canvas.height
 ```ts
-getHeight(): void
+get height(): number
 ```
 Return the window height
 
@@ -275,6 +275,24 @@ Get current frame time, only if the scene is rendered with loop
 get fps(): number
 ```
 Get current frame time, only if the scene is rendered with loop
+
+### Canvas.getLayers
+```ts
+getLayers(): Layer[]
+```
+Get layers in order of appearance
+
+### Canvas.activateLayer
+```ts
+activateLayer(layerID: string): void
+```
+Activate a layer
+
+### Canvas.deactivateLayer
+```ts
+deactivateLayer(layerID: string): void
+```
+Deactivate a layer
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:

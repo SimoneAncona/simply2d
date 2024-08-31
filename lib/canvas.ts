@@ -1,7 +1,8 @@
 import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
-import { CanvasOptions, Key, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import { Path } from "./path.js";
+import { Colors } from "./colors.js";
 import fs from "fs";
 
 export class Canvas {
@@ -155,7 +156,8 @@ export class Canvas {
 	 * @param {number} width the width 
 	 * @param {number} height the height
 	 * @param {boolean} fill fill the rectangle
-	 * @since v0.1.10 (last update in v1.0.6)
+	 * @since v0.1.10 
+	 * @updated with v1.0.6
 	 * 
 	 */
 	drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill: boolean = false) {
@@ -206,15 +208,31 @@ export class Canvas {
 	 * Return the width of the window 
 	 * @returns {number} the width of the window
 	 * @since v0.1.0
+	 * @deprecated
 	 */
 	getWidth(): number { return this._width };
+
+	/**
+	 * Return the width of the window 
+	 * @returns {number} the width of the window
+	 * @since v1.3.1
+	 */
+	get width(): number { return this._width };
 
 	/**
 	 * Return the height of the window 
 	 * @returns {number} the height of the window
 	 * @since v0.1.0
+	 * @deprecated
 	 */
 	getHeight(): number { return this._height };
+
+	/**
+	 * Return the height of the window 
+	 * @returns {number} the height of the window
+	 * @since v1.3.1
+	 */
+	get height(): number { return this._height };
 
 	/**
 	 * Clear the canvas
@@ -372,9 +390,11 @@ export class Canvas {
 	}
 
 	/**
-	 * Start the rendering loop
+	 * Start the rendering loop  
+	 * Notice that at the end of every loop, the layer is set to the main layer
 	 * @param callback a repeated drawing process
 	 * @since v1.0.8
+	 * @updated with v1.3.1
 	 */
 	async loop(callback: () => void) {
 		this._loop = true;
@@ -383,6 +403,7 @@ export class Canvas {
 			setRenderingSequence();
 			refresh(this._renderer);
 			callback();
+			this.useMainLayer();
 			renderPresent(this._renderer);
 			this._currentFrametime = new Date().getTime() - loopStartTime;
 		}
@@ -477,8 +498,9 @@ export class Canvas {
 	 * @param {number} radius 
 	 * @returns {Position} converted coordinates
 	 * @since v1.2.1
+	 * @updated with v1.3.1
 	 */
-	convertPolarCoords(center: Position, angle: number, radius: number): Position {
+	static convertPolarCoords(center: Position, angle: number, radius: number): Position {
 		return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
 	}
 
@@ -486,7 +508,8 @@ export class Canvas {
 	 * Load a texture from a file
 	 * @param {string} textureID 
 	 * @param {string} filePath 
-	 * @since v1.2.1 (last update in v1.3)
+	 * @since v1.2.1 
+	 * @updated with v1.2.2
 	 */
 	loadTexture(textureID: string, filePath: string): void {
 		sdl2bind.loadTextureBuffer(this._renderer, textureID, filePath);
@@ -496,7 +519,8 @@ export class Canvas {
 	 * Draw a texture on the screen
 	 * @param {string} textureID 
 	 * @param {Position} pos top left corner of the box 
-	 * @since v1.2.1 (last update in v1.3)
+	 * @since v1.2.1 
+	 * @updated with v1.2.2
 	 */
 	drawTexture(textureID: string, pos: Position): void {
 		setTexture(this._renderer, pos.x, pos.y, textureID);
@@ -515,7 +539,8 @@ export class Canvas {
 	/**
 	 * Get the texture resolution
 	 * @param {string} textureID the texture ID
-	 * @since v1.2.1 (last update in v1.3)
+	 * @since v1.2.1 
+	 * @updated with v1.2.2
 	 */
 	getTextureResolution(textureID: string): Resolution {
 		return sdl2bind.getTextureRes(this._renderer, textureID) as Resolution;
@@ -525,8 +550,9 @@ export class Canvas {
 	 * Add a new layer to the scene
 	 * @param {string} layerID ID of the layer
 	 * @since v1.3.0
+	 * @updated with v1.3.1
 	 */
-	addLayer(layerID: string, bitPerPixel: PixelFormat): void {
+	addLayer(layerID: string, bitPerPixel: PixelFormat, backgroundColor: RGBAColor = Colors.BLACK): void {
 		let format;
 		switch (bitPerPixel) {
 			case 8:
@@ -543,6 +569,9 @@ export class Canvas {
 				break;
 		}
 		sdl2bind.addLayer(this._renderer, layerID, format, this._width, this._height);
+		this.changeLayer(layerID);
+		this.setBackgroundColor(backgroundColor);
+		this.useMainLayer();
 	}
 
 	/**
@@ -583,5 +612,34 @@ export class Canvas {
 		for (let i = 0; i < p.length - 1; i++) {
 			this.drawLine(color === undefined ? p[i + 1].color : color, {x: p[i].pos.x + pos.x, y: p[i].pos.y + pos.y}, {x: p[i + 1].pos.x + pos.x, y: p[i + 1].pos.y + pos.y});
 		}
+	}
+
+	/**
+	 * Get all the layers
+	 * @returns {Layer[]} All layers
+	 * @since v1.3.1
+	 */
+	getLayers(): Layer[] {
+		return sdl2bind.getLayers();
+	}
+
+	/**
+	 * Activate a layer  
+	 * When a layer is active, it will be rendered
+	 * @param {string} layerID 
+	 * @since v1.3.1
+	 */
+	activateLayer(layerID: string) {
+		sdl2bind.activateLayer(layerID);
+	}
+
+	/**
+	 * Deactivate a layer  
+	 * When a layer is inactive, it will not be rendered
+	 * @param {string} layerID 
+	 * @since v1.3.1
+	 */
+	deactivateLayer(layerID: string) {
+		sdl2bind.deactivateLayer(layerID);
 	}
 }

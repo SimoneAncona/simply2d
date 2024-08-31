@@ -20,12 +20,6 @@ detach(): void
 ```
 Detach the array
 
-### Canvas.getLayers
-```ts
-getLayers(): Layer[]
-```
-Get layers in order of appearance
-
 ### Canvas.moveLayer
 ```ts
 moveLayer(layerId: string, direction: "top" | "bottom", steps: number): void

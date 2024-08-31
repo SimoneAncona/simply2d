@@ -9,8 +9,14 @@
 
 namespace SDLImage
 {
+	struct Layer
+	{
+		SDL_Texture *texture;
+		bool is_active;
+	};
+
 	std::map<std::string, SDL_Texture *> textures;
-	std::map<std::string, SDL_Texture *> layers;
+	std::map<std::string, Layer> layers;
 	std::string current_layer;
 
 	Napi::Value init(const Napi::CallbackInfo &info)
@@ -102,8 +108,9 @@ namespace SDLImage
 		int w = info[3].As<Napi::Number>().Int32Value();
 		int h = info[4].As<Napi::Number>().Int32Value();
 		SDL_Texture *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
+		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
-		layers.insert_or_assign(layer_id, texture);
+		layers.insert_or_assign(layer_id, Layer{ texture, true });
 		return env.Undefined();
 	}
 
@@ -118,16 +125,8 @@ namespace SDLImage
 		{
 			return env.Undefined();
 		}
-		SDL_SetRenderTarget(renderer, layers.at(current_layer));
+		SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
 		return env.Undefined();
-	}
-
-	Napi::Value get_current_layer(const Napi::CallbackInfo &info)
-	{
-		Napi::Env env = info.Env();
-		if (current_layer == "")
-			return env.Null();
-		return Napi::ArrayBuffer::New(env, layers.at(current_layer), sizeof(SDL_Texture *));
 	}
 
 	Napi::Value clear_current_layer(const Napi::CallbackInfo &info)
@@ -145,10 +144,12 @@ namespace SDLImage
 		SDL_Renderer *renderer = GET_RENDERER;
 		for (auto layer : layers)
 		{
-			SDL_SetRenderTarget(renderer, NULL);
-			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderCopy(renderer, layer.second, NULL, NULL);
-			SDL_SetRenderTarget(renderer, layers.at(current_layer));
+			if (layer.second.is_active)
+			{
+				SDL_SetRenderTarget(renderer, NULL);
+				SDL_RenderCopy(renderer, layer.second.texture, NULL, NULL);
+				if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
+			}
 
 		}
 		return env.Undefined();
@@ -158,7 +159,7 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		std::string id = info[0].As<Napi::String>().Utf8Value();
-		SDL_DestroyTexture(layers.at(id));
+		SDL_DestroyTexture(layers.at(id).texture);
 		layers.erase(id);
 		if (id == current_layer)
 			current_layer = "";
@@ -184,6 +185,38 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		IMG_Quit();
+		return env.Undefined();
+	}
+
+	Napi::Value get_layers(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		Napi::Array napi_layers = Napi::Array::New(env);
+		size_t i = 0;
+		for (auto layer : layers) 
+		{
+			auto object = Napi::Object::New(env);
+			object.Set(Napi::String::New(env, "id"), Napi::String::New(env, layer.first));
+			object.Set(Napi::String::New(env, "isActive"), Napi::Boolean::New(env, layer.second.is_active));
+			napi_layers.Set(i, object);
+			i++;
+		}
+		return napi_layers;
+	}
+
+	Napi::Value activate_layer(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		auto layer = info[0].As<Napi::String>().Utf8Value();
+		layers.at(layer).is_active = true;
+		return env.Undefined();
+	}
+
+	Napi::Value deactivate_layer(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		auto layer = info[0].As<Napi::String>().Utf8Value();
+		layers.at(layer).is_active = false;
 		return env.Undefined();
 	}
 }

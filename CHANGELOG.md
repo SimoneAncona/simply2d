@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.2
+
+- **`[Added]`** antialiasing
+- **`[Fixed]`** DPI scale for Windows
+
 ## 1.3.1
 
 - **`[Added]`** activate / deactivate layers

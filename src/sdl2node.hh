@@ -7,6 +7,10 @@
 #include "common.hh"
 #include "antialiasing.hh"
 
+#ifdef _WIN32
+	#include <windows.h>
+#endif
+
 namespace SDL
 {
 	struct Position
@@ -86,6 +90,10 @@ namespace SDL
 
 	inline Napi::Value init(const Napi::CallbackInfo &info)
 	{
+		#ifdef _WIN32
+			SetProcessDPIAware();
+		#endif
+		
 		Napi::Env env = info.Env();
 		Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
 		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
@@ -101,6 +109,7 @@ namespace SDL
 
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 	}
 
 	inline Napi::Value get_error(const Napi::CallbackInfo &info)

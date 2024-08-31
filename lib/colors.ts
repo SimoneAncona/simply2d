@@ -39,7 +39,7 @@ export class Colors {
 	}
 
 	static from16bit(color: number) {
-		if (color < 0 || color >= 65536) throw "Color must be between 0 and 65536";
+		if (color < 0 || color >= 65536) throw "Color must be between 0 and 65535";
 		return {
 			red: (color >> 11) * 8,
 			green: ((color & 0b0000011111100000) >> 5) * 4,
@@ -49,7 +49,7 @@ export class Colors {
 	}
 
 	static from24bit(color: number) {
-		if (color < 0 || color >= 2 ** 24) throw "Color must be between 0 and 2^24";
+		if (color < 0 || color >= 2 ** 24) throw "Color must be between 0 and 2^24 - 1";
 		return {
 			red: (color >> 16),
 			green: ((color & 0x00FF00) >> 8),
@@ -59,7 +59,7 @@ export class Colors {
 	}
 
 	static from32bit(color: number) {
-		if (color < 0 || color >= 2 ** 32) throw "Color must be between 0 and 2^32";
+		if (color < 0 || color >= 2 ** 32) throw "Color must be between 0 and 2^32 - 1";
 		return {
 			red: (color >> 24),
 			green: ((color & 0x00FF0000) >> 16),

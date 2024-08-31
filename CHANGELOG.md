@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1
+
+- **`[Added]`** activate / deactivate layers
+- **`[Changed]`** get width and height
+- **`[Fixed]`** layer bland mode
+
 ## 1.3.0
 
 - **`[Added]`** layers

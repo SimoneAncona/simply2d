@@ -100,7 +100,7 @@ namespace SDL
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	}
 
 	inline Napi::Value get_error(const Napi::CallbackInfo &info)
@@ -119,7 +119,7 @@ namespace SDL
 		int h = info[4].As<Napi::Number>().Int64Value();
 		Uint32 flags = info[5].As<Napi::Number>().Uint32Value();
 
-		SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+		SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags | SDL_WINDOW_ALLOW_HIGHDPI);
 		if (window == NULL)
 			return env.Undefined();
 		return Napi::ArrayBuffer::New(env, window, sizeof(window));
@@ -133,6 +133,9 @@ namespace SDL
 		Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 		TTF_Init();
 		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		int w, h;
+		SDL_GetWindowSize(window, &w, &h);
+		SDL_RenderSetLogicalSize(renderer, w, h);
 		if (renderer == NULL)
 			return env.Undefined();
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -421,19 +424,17 @@ namespace SDL
 		int radius = info[3].As<Napi::Number>().Int32Value();
 		double angle1 = info[4].As<Napi::Number>().DoubleValue();
 		double angle2 = info[5].As<Napi::Number>().DoubleValue();
+		if (antialiasing)
+		{
+			AA::draw_arc_aa(renderer, x, y, radius, angle1, angle2);
+			return env.Undefined();
+		}
 		Position pos = from_angle(x, y, angle1, radius), temp;
 		while (angle1 < angle2)
 		{
 			angle1 += precision;
 			temp = from_angle(x, y, angle1, radius);
-			if (antialiasing)
-			{
-				AA::draw_line_aa(renderer, pos.x, pos.y, temp.x, temp.y);
-			}
-			else
-			{
-				SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
-			}
+			SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
 			pos = temp;
 		}
 		return env.Undefined();

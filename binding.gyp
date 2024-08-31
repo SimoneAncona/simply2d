@@ -7,10 +7,12 @@
             ],
             'cflags!': ['-fno-exceptions'],
             'cflags_cc!': ['-fno-exceptions'],
+            'cflags_cc': ['-std=c++17'],
             'xcode_settings': {
                 'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
                 'CLANG_CXX_LIBRARY': 'libc++',
-                'MACOSX_DEPLOYMENT_TARGET': '10.7'
+                'MACOSX_DEPLOYMENT_TARGET': '10.7',
+                'OTHER_FLAGS': ['-std=c++17', '-stdlib=libc++']
             },
             'msvs_settings': {
                 'VCCLCompilerTool': {'ExceptionHandling': 1},

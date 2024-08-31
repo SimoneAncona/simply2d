@@ -34,7 +34,6 @@
   "dependencies": {
     "node-addon-api": "^6.1.0",
     "node-gyp": "^9.3.1",
-    "simply2d": "file:",
     "typescript": "^5.0.4"
   },
   "devDependencies": {

@@ -2,16 +2,19 @@ import fs from 'fs';
 
 const SDL_paths = [
     "/lib/x86_64-linux-gnu/libSDL2-2.0.so",
+    "/lib/x86_64-linux-gnu/libSDL2-2.0.so.0",
     "/lib64/libSDL2-2.0.so.0"
 ];
 
 const SDL_imagePaths = [
+    "/lib/x86_64-linux-gnu/libSDL2_image-2.0.so",
     "/lib/x86_64-linux-gnu/libSDL2_image-2.0.so.0",
     "/lib64/libSDL2_image-2.0.so.0"
 ];
 
 const SDL_ttfPaths = [
     "/lib/x86_64-linux-gnu/libSDL2_ttf-2.0.so",
+    "/lib/x86_64-linux-gnu/libSDL2_ttf-2.0.so.0",
     "/lib64/libSDL2_ttf-2.0.so.0"
 ]
 

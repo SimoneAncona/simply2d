@@ -12,6 +12,11 @@ namespace AA
         return f - ((int)f + 1);
     }
 
+    struct Position
+	{
+		int x, y;
+	};
+
     void draw_line_aa(SDL_Renderer *renderer, int x0, int y0, int x1, int y1)
     {
         bool steep = abs(y1 - y0) > abs(x1 - x0);
@@ -65,5 +70,125 @@ namespace AA
                 intersectY += gradient;
             }
         }
-    }   
+    }
+
+    inline Position from_angle(int center_x, int center_y, float angle, int radius)
+	{
+		float sin = static_cast<float>(std::sin(angle));
+		float cos = static_cast<float>(std::cos(angle));
+		return Position{static_cast<int>(center_x + cos * radius), static_cast<int>(center_y + sin * radius)};
+	}
+
+    void draw_arc_aa(SDL_Renderer *renderer, int x, int y, int radius, double angle1, double angle2) 
+    {
+		const float precision = (float)0.1f;
+		Position pos = from_angle(x, y, angle1, radius), temp;
+        double angle_temp = angle1;
+		while (angle_temp < angle2)
+		{
+			angle_temp += precision;
+			temp = from_angle(x, y, angle_temp, radius);
+            Uint8 r, g, b, a;
+            SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+            SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+			SDL_RenderDrawLine(renderer, pos.x, pos.y, temp.x, temp.y);
+			pos = temp;
+		}
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 40);
+                SDL_RenderDrawLine(renderer, pos.x + i, pos.y, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 40);
+                SDL_RenderDrawLine(renderer, pos.x, pos.y + i, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius + 1), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius + 1);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 30);
+                SDL_RenderDrawLine(renderer, pos.x + i, pos.y, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius + 1), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius + 1);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 30);
+                SDL_RenderDrawLine(renderer, pos.x, pos.y + i, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius - 1), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius - 1);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 10);
+                SDL_RenderDrawLine(renderer, pos.x + i, pos.y, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+
+        for (int i = -1; i < 1; i++)
+        {
+            angle_temp = angle1;
+            Position pos = from_angle(x, y, angle1, radius - 1), temp;
+            while (angle_temp < angle2)
+            {
+                angle_temp += precision;
+                temp = from_angle(x, y, angle_temp, radius - 1);
+                Uint8 r, g, b, a;
+                SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
+                SDL_SetRenderDrawColor(renderer, r, g, b, 10);
+                SDL_RenderDrawLine(renderer, pos.x, pos.y + i, temp.x, temp.y);
+                pos = temp;
+            }
+        }
+    }
 }

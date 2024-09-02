@@ -12,7 +12,9 @@ Visual Studio is required
 ### For Linux
 To use Simply2D you must have installed SDL2. To install it you can use the following command:
 - For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0`
-- For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`
+- For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`  
+
+Make and g++ are required.
 
 > If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
 

@@ -179,6 +179,9 @@ export class Canvas {
 	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
 	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v0.1.9
+	 * 
+	 * Consider using attach function if you want to 
+	 * load raw data in a loop
 	 */
 	loadRawData(pixels: Uint8Array, bitPerPixel: PixelFormat = this._currentBitPerPixel) {
 		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;

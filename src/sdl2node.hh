@@ -297,6 +297,15 @@ namespace SDL
 		return env.Undefined();
 	}
 
+	Napi::Value delete_texture(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_DestroyTexture(texture);
+		handle_events(env);
+		return env.Undefined();
+	}
+
 	Napi::Value read_render(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();

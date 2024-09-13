@@ -8,6 +8,7 @@ export declare function getWindow(title: string, xPos: number, yPos: number, wid
 export declare function getRenderer(window: ArrayBuffer, index: number, flag: number): any;
 export declare function showWindow(window: ArrayBuffer): Promise<void>;
 export declare function hideWindow(window: ArrayBuffer): Promise<void>;
+export declare function render(renderer: ArrayBuffer): void;
 export declare function clearWithColor(renderer: ArrayBuffer, r: number, g: number, b: number, alpha: number): Promise<void>;
 export declare function delay(ms: number): Promise<void>;
 export declare function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number): Promise<void>;

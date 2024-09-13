@@ -46,7 +46,7 @@ export async function hideWindow(window: ArrayBuffer) {
 	sdl2bind.hideWindow(window);
 }
 
-function render(renderer: ArrayBuffer) {
+export function render(renderer: ArrayBuffer) {
 	if (renderingSequence)
 		return;
 	sdl2bind.renderLayers(renderer);
@@ -128,6 +128,8 @@ export async function setRawData(renderer: ArrayBuffer, buffer: Uint8Array, bitP
 	if (sdl2bind.renderCopy(renderer, texture, sdl.NULL, sdl.NULL) !== 0) {
 		throw "Cannot load the texture into the renderer";
 	};
+
+	sdl2bind.deleteTexture(texture);
 	render(renderer);
 }
 

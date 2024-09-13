@@ -19,6 +19,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "drawRectangle"), Napi::Function::New<SDL::draw_rectangle>(env));
 	exports.Set(Napi::String::New(env, "createTexture"), Napi::Function::New<SDL::create_texture>(env));
 	exports.Set(Napi::String::New(env, "writeTexture"), Napi::Function::New<SDL::write_texture>(env));
+	exports.Set(Napi::String::New(env, "deleteTexture"), Napi::Function::New<SDL::delete_texture>(env));
 	exports.Set(Napi::String::New(env, "readData"), Napi::Function::New<SDL::read_render>(env));
 	exports.Set(Napi::String::New(env, "setScale"), Napi::Function::New<SDL::set_scale>(env));
 	exports.Set(Napi::String::New(env, "onClick"), Napi::Function::New<SDL::on_click>(env));
@@ -51,6 +52,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "activateLayer"), Napi::Function::New<SDLImage::activate_layer>(env));
 	exports.Set(Napi::String::New(env, "deactivateLayer"), Napi::Function::New<SDLImage::deactivate_layer>(env));
 	exports.Set(Napi::String::New(env, "clearAll"), Napi::Function::New<SDLImage::clear_all>(env));
+	exports.Set(Napi::String::New(env, "moveLayer"), Napi::Function::New<SDLImage::move_layer>(env));
 	return exports;
 }
 

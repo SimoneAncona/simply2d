@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.3
+
+- **`[Fixed]`** optimizations for path drawing
+- **`[Fixed]`** memory leak
+- **`[Added]`** move layer
+- **`[Changed]`** get layers returns the layer in order of appearance
+
 ## 1.3.2
 
 - **`[Added]`** antialiasing

@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import { Path } from "./path.js";
@@ -304,6 +304,7 @@ export class Canvas {
 	 * @since v.1.0.5
 	 */
 	private _scaleRawData(rawData: Uint8Array) {
+		if (this._scale === 1) return rawData;
 		let newRawData = new Uint8Array(rawData.length * this._scale ** 2);
 		for (let i = 0; i < rawData.length; i++) {
 			let indexes = this._getScaledIndexes(i);
@@ -608,21 +609,25 @@ export class Canvas {
 	 * @param {Position} pos
 	 * @param {RGBAColor} color
  	 * @since v1.2.2
+	 * @updated with v1.3.3
 	 */
 	drawPath(path: Path, pos: Position = {x: 0, y: 0}, color?: RGBAColor) {
 		const p = path._getPath();
 		for (let i = 0; i < p.length - 1; i++) {
-			this.drawLine(color === undefined ? p[i + 1].color : color, {x: p[i].pos.x + pos.x, y: p[i].pos.y + pos.y}, {x: p[i + 1].pos.x + pos.x, y: p[i + 1].pos.y + pos.y});
+			let currentColor = color === undefined ? p[i + 1].color : color;
+			sdl2bind.setDrawColor(this._renderer, currentColor.red, currentColor.green, currentColor.blue, currentColor.alpha);
+			sdl2bind.drawLine(this._renderer, p[i].pos.x + pos.x, p[i].pos.y + pos.y, p[i + 1].pos.x + pos.x, p[i + 1].pos.y + pos.y);
 		}
+		render(this._renderer);
 	}
 
 	/**
-	 * Get all the layers
+	 * Get all the layers in order of drawing priority
 	 * @returns {Layer[]} All layers
 	 * @since v1.3.1
 	 */
 	getLayers(): Layer[] {
-		return sdl2bind.getLayers();
+		return (sdl2bind.getLayers() as Layer[]).reverse();
 	}
 
 	/**
@@ -671,5 +676,15 @@ export class Canvas {
 	 * @returns {boolean}
 	 * @since v1.3.2
 	 */
-	get antialiasing() { return this._antialias; }
+	get antialiasing(): boolean { return this._antialias; }
+
+	/**
+	 * Move the order of the layers changing the drawing priority
+	 * @param {string} layerID the layer
+	 * @param {"up" | "down"} direction the direction
+	 * @param {number} steps how many steps
+	 */
+	moveLayer(layerID: string, direction: "up" | "down", steps: number = 1): void {
+		sdl2bind.moveLayer(layerID, direction === "up", steps);
+	}
 }

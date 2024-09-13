@@ -16,8 +16,8 @@ const gravity = 1;
 canvas.onKeysDown((keys) => {
     if (keys.includes("Up")) {
         if (playerCurrentPos.y === height - playerSize) {
-            playerVerticalSpeed = 10;
             playerCurrentPos.y -= 1;
+            playerVerticalSpeed = 10;
         }
     }
     if (keys.includes("Left")) {

@@ -85,4 +85,5 @@ export declare class Canvas {
     clearAll(): void;
     set antialiasing(set: boolean);
     get antialiasing(): boolean;
+    moveLayer(layerID: string, direction: "up" | "down", steps?: number): void;
 }

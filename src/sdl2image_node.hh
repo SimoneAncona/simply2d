@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <map>
 #include <string>
+#include <vector>
 #include "common.hh"
 #ifdef _DEBUG
 	#include <iostream>
@@ -17,6 +18,7 @@ namespace SDLImage
 
 	std::map<std::string, SDL_Texture *> textures;
 	std::map<std::string, Layer> layers;
+	std::vector<std::string> layers_order;
 	std::string current_layer;
 
 	Napi::Value init(const Napi::CallbackInfo &info)
@@ -111,6 +113,7 @@ namespace SDLImage
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
 		layers.insert_or_assign(layer_id, Layer{ texture, true });
+		layers_order.push_back(layer_id);
 		return env.Undefined();
 	}
 
@@ -143,12 +146,13 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
-		for (auto layer : layers)
+		for (auto layer_id : layers_order)
 		{
-			if (layer.second.is_active)
+			auto layer = layers.at(layer_id);
+			if (layer.is_active)
 			{
 				SDL_SetRenderTarget(renderer, NULL);
-				SDL_RenderCopy(renderer, layer.second.texture, NULL, NULL);
+				SDL_RenderCopy(renderer, layer.texture, NULL, NULL);
 				if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
 			}
 
@@ -162,6 +166,9 @@ namespace SDLImage
 		std::string id = info[0].As<Napi::String>().Utf8Value();
 		SDL_DestroyTexture(layers.at(id).texture);
 		layers.erase(id);
+		auto el = std::find(layers_order.begin(), layers_order.end(), id);
+		if (el != layers_order.end())
+			layers_order.erase(el);
 		if (id == current_layer)
 			current_layer = "";
 		return env.Undefined();
@@ -194,11 +201,11 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		Napi::Array napi_layers = Napi::Array::New(env);
 		size_t i = 0;
-		for (auto layer : layers) 
+		for (auto layer : layers_order) 
 		{
 			auto object = Napi::Object::New(env);
-			object.Set(Napi::String::New(env, "id"), Napi::String::New(env, layer.first));
-			object.Set(Napi::String::New(env, "isActive"), Napi::Boolean::New(env, layer.second.is_active));
+			object.Set(Napi::String::New(env, "id"), Napi::String::New(env, layer));
+			object.Set(Napi::String::New(env, "isActive"), Napi::Boolean::New(env, layers.at(layer).is_active));
 			napi_layers.Set(i, object);
 			i++;
 		}
@@ -232,6 +239,32 @@ namespace SDLImage
 			SDL_RenderClear(renderer);
 		}
 		if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
+		return env.Undefined();
+	}
+
+	Napi::Value move_layer(const Napi::CallbackInfo& info)
+	{
+		Napi::Env env = info.Env();
+		std::string layer_id = info[0].As<Napi::String>().Utf8Value();
+		bool move_up = info[1].As<Napi::Boolean>().Value();
+		int steps = info[2].As<Napi::Number>().Int32Value();
+		auto el = std::find(layers_order.begin(), layers_order.end(), layer_id);
+		
+		if (el == layers_order.end()) return env.Undefined();
+
+		auto new_pos = el;
+
+		if (move_up)
+			new_pos += steps;
+		else
+			new_pos -= steps;
+		
+		if (new_pos >= layers_order.end())
+			new_pos = layers_order.end() - 1;
+		else if (new_pos <= layers_order.begin())
+			new_pos = layers_order.begin();
+		
+		std::swap(*el, *new_pos);
 		return env.Undefined();
 	}
 }

@@ -20,6 +20,7 @@ export class Canvas {
 	protected _textures: { textureID: string, file: string }[];
 	private _currentFrametime: number;
 	protected _antialias: boolean;
+	protected _attached: boolean;
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -180,7 +181,7 @@ export class Canvas {
 	 * @since v0.1.9
 	 */
 	loadRawData(pixels: Uint8Array, bitPerPixel: PixelFormat = this._currentBitPerPixel) {
-		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw "The buffer must be the same size as the canvas resolution";
+		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this._currentBitPerPixel = bitPerPixel;
 		pixels = this._scaleRawData(pixels);
@@ -308,7 +309,6 @@ export class Canvas {
 		let newRawData = new Uint8Array(rawData.length * this._scale ** 2);
 		for (let i = 0; i < rawData.length; i++) {
 			let indexes = this._getScaledIndexes(i);
-			console.log
 			for (let index of indexes) {
 				newRawData[index] = rawData[i];
 			}
@@ -400,6 +400,7 @@ export class Canvas {
 	 * @updated with v1.3.1
 	 */
 	async loop(callback: () => void) {
+		if (this._attached) throw "Video buffer is attached, use detach to free the video buffer";
 		this._loop = true;
 		while (this._loop) {
 			let loopStartTime = new Date().getTime();
@@ -686,5 +687,46 @@ export class Canvas {
 	 */
 	moveLayer(layerID: string, direction: "up" | "down", steps: number = 1): void {
 		sdl2bind.moveLayer(layerID, direction === "up", steps);
+	}
+
+	/**
+	 * Attach a buffer to the video memory
+	 * @param {Uint8Array} buffer the buffer
+	 * @param {PixelFormat} bitPerPixel pixel format
+	 * @since v1.3.3
+	 */
+	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
+		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
+		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
+		this._loop = false;
+		this._attached = true;
+		let format;
+		switch (bitPerPixel) {
+			case 8:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB332;
+				break;
+			case 16:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
+				break;
+			case 24:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				break;
+			case 32:
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
+				break;
+		}
+		sdl2bind.attach(this._renderer, buffer, format, this._width, this._height);
+		setInterval(() => {
+			sdl2bind.update(this._renderer);
+		})
+	}
+
+	/**
+	 * Detach the current attached buffer
+	 * @since v1.3.3
+	 */
+	detach() {
+		sdl2bind.detach();
+		this._attached = false;
 	}
 }

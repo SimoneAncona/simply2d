@@ -4,7 +4,10 @@
 
 - **`[Fixed]`** optimizations for path drawing
 - **`[Fixed]`** memory leak
+- **`[Fixed]`** fixed a problem with RGB888 format
 - **`[Added]`** move layer
+- **`[Added]`** attach buffer to video memory
+- **`[Added]`** PixelFormats class
 - **`[Changed]`** get layers returns the layer in order of appearance
 
 ## 1.3.2

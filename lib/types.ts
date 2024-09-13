@@ -15,7 +15,14 @@ export type RGBAColor = {
 export type Position = {
 	x: number,
 	y: number,
-};
+}
+
+export class PixelFormats {
+	static get rgb332() { return 8 as PixelFormat; }
+	static get rgb565() { return 16 as PixelFormat; }
+	static get rgb888() { return 24 as PixelFormat; }
+	static get rgba8888() { return 32 as PixelFormat; }
+}
 
 export type Layer = {
 	id: string,

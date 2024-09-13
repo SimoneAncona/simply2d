@@ -14,6 +14,12 @@ export type Position = {
     x: number;
     y: number;
 };
+export declare class PixelFormats {
+    static get rgb332(): PixelFormat;
+    static get rgb565(): PixelFormat;
+    static get rgb888(): PixelFormat;
+    static get rgba8888(): PixelFormat;
+}
 export type Layer = {
     id: string;
     isActive: boolean;

@@ -315,6 +315,18 @@ clearAll(): void
 ```
 Clear all layers, including the main layer
 
+### Canvas.attach
+```ts
+attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void
+```
+Attach a buffer to the video memory. The loop and every other drawing functions are disabled
+
+### Canvas.detach
+```ts
+detach(): void
+```
+Detach the current buffer from the video memory
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts
@@ -407,4 +419,14 @@ const p = new Path();
 p.setStart({ x: 10, y: 15 });
 p.pushLine({ x: 20, y: 60 });
 p.close();
+```
+
+### PixelFormats
+Static class that stores all the available pixel formats
+
+```ts
+PixelFormats.rgb332;
+PixelFormats.rgb565;
+PixelFormats.rgb888;
+PixelFormats.rgba8888;
 ```

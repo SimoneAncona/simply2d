@@ -34,6 +34,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "drawText"), Napi::Function::New<SDL::draw_text>(env));
 	exports.Set(Napi::String::New(env, "drawArc"), Napi::Function::New<SDL::draw_arc>(env));
 	exports.Set(Napi::String::New(env, "getScreenRes"), Napi::Function::New<SDL::get_screen_resolution>(env));
+	exports.Set(Napi::String::New(env, "update"), Napi::Function::New<SDL::update>(env));
+	exports.Set(Napi::String::New(env, "attach"), Napi::Function::New<SDL::attach>(env));
+	exports.Set(Napi::String::New(env, "detach"), Napi::Function::New<SDL::detach>(env));
 
 	exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
 	exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));

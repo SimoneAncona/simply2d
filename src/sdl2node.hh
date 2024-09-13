@@ -23,6 +23,8 @@ namespace SDL
 	Napi::FunctionReference on_keyup_callback_ref;
 	Napi::FunctionReference on_keysdown_callback_ref;
 	Napi::FunctionReference on_keysup_callback_ref;
+	Napi::Uint8Array video_buffer;
+	SDL_Texture* attached_texture;
 	TTF_Font *current_font;
 	bool antialiasing = false;
 
@@ -79,6 +81,57 @@ namespace SDL
 		default:
 			break;
 		}
+	}
+
+	Napi::Value update(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		if (attached_texture == nullptr) return env.Undefined();
+		SDL_Renderer *renderer = GET_RENDERER;
+		uint8_t *raw_pixels = video_buffer.Data();
+		uint8_t *texture_data;
+		int pitch;
+		if (SDL_LockTexture(attached_texture, NULL, (void **)&texture_data, &pitch) != 0)
+		{
+			throw Napi::Error::New(env, std::string("Unable to lock texture: ") + SDL_GetError());
+		}
+		
+		for (size_t i = 0; i < video_buffer.ElementLength(); i++)
+		{
+			texture_data[i] = raw_pixels[i];
+		}
+
+		SDL_UnlockTexture(attached_texture);
+		SDL_RenderCopy(renderer, attached_texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+		handle_events(env);
+		return env.Undefined();
+	}
+
+	Napi::Value attach(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		if (attached_texture != nullptr) return env.Undefined();
+		SDL_Renderer *renderer = GET_RENDERER;
+		video_buffer = info[1].As<Napi::Uint8Array>();
+		Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
+		int width = info[3].As<Napi::Number>().Int32Value();
+		int height = info[4].As<Napi::Number>().Int32Value();
+		attached_texture = SDL_CreateTexture(renderer, flags, SDL_TEXTUREACCESS_STREAMING, width, height);
+		auto pixels = video_buffer.Data();
+		if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width) != 0)
+		{
+			throw Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError());
+		}
+		return env.Undefined();
+	}
+
+	Napi::Value detach(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_DestroyTexture(attached_texture);
+		attached_texture = nullptr;
+		return env.Undefined();
 	}
 
 	inline Position from_angle(int center_x, int center_y, float angle, int radius)

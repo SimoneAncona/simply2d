@@ -20,6 +20,7 @@ export declare class Canvas {
     }[];
     private _currentFrametime;
     protected _antialias: boolean;
+    protected _attached: boolean;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -86,4 +87,6 @@ export declare class Canvas {
     set antialiasing(set: boolean);
     get antialiasing(): boolean;
     moveLayer(layerID: string, direction: "up" | "down", steps?: number): void;
+    attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void;
+    detach(): void;
 }

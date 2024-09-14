@@ -315,6 +315,12 @@ clearAll(): void
 ```
 Clear all layers, including the main layer
 
+### Canvas.moveLayer
+```ts
+moveLayer(layerID: string, direction: "up" | "down", steps: number = 1): void
+```
+Change layer rendering priority
+
 ### Canvas.attach
 ```ts
 attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void

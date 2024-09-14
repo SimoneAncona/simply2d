@@ -9,7 +9,8 @@ export declare class Canvas {
     protected _scale: number;
     protected _startFrameTime: number;
     protected _frameTime: number;
-    protected _loop: boolean;
+    protected _isLoopMode: boolean;
+    protected _loop: NodeJS.Timeout;
     protected _fonts: {
         fontName: string;
         file: string;
@@ -20,7 +21,7 @@ export declare class Canvas {
     }[];
     private _currentFrametime;
     protected _antialias: boolean;
-    protected _attached: boolean;
+    protected _isAttachedMode: boolean;
     protected _attachLoop: NodeJS.Timeout;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
@@ -62,7 +63,7 @@ export declare class Canvas {
     initRenderSequence(): void;
     exposeRender(): void;
     waitFrame(): void;
-    loop(callback: () => void): Promise<void>;
+    loop(callback: () => void): void;
     get frameTime(): number;
     get fps(): number;
     onKeysDown(callback: (keys: Key[]) => void): void;
@@ -91,4 +92,5 @@ export declare class Canvas {
     attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void;
     detach(): void;
     close(): void;
+    endLoop(): void;
 }

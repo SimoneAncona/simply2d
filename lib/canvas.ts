@@ -15,12 +15,13 @@ export class Canvas {
 	protected _scale: number;
 	protected _startFrameTime: number;
 	protected _frameTime: number;
-	protected _loop: boolean;
+	protected _isLoopMode: boolean;
+	protected _loop: NodeJS.Timeout;
 	protected _fonts: { fontName: string, file: string }[];
 	protected _textures: { textureID: string, file: string }[];
 	private _currentFrametime: number;
 	protected _antialias: boolean;
-	protected _attached: boolean;
+	protected _isAttachedMode: boolean;
 	protected _attachLoop: NodeJS.Timeout;
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
@@ -401,12 +402,12 @@ export class Canvas {
 	 * Notice that at the end of every loop, the layer is set to the main layer
 	 * @param callback a repeated drawing process
 	 * @since v1.0.8
-	 * @updated with v1.3.1
+	 * @updated with v1.3.4
 	 */
-	async loop(callback: () => void) {
-		if (this._attached) throw "Video buffer is attached, use detach to free the video buffer";
-		this._loop = true;
-		while (this._loop) {
+	loop(callback: () => void) {
+		if (this._isAttachedMode) throw "Video buffer is attached, use detach to free the video buffer";
+		this._isLoopMode = true;
+		this._loop = setInterval(() => {
 			let loopStartTime = new Date().getTime();
 			setRenderingSequence();
 			refresh(this._renderer);
@@ -414,7 +415,7 @@ export class Canvas {
 			this.useMainLayer();
 			renderPresent(this._renderer);
 			this._currentFrametime = new Date().getTime() - loopStartTime;
-		}
+		});
 	}
 
 	/**
@@ -422,7 +423,7 @@ export class Canvas {
 	 * @since v1.3.0
 	 */
 	get frameTime() {
-		if (!this._loop) throw "Must render the scene with the loop function to get frametime";
+		if (!this._isLoopMode) throw "Must render the scene with the loop function to get frametime";
 		return this._currentFrametime;
 	}
 
@@ -431,7 +432,7 @@ export class Canvas {
 	 * @since v1.3.0
 	 */
 	get fps() {
-		if (!this._loop) throw "Must render the scene with the loop function to get frametime";
+		if (!this._isLoopMode) throw "Must render the scene with the loop function to get frametime";
 		return 1000 / this._currentFrametime;
 	}
 
@@ -703,8 +704,8 @@ export class Canvas {
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
-		this._loop = false;
-		this._attached = true;
+		this.endLoop();
+		this._isAttachedMode = true;
 		let format;
 		switch (bitPerPixel) {
 			case 8:
@@ -733,7 +734,7 @@ export class Canvas {
 	 */
 	detach() {
 		sdl2bind.detach();
-		this._attached = false;
+		this._isAttachedMode = false;
 		clearInterval(this._attachLoop);
 	}
 
@@ -743,5 +744,14 @@ export class Canvas {
 	 */
 	close() {
 		sdl2bind.close();
+	}
+
+	/**
+	 * Terminates the loop
+	 * @since v1.3.4
+	 */
+	endLoop() {
+		this._isLoopMode = false;
+		clearInterval(this._loop);
 	}
 }

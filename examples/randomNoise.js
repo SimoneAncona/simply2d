@@ -1,14 +1,11 @@
-import { Canvas } from "../index.js";
+import { Canvas, PixelFormats } from "../index.js";
 const width = 300;
 const height = 300;
 const canvas = new Canvas("Random noise", width, height);
 let buf = new Uint8Array(width * height);
-canvas.loop(() => {
-    randomData();
-    canvas.loadRawData(buf, 8);
-})
+canvas.attach(buf, PixelFormats.rgb332);
 
-function randomData() {
+setInterval(() => {
     for (let i = 0; i < buf.length; i++) buf[i] = Math.floor(Math.random() * 255);
     return buf;
-}
+});

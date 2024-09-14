@@ -333,6 +333,18 @@ detach(): void
 ```
 Detach the current buffer from the video memory
 
+### Canvas.close
+```ts
+close(): void
+```
+Close the window
+
+### Canvas.endLoop
+```ts
+endLoop(): void
+```
+Terminate the current loop
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts

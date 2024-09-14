@@ -1,4 +1,4 @@
-import { Canvas, PixelFormats } from '../index.js';
+import { Canvas, PixelFormats, Colors } from '../index.js';
 const canvas = new Canvas("attached", 800, 600);
 const pf = PixelFormats.rgb888;
 let buffer = new Uint8Array(canvas.width * canvas.height * (pf / 8));
@@ -24,5 +24,7 @@ setTimeout(() => {
 
 setTimeout(() => {
     canvas.detach();
+    canvas.drawLine(Colors.WHITE, canvas.TOP_LEFT, canvas.BOTTOM_RIGHT);
+    canvas.sleep(2000);
     canvas.close();
 }, 4000);

@@ -27,6 +27,7 @@ namespace SDL
 	SDL_Texture* attached_texture;
 	TTF_Font *current_font;
 	bool antialiasing = false;
+	short scale = 1;
 
 	Napi::Array get_pressed_keys(Napi::Env env)
 	{
@@ -64,7 +65,7 @@ namespace SDL
 			SDL_GetMouseState(&x_mouse, &y_mouse);
 			if (on_click_callback_ref.IsEmpty())
 				break;
-			on_click_callback_ref.Call({Napi::Number::New(env, x_mouse), Napi::Number::New(env, y_mouse)});
+			on_click_callback_ref.Call({Napi::Number::New(env, x_mouse / scale), Napi::Number::New(env, y_mouse / scale)});
 			break;
 		case SDL_KEYDOWN:
 			if (!on_keydown_callback_ref.IsEmpty())
@@ -188,8 +189,9 @@ namespace SDL
 		int w = info[3].As<Napi::Number>().Int64Value();
 		int h = info[4].As<Napi::Number>().Int64Value();
 		Uint32 flags = info[5].As<Napi::Number>().Uint32Value();
+		scale = info[6].As<Napi::Number>().Int32Value();
 
-		SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags | SDL_WINDOW_ALLOW_HIGHDPI);
+		SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, w * scale, h * scale, flags | SDL_WINDOW_ALLOW_HIGHDPI);
 		if (window == NULL)
 			return env.Undefined();
 		return Napi::ArrayBuffer::New(env, window, sizeof(window));
@@ -205,7 +207,7 @@ namespace SDL
 		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
-		SDL_RenderSetLogicalSize(renderer, w, h);
+		SDL_RenderSetLogicalSize(renderer, w / scale, h / scale);
 		if (renderer == NULL)
 			return env.Undefined();
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
@@ -517,5 +519,16 @@ namespace SDL
 			pos = temp;
 		}
 		return env.Undefined();
+	}
+
+	Napi::Value get_mouse_pos(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		int x, y;
+		SDL_GetMouseState(&x, &y);
+		Napi::Object res = Napi::Object::New(env);
+		res.Set(Napi::String::New(env, "x"), Napi::Number::New(env, x / scale));
+		res.Set(Napi::String::New(env, "y"), Napi::Number::New(env, y / scale));
+		return res;
 	}
 }

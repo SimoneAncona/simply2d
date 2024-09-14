@@ -23,27 +23,19 @@ export async function clearRenderingSequence() {
 	renderingSequence = false;
 }
 
-export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number) {
+export function getWindow(title: string, xPos: number, yPos: number, width: number, height: number, flags: number, scale: number) {
 	if (sdl2bind.init(sdl.SDL_Init_Everything) != 0) {
 		throw "An error occurred while initializing SDL: " + sdl2bind.getError();
 	}
 
-	return sdl2bind.createWindow(title, xPos, yPos, width, height, flags) as ArrayBuffer;
+	return sdl2bind.createWindow(title, xPos, yPos, width, height, flags, scale) as ArrayBuffer;
 }
 
 export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
 	if (window === undefined) {
 		throw "Cannot create a window";
 	}
-	return sdl2bind.createRenderer(window, index, flag);
-}
-
-export async function showWindow(window: ArrayBuffer) {
-	sdl2bind.showWindow(window);
-}
-
-export async function hideWindow(window: ArrayBuffer) {
-	sdl2bind.hideWindow(window);
+	return sdl2bind.createRenderer(window, index, flag) as ArrayBuffer;
 }
 
 export function render(renderer: ArrayBuffer) {
@@ -57,10 +49,6 @@ export async function clearWithColor(renderer: ArrayBuffer, r: number, g: number
 	sdl2bind.setDrawColor(renderer, r, g, b, alpha);
 	sdl2bind.renderClear(renderer);
 	render(renderer);
-}
-
-export async function delay(ms: number) {
-	sdl2bind.delay(ms);
 }
 
 export async function setPoint(renderer: ArrayBuffer, r: number, g: number, b: number, a: number, px: number, py: number) {

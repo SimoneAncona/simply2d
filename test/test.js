@@ -1,9 +1,7 @@
-import { Canvas } from '../index.js'
+import { Canvas, Colors } from '../index.js'
 
-let a = new Uint8Array(4);
-a[0] = 10
-console.log(a[0]);
-const canvas = new Canvas("", 10, 10)
-canvas.ll(a)
-a[0] = 1
-canvas.cc()
+
+const canvas = new Canvas("ciao", 100, 100, null, null, { scale: 5 });
+canvas.drawLine(Colors.WHITE, {x: 0, y: 0}, {x: 100, y: 100});
+canvas.sleep(500);
+canvas.loop(() => console.log(canvas.mousePosition));

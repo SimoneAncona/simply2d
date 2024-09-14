@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.5
+
+- **`[Added]`** get mouse position
+- **`[Changed]`** deprecated all gets
+- **`[Fixed]`** scale
+
 ## 1.3.4
 
 - **`[Added]`** close window and end loop

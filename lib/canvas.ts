@@ -1,4 +1,4 @@
-import { clearRenderingSequence, clearWithColor, delay, getRenderer, getTicks, getWindow, hideWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, showWindow, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
+import { clearRenderingSequence, clearWithColor, getRenderer, getTicks, getWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
 import { Path } from "./path.js";
@@ -54,10 +54,10 @@ export class Canvas {
 		this._width = width;
 		this._height = height;
 		this._scale = Math.floor(options.scale);
-		if (xPos === 0 || xPos === undefined) {
+		if (!xPos) {
 			xPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
 		}
-		if (yPos === 0 || yPos === undefined) {
+		if (!yPos) {
 			yPos = SDL_WindowPos.SDL_WINDOWPOS_CENTERED;
 		}
 		flags = SDL_Window_Flags.SDL_WINDOW_SHOWN;
@@ -71,7 +71,7 @@ export class Canvas {
 		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		this._currentBitPerPixel = 32;
-		this._window = getWindow(windowTitle, xPos, yPos, width * this._scale, height * this._scale, flags);
+		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags, this._scale);
 		this._renderer = getRenderer(this._window, -1, 0);
 		this._frameTime = 2;
 		this._fonts = [];
@@ -102,7 +102,7 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	show() {
-		showWindow(this._window);
+		sdl2bind.showWindow(this._window);
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	hide() {
-		hideWindow(this._window);
+		sdl2bind.hideWindow(this._window);
 	}
 
 	/**
@@ -128,7 +128,7 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	sleep(ms: number) {
-		delay(ms);
+		sdl2bind.delay(ms);
 	}
 
 	/**
@@ -149,8 +149,6 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	drawLine(color: RGBAColor, from: Position, to: Position) {
-		from = this._scalePosition(from);
-		to = this._scalePosition(to);
 		setLine(this._renderer, color.red, color.green, color.blue, color.alpha, from.x, from.y, to.x, to.y);
 	}
 
@@ -166,9 +164,6 @@ export class Canvas {
 	 * 
 	 */
 	drawRectangle(color: RGBAColor, pos: Position, width: number, height: number, fill: boolean = false) {
-		pos = this._scalePosition(pos);
-		width = width * this._scale;
-		height = height * this._scale;
 		setRectangle(this._renderer, pos.x, pos.y, width, height, color.red, color.green, color.blue, color.alpha, fill);
 	}
 
@@ -189,8 +184,7 @@ export class Canvas {
 		if ((pixels.length / (bitPerPixel / 8)) !== this._height * this._width) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this._currentBitPerPixel = bitPerPixel;
-		pixels = this._scaleRawData(pixels);
-		setRawData(this._renderer, pixels, bitPerPixel, this._width * this._scale, this._height * this._scale);
+		setRawData(this._renderer, pixels, bitPerPixel, this._width, this._height);
 	}
 
 
@@ -216,7 +210,7 @@ export class Canvas {
 	 * Return the width of the window 
 	 * @returns {number} the width of the window
 	 * @since v0.1.0
-	 * @deprecated
+	 * @deprecated Use get width
 	 */
 	getWidth(): number { return this._width };
 
@@ -231,7 +225,7 @@ export class Canvas {
 	 * Return the height of the window 
 	 * @returns {number} the height of the window
 	 * @since v0.1.0
-	 * @deprecated
+	 * @deprecated Use get height
 	 */
 	getHeight(): number { return this._height };
 
@@ -258,9 +252,19 @@ export class Canvas {
 	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
 	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
 	 * @since v1.0.4
+	 * @deprecated 
 	 */
 	setBitPerPixel(bitPerPixel: PixelFormat) {
-		this._currentBitPerPixel = bitPerPixel;
+	}
+
+	/**
+	 * Get the current pixel format
+	 * @returns {PixelFormat} the current pixel format
+	 * @since v1.0.4
+	 * @deprecated Use get bitPerPixel
+	 */
+	getBitPerPixel(): PixelFormat {
+		return this._currentBitPerPixel;
 	}
 
 	/**
@@ -268,7 +272,7 @@ export class Canvas {
 	 * @returns {PixelFormat} the current pixel format
 	 * @since v1.0.4
 	 */
-	getBitPerPixel(): PixelFormat {
+	get bitPerPixel(): PixelFormat {
 		return this._currentBitPerPixel;
 	}
 
@@ -300,46 +304,21 @@ export class Canvas {
 	}
 
 	/**
+	 * Get the scale factor
+	 * @returns {number} scale factor
 	 * @since v1.0.5
+	 * @deprecated Use get scale
 	 */
-	private _scalePosition(pos: Position) {
-		return { x: pos.x * this._scale, y: pos.y * this._scale } as Position;
-	}
-
-	/**
-	 * @since v.1.0.5
-	 */
-	private _scaleRawData(rawData: Uint8Array) {
-		if (this._scale === 1) return rawData;
-		let newRawData = new Uint8Array(rawData.length * this._scale ** 2);
-		for (let i = 0; i < rawData.length; i++) {
-			let indexes = this._getScaledIndexes(i);
-			for (let index of indexes) {
-				newRawData[index] = rawData[i];
-			}
-		}
-		return newRawData;
-	}
-
-	private _getScaledIndexes(index: number) {
-		let indexes = [];
-		index = index * this._scale + (Math.floor(index / this._width) * this._width * this._scale);
-
-		for (let i = 0; i < this._scale; i++) {
-			for (let j = 0; j < this._scale; j++) {
-				indexes.push(index + i + (j * this._width * this._scale));
-			}
-		}
-
-		return indexes;
+	getScale(): number {
+		return this._scale;
 	}
 
 	/**
 	 * Get the scale factor
 	 * @returns {number} scale factor
-	 * @since v1.0.5
+	 * @since v1.3.5
 	 */
-	getScale(): number {
+	get scale(): number {
 		return this._scale;
 	}
 
@@ -374,6 +353,7 @@ export class Canvas {
 	 * It is used to initialize the rendering sequence. 
 	 * Every drawing process will not be displayed until exposeRender is called
 	 * @since v1.0.8
+	 * @deprecated Use the loop function instead
 	 */
 	initRenderSequence() {
 		setRenderingSequence();
@@ -383,6 +363,7 @@ export class Canvas {
 	/**
 	 * Shows the rendering
 	 * @since v1.0.8
+	 * @deprecated Use the loop function instead
 	 */
 	exposeRender() {
 		clearRenderingSequence();
@@ -392,9 +373,10 @@ export class Canvas {
 	/**
 	 * Sleep for a certain time before the next frame is rendered
 	 * @since v1.0.8
+	 * @deprecated Use the loop function instead
 	 */
 	waitFrame() {
-		delay(this._frameTime - (this._startFrameTime - getTicks()));
+		sdl2bind.delay(this._frameTime - (this._startFrameTime - getTicks()));
 	}
 
 	/**
@@ -631,8 +613,18 @@ export class Canvas {
 	 * Get all the layers in order of drawing priority
 	 * @returns {Layer[]} All layers
 	 * @since v1.3.1
+	 * @deprecated
 	 */
 	getLayers(): Layer[] {
+		return (sdl2bind.getLayers() as Layer[]).reverse();
+	}
+
+	/**
+	 * Get all the layers in order of drawing priority
+	 * @returns {Layer[]} All layers
+	 * @since v1.3.5
+	 */
+	get layers(): Layer[] {
 		return (sdl2bind.getLayers() as Layer[]).reverse();
 	}
 
@@ -699,13 +691,14 @@ export class Canvas {
 	 * @param {Uint8Array} buffer the buffer
 	 * @param {PixelFormat} bitPerPixel pixel format
 	 * @since v1.3.3
-	 * @updated with v1.3.4
+	 * @updated with v1.3.5
 	 */
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this.endLoop();
 		this._isAttachedMode = true;
+		this._currentBitPerPixel = bitPerPixel;
 		let format;
 		switch (bitPerPixel) {
 			case 8:
@@ -753,5 +746,14 @@ export class Canvas {
 	endLoop() {
 		this._isLoopMode = false;
 		clearInterval(this._loop);
+	}
+
+	/**
+	 * Returns the position of the mouse cursor
+	 * @returns {Position} The position of the mouse cursor
+	 * @since v1.3.5
+	 */
+	get mousePosition(): Position {
+		return sdl2bind.getMousePosition();
 	}
 }

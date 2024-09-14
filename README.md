@@ -14,8 +14,6 @@ To use Simply2D you must have installed make, a C++ compiler and SDL2. To instal
 - For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0`
 - For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`  
 
-Make and g++ are required.
-
 > If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
 
 ## API
@@ -344,6 +342,12 @@ Close the window
 endLoop(): void
 ```
 Terminate the current loop
+
+### get Canvas.mousePosition
+```ts
+get mousePosition(): Position
+```
+Return the current mouse position
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:

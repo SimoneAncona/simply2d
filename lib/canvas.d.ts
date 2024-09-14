@@ -50,13 +50,12 @@ export declare class Canvas {
     clear(): void;
     setBitPerPixel(bitPerPixel: PixelFormat): void;
     getBitPerPixel(): PixelFormat;
+    get bitPerPixel(): PixelFormat;
     getRawData(): Uint8Array;
     dumpPNG(filename: string): void;
     dumpJPG(filename: string): void;
-    private _scalePosition;
-    private _scaleRawData;
-    private _getScaledIndexes;
     getScale(): number;
+    get scale(): number;
     onClick(callback: (x: number, y: number) => void): void;
     onKeyDown(callback: (key: Key) => void): void;
     onKeyUp(callback: (key: Key) => void): void;
@@ -83,6 +82,7 @@ export declare class Canvas {
     removeLayer(layerID: string): void;
     drawPath(path: Path, pos?: Position, color?: RGBAColor): void;
     getLayers(): Layer[];
+    get layers(): Layer[];
     activateLayer(layerID: string): void;
     deactivateLayer(layerID: string): void;
     clearAll(): void;
@@ -93,4 +93,5 @@ export declare class Canvas {
     detach(): void;
     close(): void;
     endLoop(): void;
+    get mousePosition(): Position;
 }

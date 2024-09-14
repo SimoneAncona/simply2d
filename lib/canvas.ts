@@ -694,6 +694,7 @@ export class Canvas {
 	 * @updated with v1.3.5
 	 */
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
+		if (this._scale != 1) throw `Attach does not support scaling`;
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this.endLoop();

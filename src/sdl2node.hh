@@ -128,9 +128,9 @@ namespace SDL
 		int height = info[4].As<Napi::Number>().Int32Value();
 		attached_texture = SDL_CreateTexture(renderer, flags, SDL_TEXTUREACCESS_STREAMING, width, height);
 		auto pixels = video_buffer.Data();
-		if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width) != 0)
+		if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width * scale) != 0)
 		{
-			throw Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError());
+			Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError()).ThrowAsJavaScriptException();
 		}
 		return env.Undefined();
 	}

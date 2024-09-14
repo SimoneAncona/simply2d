@@ -21,6 +21,7 @@ export declare class Canvas {
     private _currentFrametime;
     protected _antialias: boolean;
     protected _attached: boolean;
+    protected _attachLoop: NodeJS.Timeout;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -89,4 +90,5 @@ export declare class Canvas {
     moveLayer(layerID: string, direction: "up" | "down", steps?: number): void;
     attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void;
     detach(): void;
+    close(): void;
 }

@@ -37,6 +37,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "update"), Napi::Function::New<SDL::update>(env));
 	exports.Set(Napi::String::New(env, "attach"), Napi::Function::New<SDL::attach>(env));
 	exports.Set(Napi::String::New(env, "detach"), Napi::Function::New<SDL::detach>(env));
+	exports.Set(Napi::String::New(env, "close"), Napi::Function::New<SDL::close>(env));
 
 	exports.Set(Napi::String::New(env, "imgInit"), Napi::Function::New<SDLImage::init>(env));
 	exports.Set(Napi::String::New(env, "loadTexture"), Napi::Function::New<SDLImage::load_texture>(env));

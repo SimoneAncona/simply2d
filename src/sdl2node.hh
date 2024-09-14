@@ -83,6 +83,14 @@ namespace SDL
 		}
 	}
 
+	Napi::Value close(const Napi::CallbackInfo& info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Quit();
+		TTF_Quit();
+		return env.Undefined();
+	}
+
 	Napi::Value update(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();

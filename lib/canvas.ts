@@ -21,6 +21,7 @@ export class Canvas {
 	private _currentFrametime: number;
 	protected _antialias: boolean;
 	protected _attached: boolean;
+	protected _attachLoop: NodeJS.Timeout;
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -697,6 +698,7 @@ export class Canvas {
 	 * @param {Uint8Array} buffer the buffer
 	 * @param {PixelFormat} bitPerPixel pixel format
 	 * @since v1.3.3
+	 * @updated with v1.3.4
 	 */
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
@@ -719,7 +721,7 @@ export class Canvas {
 				break;
 		}
 		sdl2bind.attach(this._renderer, buffer, format, this._width, this._height);
-		setInterval(() => {
+		this._attachLoop = setInterval(() => {
 			sdl2bind.update(this._renderer);
 		})
 	}
@@ -727,9 +729,19 @@ export class Canvas {
 	/**
 	 * Detach the current attached buffer
 	 * @since v1.3.3
+	 * @updated with v1.3.4
 	 */
 	detach() {
 		sdl2bind.detach();
 		this._attached = false;
+		clearInterval(this._attachLoop);
+	}
+
+	/**
+	 * Close the window
+	 * @since v1.3.4
+	 */
+	close() {
+		sdl2bind.close();
 	}
 }

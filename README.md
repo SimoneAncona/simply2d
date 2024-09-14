@@ -16,6 +16,32 @@ To use Simply2D you must have installed make, a C++ compiler and SDL2. To instal
 
 > If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
 
+### For contributors
+On Windows you must create the following files in your project directory:
+```
+📁 bin
+│  📁 sdl
+│  │  📁 winx64
+│  │  │  📄 SDl2.dll
+│  │  │  📄 SDL2.lib
+│  │  │  📄 SDL2main.lib
+│  │  │  📄 SDL2test.lib
+│  📁 sdlimg
+│  │  📁 winx64
+│  │  │  📄 SDL2_image.dll
+│  │  │  📄 SDL2_image.lib
+│  📁 sdlttf
+│  │  📁 winx64
+│  │  │  📄 SDL2_ttf.dll
+│  │  │  📄 SDL2_ttf.lib
+```
+These files can be extracted from the following links:
+- https://github.com/libsdl-org/SDL/releases/download/release-2.30.7/SDL2-devel-2.30.7-VC.zip
+- https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-VC.zip
+- https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-VC.zip
+
+Under the lib/x64 path
+
 ## API
 ### Canvas
 The `Canvas` class allows you to create a canvas and to draw on it

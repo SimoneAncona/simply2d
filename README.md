@@ -349,7 +349,7 @@ Change layer rendering priority
 ```ts
 attach(buffer: Uint8Array, bitPerPixel: PixelFormat): void
 ```
-Attach a buffer to the video memory. The loop and every other drawing functions will be disabled. Scaling is not supported
+Attach a buffer to the video memory. The loop and every other drawing functions will be disabled.
 
 ### Canvas.detach
 ```ts

@@ -179,7 +179,6 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		int texW = 0;
 		int texH = 0;
-		SDL_Renderer *renderer = GET_RENDERER;
 		std::string id = info[1].As<Napi::String>().Utf8Value();
 		SDL_Texture *texture = textures.at(id);
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);

@@ -15,7 +15,8 @@
     "build:dev": "tsc --build && node-gyp rebuild --debug && node tools/debug.js",
     "build:tsc": "tsc --build",
     "start": "node index.js",
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "check:win32wsl": "tsc --build && node-gyp rebuild && ubuntu run nvm use node && tsc --build && node-gyp rebuild"
   },
   "keywords": [
     "2d",

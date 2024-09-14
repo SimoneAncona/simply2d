@@ -105,18 +105,20 @@ namespace SDL
 		case SDL_PIXELFORMAT_RGBA8888:
 			bpp = 4;
 			break;
+		default:
+			bpp = 4;
 		}
-		if (size < width * height * bpp) return 1;
-		uint8_t *pixels = new uint8_t[width * height * pow(scale, 2) * bpp];
+		if (size < (size_t)(width * height * bpp)) return 1;
+		uint8_t *pixels = new uint8_t[width * height * (int)pow(scale, 2) * bpp];
 		auto code = SDL_RenderReadPixels(renderer, NULL, format, (void *)pixels, width * scale * bpp);
 		if (code) return code;
 
 		size_t index = 0;
-		for (size_t i = 0; i < height; i++)
+		for (int i = 0; i < height; i++)
 		{
-			for (size_t j = 0; j < width; j++)
+			for (int j = 0; j < width; j++)
 			{
-				for (size_t k = 0; k < bpp; k++)
+				for (int k = 0; k < bpp; k++)
 					buffer[(i * width * bpp) + j] = pixels[index++];
 				index += bpp * (scale - 1); 
 			}
@@ -201,7 +203,6 @@ namespace SDL
 		#endif
 		
 		Napi::Env env = info.Env();
-		Uint32 flags = info[0].As<Napi::Number>().Uint32Value();
 		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -343,8 +344,6 @@ namespace SDL
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[1].As<Napi::ArrayBuffer>());
-		SDL_Rect *src = (SDL_Rect *)get_ptr_from_js(info[2].As<Napi::ArrayBuffer>());
-		SDL_Rect *dest = (SDL_Rect *)get_ptr_from_js(info[3].As<Napi::ArrayBuffer>());
 		handle_events(env);
 		return Napi::Number::New(env, SDL_RenderCopy(renderer, texture, NULL, NULL));
 	}
@@ -524,7 +523,8 @@ namespace SDL
 		SDL_Color color = {
 			static_cast<Uint8>(info[2].As<Napi::Number>().Uint32Value()),
 			static_cast<Uint8>(info[3].As<Napi::Number>().Uint32Value()),
-			static_cast<Uint8>(info[4].As<Napi::Number>().Uint32Value())};
+			static_cast<Uint8>(info[4].As<Napi::Number>().Uint32Value()),
+			255};
 		SDL_Surface *surface = TTF_RenderText_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
 
 		SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);

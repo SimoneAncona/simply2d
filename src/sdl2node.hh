@@ -11,6 +11,10 @@
 	#include <windows.h>
 #endif
 
+#ifdef _DEBUG
+	#include <iostream>
+#endif
+
 namespace SDL
 {
 	struct Position
@@ -84,6 +88,44 @@ namespace SDL
 		}
 	}
 
+	int read_pixels(SDL_Renderer *renderer, uint8_t *buffer, size_t size, int width, int height, Uint32 format)
+	{
+		uint8_t bpp;
+		switch (format)
+		{
+		case SDL_PIXELFORMAT_RGB332:
+			bpp = 1;
+			break;
+		case SDL_PIXELFORMAT_RGB565:
+			bpp = 2;
+			break;
+		case SDL_PIXELFORMAT_RGB24:
+			bpp = 3;
+			break;
+		case SDL_PIXELFORMAT_RGBA8888:
+			bpp = 4;
+			break;
+		}
+		if (size < width * height * bpp) return 1;
+		uint8_t *pixels = new uint8_t[width * height * pow(scale, 2) * bpp];
+		auto code = SDL_RenderReadPixels(renderer, NULL, format, (void *)pixels, width * scale * bpp);
+		if (code) return code;
+
+		size_t index = 0;
+		for (size_t i = 0; i < height; i++)
+		{
+			for (size_t j = 0; j < width; j++)
+			{
+				for (size_t k = 0; k < bpp; k++)
+					buffer[(i * width * bpp) + j] = pixels[index++];
+				index += bpp * (scale - 1); 
+			}
+			index += width * bpp * (scale - 1);
+		}
+		delete pixels;
+		return 0;
+	}
+
 	Napi::Value close(const Napi::CallbackInfo& info)
 	{
 		Napi::Env env = info.Env();
@@ -102,7 +144,8 @@ namespace SDL
 		int pitch;
 		if (SDL_LockTexture(attached_texture, NULL, (void **)&texture_data, &pitch) != 0)
 		{
-			throw Napi::Error::New(env, std::string("Unable to lock texture: ") + SDL_GetError());
+			Napi::Error::New(env, std::string("Unable to lock texture: ") + SDL_GetError()).ThrowAsJavaScriptException();
+			return env.Undefined();
 		}
 		
 		for (size_t i = 0; i < video_buffer.ElementLength(); i++)
@@ -128,9 +171,10 @@ namespace SDL
 		int height = info[4].As<Napi::Number>().Int32Value();
 		attached_texture = SDL_CreateTexture(renderer, flags, SDL_TEXTUREACCESS_STREAMING, width, height);
 		auto pixels = video_buffer.Data();
-		if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width * scale) != 0)
+		if (read_pixels(renderer, pixels, video_buffer.ElementLength(), width, height, flags) != 0)
 		{
-			Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError()).ThrowAsJavaScriptException();
+			Napi::Error::New(env, std::string("Cannot read pixels: ") + SDL_GetError()).ThrowAsJavaScriptException();
+			return env.Undefined();
 		}
 		return env.Undefined();
 	}
@@ -375,9 +419,9 @@ namespace SDL
 		SDL_Renderer *renderer = GET_RENDERER;
 		int width = info[1].As<Napi::Number>().Int64Value();
 		int height = info[2].As<Napi::Number>().Int64Value();
-		size_t size = width * height;
+		size_t size = width * height * 4;
 		uint8_t *pixels = new uint8_t[size];
-		if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB332, (void *)pixels, width) != 0)
+		if (read_pixels(renderer, pixels, size, width, height, SDL_PIXELFORMAT_RGBA8888) != 0)
 		{
 			throw Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError());
 		}
@@ -530,5 +574,13 @@ namespace SDL
 		res.Set(Napi::String::New(env, "x"), Napi::Number::New(env, x / scale));
 		res.Set(Napi::String::New(env, "y"), Napi::Number::New(env, y / scale));
 		return res;
+	}
+
+	Napi::Value remove_borders(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_SetWindowBordered(window, SDL_FALSE);
+		return env.Undefined();
 	}
 }

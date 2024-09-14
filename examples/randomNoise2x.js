@@ -1,10 +1,11 @@
 import { Canvas, PixelFormats } from "../index.js";
 const width = 300;
 const height = 300;
-const canvas = new Canvas("Random noise", width, height, null, null, { scale: 2 });
+const canvas = new Canvas("Random noise 2x", width, height, null, null, { scale: 2 });
 let buf = new Uint8Array(width * height);
+canvas.attach(buf, PixelFormats.rgb332);
 
-canvas.loop(() => {
+setInterval(() => {
     for (let i = 0; i < buf.length; i++) buf[i] = Math.floor(Math.random() * 255);
-    canvas.loadRawData(buf, PixelFormats.rgb332);
-})
+    return buf;
+});

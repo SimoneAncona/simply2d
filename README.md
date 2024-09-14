@@ -375,6 +375,17 @@ get mousePosition(): Position
 ```
 Return the current mouse position
 
+### Canvas options
+```ts
+type CanvasOptions = {
+	mode?: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown",
+	resizable?: boolean,
+	scale?: number,
+	antiAliasing?: boolean,
+	removeWindowDecoration?: boolean
+}
+```
+
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
 ```ts

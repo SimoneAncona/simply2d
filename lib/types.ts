@@ -2,7 +2,8 @@ export type CanvasOptions = {
 	mode?: "fullscreen" | "minimized" | "maximized" | "hidden" | "shown",
 	resizable?: boolean,
 	scale?: number,
-	antiAliasing?: boolean
+	antiAliasing?: boolean,
+	removeWindowDecoration?: boolean
 }
 
 export type RGBAColor = {

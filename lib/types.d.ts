@@ -3,6 +3,7 @@ export type CanvasOptions = {
     resizable?: boolean;
     scale?: number;
     antiAliasing?: boolean;
+    removeWindowDecoration?: boolean;
 };
 export type RGBAColor = {
     red: number;

@@ -12,5 +12,3 @@ examples/
 .github/
 node_modules/
 .gitignore
-
-bin/sdlttf/winx64/*.txt

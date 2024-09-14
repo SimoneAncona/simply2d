@@ -3,6 +3,7 @@
 ## 1.3.5
 
 - **`[Added]`** get mouse position
+- **`[Added]`** remove default decoration option
 - **`[Changed]`** deprecated all gets
 - **`[Fixed]`** scale
 

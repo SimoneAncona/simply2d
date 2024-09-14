@@ -43,13 +43,15 @@ export class Canvas {
 			mode: "shown",
 			resizable: false,
 			scale: 1,
-			antiAliasing: true
+			antiAliasing: true,
+			removeWindowDecoration: false,
 		}
 	) {
-		if (options.mode === undefined) options.mode = "shown";
-		if (options.resizable === undefined) options.resizable = false;
-		if (options.scale === undefined) options.scale = 1;
-		if (options.antiAliasing === undefined) options.antiAliasing = true;
+		if (!options.mode) options.mode = "shown";
+		if (!options.resizable) options.resizable = false;
+		if (!options.scale) options.scale = 1;
+		if (options.antiAliasing === undefined || options.antiAliasing === null) options.antiAliasing = true;
+		if (!options.removeWindowDecoration) options.removeWindowDecoration = false;
 		let flags: number;
 		this._width = width;
 		this._height = height;
@@ -72,6 +74,7 @@ export class Canvas {
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags, this._scale);
+		if (options.removeWindowDecoration) sdl2bind.removeBorders(this._window);
 		this._renderer = getRenderer(this._window, -1, 0);
 		this._frameTime = 2;
 		this._fonts = [];
@@ -694,7 +697,6 @@ export class Canvas {
 	 * @updated with v1.3.5
 	 */
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
-		if (this._scale != 1) throw `Attach does not support scaling`;
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
 		this.endLoop();

@@ -203,7 +203,6 @@ namespace SDL
 		#endif
 		
 		Napi::Env env = info.Env();
-		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -217,6 +216,7 @@ namespace SDL
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
+		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
 	}
 
 	inline Napi::Value get_error(const Napi::CallbackInfo &info)

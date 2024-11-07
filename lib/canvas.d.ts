@@ -48,8 +48,6 @@ export declare class Canvas {
     getHeight(): number;
     get height(): number;
     clear(): void;
-    setBitPerPixel(bitPerPixel: PixelFormat): void;
-    getBitPerPixel(): PixelFormat;
     get bitPerPixel(): PixelFormat;
     getRawData(): Uint8Array;
     dumpPNG(filename: string): void;
@@ -94,4 +92,5 @@ export declare class Canvas {
     close(): void;
     endLoop(): void;
     get mousePosition(): Position;
+    applyFilter(fn: (v: number, i: number, buff: Uint8Array) => number): void;
 }

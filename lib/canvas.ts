@@ -248,29 +248,6 @@ export class Canvas {
 	}
 
 	/**
-	 * Set the current pixel format
-	 * @param {PixelFormat} bitPerPixel the bit size of the color
-	 * 	- 8 = 3 bit RED, 3 bit GREEN, 2 bit BLUE
-	 *  - 16 = 5 bit RED, 6 bit GREEN, 5 bit BLUE
-	 *  - 24 = 8 bit RED, 8 bit GREEN, 8 bit BLUE
-	 *  - 32 = 8 bit RED, 8 bit GREEN, 8 bit BLUE, 8 bit alpha channel
-	 * @since v1.0.4
-	 * @deprecated 
-	 */
-	setBitPerPixel(bitPerPixel: PixelFormat) {
-	}
-
-	/**
-	 * Get the current pixel format
-	 * @returns {PixelFormat} the current pixel format
-	 * @since v1.0.4
-	 * @deprecated Use get bitPerPixel
-	 */
-	getBitPerPixel(): PixelFormat {
-		return this._currentBitPerPixel;
-	}
-
-	/**
 	 * Get the current pixel format
 	 * @returns {PixelFormat} the current pixel format
 	 * @since v1.0.4
@@ -758,5 +735,19 @@ export class Canvas {
 	 */
 	get mousePosition(): Position {
 		return sdl2bind.getMousePosition();
+	}
+
+	/**
+	 * Apply a function to every byte in the framebuffer
+	 * @param {Function} fn the filter, a function that takes current pixel value, current pixel index (optional), current buffer (optional)
+	 * @since v1.3.7
+	 */
+	applyFilter(fn: (v: number, i: number, buff: Uint8Array) => number): void {
+		let size = this._width * this._height * this.bitPerPixel / 8;
+		let buffer = new Uint8Array(size);
+		this.attach(buffer, this.bitPerPixel);
+		for (let i = 0; i < size; i++)
+			buffer[i] = fn(buffer[i], i, buffer);
+		this.detach();
 	}
 }

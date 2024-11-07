@@ -2,6 +2,7 @@ import { Canvas, PixelFormats, Colors } from '../index.js';
 const canvas = new Canvas("attached", 800, 600);
 const pf = PixelFormats.rgb888;
 let buffer = new Uint8Array(canvas.width * canvas.height * (pf / 8));
+canvas.drawLine(Colors.GREEN, canvas.BOTTOM_LEFT, canvas.TOP_RIGHT);
 canvas.attach(buffer, pf);
 
 setTimeout(() => { 

@@ -10,7 +10,7 @@ Before reporting problems, make sure you don't post duplicates. It is absolutely
 
 ## Extending the code
 Anyone can participate in the realization of this project by extending it with codes to improve or solve problems. The guidelines for clean code are as follows:
-- Use the formatting of the current project.
+- Use the formatting of the current project. C++ uses Allman braces and indents namespace contents, as configured in `.clang-format`. Format project files with `clang-format -i src/*.cpp src/*.hh`; leave vendored headers unchanged.
 - Use English.
 - Document anything that needs documentation.
 - Do NOT change the license.

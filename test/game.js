@@ -8,7 +8,14 @@ if (process.platform === "linux") process.env.SDL_VIDEODRIVER ??= "offscreen";
 process.env.SDL_AUDIODRIVER ??= "dummy";
 const { Canvas, Colors, SpriteSheet, sdl2bind } = await import("../index.js");
 const directory = fs.mkdtempSync(path.join(os.tmpdir(), "simply2d-game-"));
+const createWindow = sdl2bind.createWindow;
+sdl2bind.createWindow = (...args) => {
+    const window = createWindow(...args);
+    assert.ok(sdl2bind.getWindowFlags(window) & 0x20, "SDL window must allow interactive resizing");
+    return window;
+};
 const canvas = new Canvas("Game smoke test", 8, 4, 0, 0, { mode: "hidden", resizable: true, antiAliasing: false, vsync: false });
+sdl2bind.createWindow = createWindow;
 const present = sdl2bind.renderPresent;
 let presentations = 0;
 sdl2bind.renderPresent = (...args) => { presentations++; return present(...args); };

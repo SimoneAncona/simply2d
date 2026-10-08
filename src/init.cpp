@@ -4,6 +4,7 @@
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
+	exports.Set("getWindowFlags", Napi::Function::New<SDL::get_window_flags>(env));
 	exports.Set("pollEvents", Napi::Function::New<SDL::poll_events>(env));
 	exports.Set("resizeWindow", Napi::Function::New<SDL::resize_window>(env));
 	exports.Set("requestWindowClose", Napi::Function::New<SDL::request_window_close>(env));

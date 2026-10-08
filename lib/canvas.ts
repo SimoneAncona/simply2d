@@ -77,6 +77,7 @@ export class Canvas {
 		else if (options.mode === "maximized") flags |= SDL_Window_Flags.SDL_WINDOW_MAXIMIZED;
 		else if (options.mode === "minimized") flags |= SDL_Window_Flags.SDL_WINDOW_MINIMIZED;
 		else if (options.mode === "shown") flags |= SDL_Window_Flags.SDL_WINDOW_SHOWN;
+		if (options.resizable) flags |= SDL_Window_Flags.SDL_WINDOW_RESIZABLE;
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags, this._scale);
 		if (options.removeWindowDecoration) sdl2bind.removeBorders(this._window);

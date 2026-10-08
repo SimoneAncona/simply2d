@@ -65,3 +65,7 @@ export type Resolution = {
     h: number;
 };
 export type PixelFormat = 8 | 16 | 24 | 32;
+export type SVGOptions = {
+    width?: number;
+    height?: number;
+};

@@ -163,6 +163,35 @@ namespace SDLImage
 		return env.Undefined();
 	}
 
+	Napi::Value load_svg(const Napi::CallbackInfo &info)
+	{
+		Napi::Env env = info.Env();
+		SDL_Renderer *renderer = GET_RENDERER;
+		SDL_RWops *input = nullptr;
+		if (info[2].IsString()) input = SDL_RWFromFile(info[2].As<Napi::String>().Utf8Value().c_str(), "rb");
+		else {
+			auto buffer = info[2].As<Napi::Uint8Array>();
+			if (buffer.ByteLength() > static_cast<size_t>(2147483647)) {
+				Napi::RangeError::New(env, "SVG buffer is too large").ThrowAsJavaScriptException(); return env.Undefined();
+			}
+			input = SDL_RWFromConstMem(buffer.Data(), static_cast<int>(buffer.ByteLength()));
+		}
+		if (!input) { Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
+		SDL_Surface *surface = IMG_LoadSizedSVG_RW(input, info[3].As<Napi::Number>().Int32Value(), info[4].As<Napi::Number>().Int32Value());
+		std::string error = SDL_GetError();
+		SDL_RWclose(input);
+		if (!surface) { Napi::Error::New(env, "Cannot load SVG: " + error).ThrowAsJavaScriptException(); return env.Undefined(); }
+		SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+		int width = surface->w, height = surface->h;
+		SDL_FreeSurface(surface);
+		if (!texture) { Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
+		std::string id = info[1].As<Napi::String>().Utf8Value();
+		auto previous = textures.find(id);
+		if (previous != textures.end()) SDL_DestroyTexture(previous->second.texture);
+		textures.insert_or_assign(id, Texture{texture, width, height});
+		return env.Undefined();
+	}
+
 	Napi::Value unload_texture(const Napi::CallbackInfo &info)
 	{
 		auto entry = textures.find(info[0].As<Napi::String>().Utf8Value());

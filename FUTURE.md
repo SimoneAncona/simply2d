@@ -8,4 +8,3 @@ The 1.4.0 foundation adds animation, texture transforms, frame timing, drawing b
 - Compressed audio formats and streamed music.
 - Text measurement and bounded text texture caching.
 - Resource ownership for multiple simultaneous canvases.
-- SVG loading.

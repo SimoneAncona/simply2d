@@ -1,3 +1,4 @@
+import { SVGOptions } from "./types.js";
 import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution, TextureDrawOptions, LoopOptions, WindowEventType, WindowEventHandler } from "./types.js";
 import { SpriteAnimation } from "./animation.js";
 import { Path } from "./path.js";
@@ -81,6 +82,7 @@ export declare class Canvas {
     private _searchFont;
     static convertPolarCoords(center: Position, angle: number, radius: number): Position;
     loadTexture(textureID: string, filePath: string): void;
+    loadSVG(textureID: string, source: string | Uint8Array, options?: SVGOptions): void;
     drawTexture(textureID: string, pos: Position, options?: TextureDrawOptions): void;
     unloadTexture(textureID: string): void;
     drawAnimation(animation: SpriteAnimation, pos: Position, options?: Omit<TextureDrawOptions, "source">): void;

@@ -40,6 +40,21 @@ try {
     canvas.unloadTexture("sheet");
     assert.throws(() => canvas.drawTexture("sheet", { x: 0, y: 0 }), /not loaded/);
 
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="4"><rect width="4" height="4" fill="#ff0000"/></svg>');
+    const svgFile = path.join(directory, "test.svg");
+    fs.writeFileSync(svgFile, svg);
+    canvas.loadSVG("vector", svgFile);
+    assert.deepEqual(canvas.getTextureResolution("vector"), { w: 8, h: 4 });
+    canvas.batch(() => { canvas.setBackgroundColor(Colors.BLUE); canvas.drawTexture("vector", { x: 0, y: 0 }); });
+    assert.equal(pixels()[0], 0xff0000ff);
+    assert.equal(pixels()[7], 0x0000ffff);
+    canvas.loadSVG("vector", svg, { width: 16 });
+    assert.deepEqual(canvas.getTextureResolution("vector"), { w: 16, h: 8 });
+    assert.throws(() => canvas.loadSVG("vector", svg, { width: -1 }), RangeError);
+    assert.throws(() => canvas.loadSVG("vector", Buffer.from("invalid")), /SVG/);
+    assert.deepEqual(canvas.getTextureResolution("vector"), { w: 16, h: 8 });
+    canvas.unloadTexture("vector");
+
     // Real SDL events cover resize, show/hide, unsubscribe, and close cancellation.
     canvas.pollEvents();
     let resized;

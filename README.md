@@ -53,6 +53,18 @@ canvas.loop(deltaMs => {
 
 `drawTexture(id, position, options)` supports a source rectangle, output width and height, rotation in degrees, horizontal and vertical flips, opacity from 0 to 1, and `filtering: "nearest" | "linear"`. Nearest sampling is the default. `unloadTexture(id)` releases a loaded texture.
 
+### SVG textures
+
+```js
+canvas.loadSVG("icon", "icon.svg", { width: 64 });
+canvas.drawTexture("icon", { x: 20, y: 20 }, { rotation: 15 });
+canvas.unloadTexture("icon");
+```
+
+`loadSVG(id, filenameOrSvgBytes, { width?, height? })` rasterizes an SVG into a reusable texture. It accepts a filename or `Uint8Array` containing SVG data. Omit both dimensions for the intrinsic size; supply only one to preserve aspect ratio, or both for an explicit size. Dimensions must be positive integers. Drawing uses the normal texture controls, including cropping, opacity, flips, and filtering. Rasterization happens when loading, so reload at a larger size when higher resolution is needed.
+
+Run `node examples/svg.js` for the example. SDL_image 2.6.0 or later is required for sized SVG loading.
+
 ### Audio
 
 `Audio` provides WAV playback independently of a canvas. It supports 32 simultaneous playback instances. Files are decoded and converted once when loaded; playback and mixing run on SDL's audio thread.

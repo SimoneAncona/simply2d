@@ -2,18 +2,17 @@
 
 ## 1.4.0 (in development)
 
-- Added sprite sheets and time-based animations.
-- Added texture cropping, scaling, rotation, flips, opacity, filtering, and unloading.
-- Added synchronous drawing batches and a paced loop with elapsed frame time.
-- Added SDL window handlers, resize support, unsubscribe functions, and cancellable close requests.
-- Cached texture dimensions and fonts; released temporary text and screenshot resources.
-- Replaced game.js with a Mario platforming example and added an animation example.
-- Preserved Windows packaging and packed-install CI checks.
+- **`[Added]`** sprite sheets and time-based animations.
+- **`[Added]`** texture cropping, scaling, rotation, flips, opacity, filtering, and unloading.
+- **`[Added]`** synchronous drawing batches and a paced loop with elapsed frame time.
+- **`[Added]`** SDL window handlers, resize support, unsubscribe functions, and cancellable close requests.
+- **`[Changed]`** Cached texture dimensions and fonts; released temporary text and screenshot resources.
+- **`[Changed]`** Replaced game.js with a Mario platforming example and added an animation example.
 
 ## 1.3.8
 
-- Included Windows x64 SDL libraries and upstream licenses in the npm package.
-- Added packaging validation and Windows installation tests against the packed release.
+- **`[Fixed]`** Windows x64 SDL libraries and upstream licenses in the npm package.
+- **`[Added]`** packaging validation and Windows installation tests against the packed release.
 
 ## 1.3.7
 

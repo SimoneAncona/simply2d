@@ -115,5 +115,4 @@ lib/*.js
 index.js
 
 bin/
-bin/
 .zed/

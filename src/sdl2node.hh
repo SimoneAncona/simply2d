@@ -219,7 +219,7 @@ namespace SDL
 		for (auto &entry : fonts) TTF_CloseFont(entry.second);
 		fonts.clear();
 		current_font = nullptr;
-		SDL_Quit();
+		SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 		TTF_Quit();
 		return env.Undefined();
 	}
@@ -313,7 +313,7 @@ namespace SDL
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
-		return Napi::Number::New(env, SDL_Init(SDL_INIT_EVERYTHING));
+		return Napi::Number::New(env, SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER));
 	}
 
 	inline Napi::Value get_error(const Napi::CallbackInfo &info)

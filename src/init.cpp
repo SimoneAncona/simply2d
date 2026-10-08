@@ -1,5 +1,6 @@
 #include "sdl2node.hh"
 #include "sdl2image_node.hh"
+#include "sdl2audio_node.hh"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
@@ -64,6 +65,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set(Napi::String::New(env, "deactivateLayer"), Napi::Function::New<SDLImage::deactivate_layer>(env));
 	exports.Set(Napi::String::New(env, "clearAll"), Napi::Function::New<SDLImage::clear_all>(env));
 	exports.Set(Napi::String::New(env, "moveLayer"), Napi::Function::New<SDLImage::move_layer>(env));
+	exports.Set("audioOpen", Napi::Function::New<SDLAudio::open>(env));
+	exports.Set("audioClose", Napi::Function::New<SDLAudio::close>(env));
+	exports.Set("audioLoad", Napi::Function::New<SDLAudio::load>(env));
+	exports.Set("audioPlay", Napi::Function::New<SDLAudio::play>(env));
+	exports.Set("audioControl", Napi::Function::New<SDLAudio::control>(env));
+	exports.Set("audioGlobal", Napi::Function::New<SDLAudio::global>(env));
 	return exports;
 }
 

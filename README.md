@@ -53,6 +53,33 @@ canvas.loop(deltaMs => {
 
 `drawTexture(id, position, options)` supports a source rectangle, output width and height, rotation in degrees, horizontal and vertical flips, opacity from 0 to 1, and `filtering: "nearest" | "linear"`. Nearest sampling is the default. `unloadTexture(id)` releases a loaded texture.
 
+### Audio
+
+`Audio` provides WAV playback independently of a canvas. It supports 32 simultaneous playback instances. Files are decoded and converted once when loaded; playback and mixing run on SDL's audio thread.
+
+```js
+import { Audio } from "simply2d";
+
+const audio = new Audio();
+audio.loadSound("jump", "jump.wav");
+audio.volume = 0.5;
+const jump = audio.play("jump", { volume: 0.8 });
+const background = audio.play("jump", { loop: true });
+background.pause();
+background.resume();
+background.volume = 0.3;
+background.stop();
+audio.close();
+```
+
+`loadSound(id, filenameOrWavBytes)` accepts a path or `Uint8Array` containing encoded WAV data and returns duration in seconds. `getSoundDuration(id)` returns that duration. Each `play()` returns a separate `SoundPlayback` with `state`, `isPlaying`, `volume`, `pause()`, `resume()`, and `stop()`.
+
+Master controls are `audio.volume`, `pause()`, `resume()`, `stopAll()`, and `unloadSound(id)`. Volume ranges from 0 to 1. Unloading stops instances of that loaded sound. Loading an existing ID replaces the sound for future playback while current instances finish with their original data. Playing when all 32 voices are occupied throws an error.
+
+Call `audio.close()` when finished; closing a canvas leaves audio available. Playback does not keep the Node event loop alive. This version supports WAV, including conversion of sample rates and mono/stereo layouts; MP3, OGG, and streamed music are not supported. No additional native dependency is required.
+
+Run `node examples/audio.js` for a standalone example. The Mario example includes original synthesized effects for jumping, coins, falls, and completing the level. Press M to mute, or start it with `--no-audio` to disable sound. If an audio device is unavailable, the game continues without sound.
+
 ### Window events
 
 Handlers apply to the SDL canvas window. Each registration returns an unsubscribe function:

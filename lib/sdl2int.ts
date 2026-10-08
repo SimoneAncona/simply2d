@@ -10,6 +10,17 @@ try {
 }
 export { sdl2bind }
 let renderingSequence = false;
+const renderBatches = new Map<ArrayBuffer, number>();
+
+export function beginRenderBatch(renderer: ArrayBuffer): void {
+	renderBatches.set(renderer, (renderBatches.get(renderer) ?? 0) + 1);
+}
+
+export function endRenderBatch(renderer: ArrayBuffer): void {
+	const depth = (renderBatches.get(renderer) ?? 1) - 1;
+	if (depth === 0) renderBatches.delete(renderer);
+	else renderBatches.set(renderer, depth);
+}
 
 export function getTicks() {
 	return sdl2bind.getTicks();
@@ -39,7 +50,7 @@ export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
 }
 
 export function render(renderer: ArrayBuffer) {
-	if (renderingSequence)
+	if (renderingSequence || renderBatches.has(renderer))
 		return;
 	sdl2bind.renderPresent(renderer);
 }

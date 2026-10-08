@@ -1,6 +1,7 @@
-import { clearRenderingSequence, clearWithColor, getRenderer, getTicks, getWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
+import { beginRenderBatch, endRenderBatch, clearRenderingSequence, clearWithColor, getRenderer, getTicks, getWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
-import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution, TextureDrawOptions, LoopOptions, WindowEvent, WindowEventType, WindowEventHandler } from "./types.js";
+import { SpriteAnimation } from "./animation.js";
 import { Path } from "./path.js";
 import { Colors } from "./colors.js";
 import fs from "fs";
@@ -23,6 +24,9 @@ export class Canvas {
 	protected _antialias: boolean;
 	protected _isAttachedMode: boolean;
 	protected _attachLoop: NodeJS.Timeout;
+	private _closed = false;
+	private _loopGeneration = 0;
+	private _windowHandlers = new Map<WindowEventType, Set<WindowEventHandler>>();
 	TOP_LEFT: Position;
 	TOP_RIGHT: Position;
 	TOP_CENTER: Position;
@@ -75,7 +79,8 @@ export class Canvas {
 		this._currentBitPerPixel = 32;
 		this._window = getWindow(windowTitle, xPos, yPos, width, height, flags, this._scale);
 		if (options.removeWindowDecoration) sdl2bind.removeBorders(this._window);
-		this._renderer = getRenderer(this._window, -1, 0);
+		this._renderer = getRenderer(this._window, -1, options.vsync === false ? 0 : 4);
+		sdl2bind.onWindowEvent(this._window, (type: WindowEventType, first: number, second: number) => this._dispatchWindowEvent(type, first, second));
 		this._frameTime = 2;
 		this._fonts = [];
 		this._textures = [];
@@ -90,14 +95,14 @@ export class Canvas {
 		this.BOTTOM_CENTER = {} as Position;
 		this.BOTTOM_RIGHT = {} as Position;
 		Object.defineProperties(this.TOP_LEFT, { x: { value: 0, writable: false }, y: { value: 0, writable: false } });
-		Object.defineProperties(this.TOP_CENTER, { x: { value: width / 2, writable: false }, y: { value: 0, writable: false } });
-		Object.defineProperties(this.TOP_RIGHT, { x: { value: width, writable: false }, y: { value: 0, writable: false } });
-		Object.defineProperties(this.CENTER_LEFT, { x: { value: 0, writable: false }, y: { value: height / 2, writable: false } });
-		Object.defineProperties(this.CENTER, { x: { value: width / 2, writable: false }, y: { value: height / 2, writable: false } });
-		Object.defineProperties(this.CENTER_RIGHT, { x: { value: width, writable: false }, y: { value: height / 2, writable: false } });
-		Object.defineProperties(this.BOTTOM_LEFT, { x: { value: 0, writable: false }, y: { value: height, writable: false } });
-		Object.defineProperties(this.BOTTOM_CENTER, { x: { value: width / 2, writable: false }, y: { value: height, writable: false } });
-		Object.defineProperties(this.BOTTOM_RIGHT, { x: { value: width, writable: false }, y: { value: height, writable: false } });
+		Object.defineProperties(this.TOP_CENTER, { x: { get: () => this._width / 2 }, y: { value: 0, writable: false } });
+		Object.defineProperties(this.TOP_RIGHT, { x: { get: () => this._width }, y: { value: 0, writable: false } });
+		Object.defineProperties(this.CENTER_LEFT, { x: { value: 0, writable: false }, y: { get: () => this._height / 2 } });
+		Object.defineProperties(this.CENTER, { x: { get: () => this._width / 2 }, y: { get: () => this._height / 2 } });
+		Object.defineProperties(this.CENTER_RIGHT, { x: { get: () => this._width }, y: { get: () => this._height / 2 } });
+		Object.defineProperties(this.BOTTOM_LEFT, { x: { value: 0, writable: false }, y: { get: () => this._height } });
+		Object.defineProperties(this.BOTTOM_CENTER, { x: { get: () => this._width / 2 }, y: { get: () => this._height } });
+		Object.defineProperties(this.BOTTOM_RIGHT, { x: { get: () => this._width }, y: { get: () => this._height } });
 	}
 
 	/**
@@ -114,6 +119,23 @@ export class Canvas {
 	 */
 	hide() {
 		sdl2bind.hideWindow(this._window);
+	}
+
+	/** Resize the SDL window in logical canvas pixels; updates arrive through onWindowResize. */
+	resize(width: number, height: number): void {
+		if (this._closed) throw new Error("The canvas is closed");
+		if (![width, height].every(value => Number.isSafeInteger(value) && value > 0 && value * this._scale <= 0x7fffffff)) throw new RangeError("Canvas dimensions must be positive integers");
+		sdl2bind.resizeWindow(this._window, width * this._scale, height * this._scale);
+	}
+
+	/** Ask to close, allowing onWindowClose handlers to cancel. close() always closes. */
+	requestClose(): void {
+		if (!this._closed) sdl2bind.requestWindowClose(this._window);
+	}
+
+	/** Process queued window/input events when drawing outside a loop. */
+	pollEvents(): void {
+		if (!this._closed) sdl2bind.pollEvents();
 	}
 
 	/**
@@ -141,7 +163,7 @@ export class Canvas {
 	 * @since v0.1.0
 	 */
 	drawPoint(color: RGBAColor, position: Position) {
-		setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x * this._scale, position.y * this._scale);
+		setPoint(this._renderer, color.red, color.green, color.blue, color.alpha, position.x, position.y);
 	}
 
 	/**
@@ -375,18 +397,50 @@ export class Canvas {
 	 * @since v1.0.8
 	 * @updated with v1.3.4
 	 */
-	loop(callback: () => void) {
+	loop(callback: (deltaMs: number) => void, options: LoopOptions = {}) {
+		if (this._closed) throw new Error("The canvas is closed");
 		if (this._isAttachedMode) throw "Video buffer is attached, use detach to free the video buffer";
+		const fps = options.fps ?? 60;
+		const maxDelta = options.maxDeltaMs ?? 100;
+		if (!Number.isFinite(fps) || fps <= 0 || !Number.isFinite(maxDelta) || maxDelta <= 0) throw new RangeError("Loop fps and maxDeltaMs must be positive and finite");
+		this.endLoop();
+		const generation = this._loopGeneration;
+		this._frameTime = 1000 / fps;
+		this._currentFrametime = 0;
+		let lastFrame = performance.now();
 		this._isLoopMode = true;
-		this._loop = setInterval(() => {
-			let loopStartTime = new Date().getTime();
-			setRenderingSequence();
-			refresh(this._renderer);
-			callback();
-			this.useMainLayer();
-			renderPresent(this._renderer);
-			this._currentFrametime = new Date().getTime() - loopStartTime;
-		});
+		const tick = () => {
+			if (!this._isLoopMode || this._closed || this._loopGeneration !== generation) return;
+			const start = performance.now();
+			this._currentFrametime = start - lastFrame;
+			lastFrame = start;
+			try {
+				sdl2bind.pollEvents();
+				if (this._closed || !this._isLoopMode || this._loopGeneration !== generation) return;
+				this.batch(() => {
+					this.useMainLayer();
+					if (options.clear !== false) refresh(this._renderer);
+					callback(Math.min(this._currentFrametime, maxDelta));
+					if (!this._closed) this.useMainLayer();
+				});
+			} catch (error) {
+				if (this._loopGeneration === generation) this.endLoop();
+				throw error;
+			}
+			if (this._isLoopMode && !this._closed && this._loopGeneration === generation) {
+				this._loop = setTimeout(tick, Math.max(0, this._frameTime - (performance.now() - start)));
+			}
+		};
+		this._loop = setTimeout(tick, this._frameTime);
+	}
+
+	/** Draw synchronously and present once. Nested batches share the same presentation. */
+	batch(callback: () => void): void {
+		if (this._closed) throw new Error("The canvas is closed");
+		beginRenderBatch(this._renderer);
+		try { callback(); }
+		finally { endRenderBatch(this._renderer); }
+		if (!this._closed) render(this._renderer);
 	}
 
 	/**
@@ -404,7 +458,7 @@ export class Canvas {
 	 */
 	get fps() {
 		if (!this._isLoopMode) throw "Must render the scene with the loop function to get frametime";
-		return 1000 / this._currentFrametime;
+		return this._currentFrametime > 0 ? 1000 / this._currentFrametime : 0;
 	}
 
 	/**
@@ -502,8 +556,17 @@ export class Canvas {
 	 * @since v1.2.1 
 	 * @updated with v1.2.2
 	 */
-	drawTexture(textureID: string, pos: Position): void {
-		setTexture(this._renderer, pos.x, pos.y, textureID);
+	drawTexture(textureID: string, pos: Position, options: TextureDrawOptions = {}): void {
+		sdl2bind.drawTexture(this._renderer, pos.x, pos.y, textureID, options);
+		render(this._renderer);
+	}
+
+	unloadTexture(textureID: string): void {
+		sdl2bind.unloadTexture(textureID);
+	}
+
+	drawAnimation(animation: SpriteAnimation, pos: Position, options: Omit<TextureDrawOptions, "source"> = {}): void {
+		this.drawTexture(animation.textureID, pos, { ...options, source: animation.frame });
 	}
 
 
@@ -726,8 +789,11 @@ export class Canvas {
 	 * @since v1.3.4
 	 */
 	close() {
+		if (this._closed) return;
+		this._closed = true;
 		this.endLoop();
 		this.detach();
+		this._windowHandlers.clear();
 		sdl2bind.close();
 	}
 
@@ -737,7 +803,47 @@ export class Canvas {
 	 */
 	endLoop() {
 		this._isLoopMode = false;
-		clearInterval(this._loop);
+		this._loopGeneration++;
+		clearTimeout(this._loop);
+	}
+
+	onWindowEvent(type: WindowEventType, callback: WindowEventHandler): () => void {
+		if (this._closed) throw new Error("The canvas is closed");
+		if (typeof callback !== "function") throw new TypeError("Window handler must be a function");
+		let handlers = this._windowHandlers.get(type);
+		if (!handlers) this._windowHandlers.set(type, handlers = new Set());
+		handlers.add(callback);
+		return () => { handlers.delete(callback); };
+	}
+
+	onWindowResize(callback: (width: number, height: number) => void): () => void { return this.onWindowEvent("resize", event => callback(event.width, event.height)); }
+	onWindowMove(callback: (x: number, y: number) => void): () => void { return this.onWindowEvent("move", event => callback(event.x, event.y)); }
+	onWindowFocus(callback: () => void): () => void { return this.onWindowEvent("focus", callback); }
+	onWindowUnfocus(callback: () => void): () => void { return this.onWindowEvent("unfocus", callback); }
+	onWindowMinimize(callback: () => void): () => void { return this.onWindowEvent("minimize", callback); }
+	onWindowMaximize(callback: () => void): () => void { return this.onWindowEvent("maximize", callback); }
+	onWindowRestore(callback: () => void): () => void { return this.onWindowEvent("restore", callback); }
+	onWindowShow(callback: () => void): () => void { return this.onWindowEvent("show", callback); }
+	onWindowHide(callback: () => void): () => void { return this.onWindowEvent("hide", callback); }
+	onWindowMouseEnter(callback: () => void): () => void { return this.onWindowEvent("mouseEnter", callback); }
+	onWindowMouseLeave(callback: () => void): () => void { return this.onWindowEvent("mouseLeave", callback); }
+	onWindowClose(callback: () => boolean | void): () => void { return this.onWindowEvent("close", callback); }
+
+	private _dispatchWindowEvent(type: WindowEventType, first: number, second: number): void {
+		if (this._closed) return;
+		const event: WindowEvent = { type };
+		if (type === "resize") {
+			this._width = event.width = first;
+			this._height = event.height = second;
+			// A JS buffer cannot be resized along with the native framebuffer.
+			if (this._isAttachedMode) this.detach();
+		} else if (type === "move") { event.x = first; event.y = second; }
+		let cancelClose = false;
+		for (const handler of Array.from(this._windowHandlers.get(type) ?? [])) {
+			if (handler(event) === false) cancelClose = true;
+			if (this._closed) return;
+		}
+		if (type === "close" && !cancelClose) this.close();
 	}
 
 	/**

@@ -1,6 +1,8 @@
 import { Key } from './types.js';
 declare let sdl2bind: any;
 export { sdl2bind };
+export declare function beginRenderBatch(renderer: ArrayBuffer): void;
+export declare function endRenderBatch(renderer: ArrayBuffer): void;
 export declare function getTicks(): any;
 export declare function setRenderingSequence(): Promise<void>;
 export declare function clearRenderingSequence(): Promise<void>;

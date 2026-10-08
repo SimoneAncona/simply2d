@@ -4,7 +4,41 @@ export type CanvasOptions = {
     scale?: number;
     antiAliasing?: boolean;
     removeWindowDecoration?: boolean;
+    vsync?: boolean;
 };
+export type Rectangle = Position & {
+    width: number;
+    height: number;
+};
+export type TextureDrawOptions = {
+    source?: Rectangle;
+    width?: number;
+    height?: number;
+    rotation?: number;
+    flipX?: boolean;
+    flipY?: boolean;
+    opacity?: number;
+    filtering?: "nearest" | "linear";
+};
+export type LoopOptions = {
+    fps?: number;
+    maxDeltaMs?: number;
+    clear?: boolean;
+};
+export type AnimationOptions = {
+    fps?: number;
+    loop?: boolean;
+    autoplay?: boolean;
+};
+export type WindowEventType = "resize" | "focus" | "unfocus" | "move" | "minimize" | "maximize" | "restore" | "show" | "hide" | "mouseEnter" | "mouseLeave" | "close";
+export type WindowEvent = {
+    type: WindowEventType;
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+};
+export type WindowEventHandler = (event: WindowEvent) => boolean | void;
 export type RGBAColor = {
     red: number;
     green: number;

@@ -1,4 +1,5 @@
-import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution } from "./types.js";
+import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution, TextureDrawOptions, LoopOptions, WindowEventType, WindowEventHandler } from "./types.js";
+import { SpriteAnimation } from "./animation.js";
 import { Path } from "./path.js";
 export declare class Canvas {
     protected _width: number;
@@ -23,6 +24,9 @@ export declare class Canvas {
     protected _antialias: boolean;
     protected _isAttachedMode: boolean;
     protected _attachLoop: NodeJS.Timeout;
+    private _closed;
+    private _loopGeneration;
+    private _windowHandlers;
     TOP_LEFT: Position;
     TOP_RIGHT: Position;
     TOP_CENTER: Position;
@@ -35,6 +39,9 @@ export declare class Canvas {
     constructor(windowTitle: string, width: number, height: number, xPos?: number, yPos?: number, options?: CanvasOptions);
     show(): void;
     hide(): void;
+    resize(width: number, height: number): void;
+    requestClose(): void;
+    pollEvents(): void;
     setBackgroundColor(color: RGBAColor): void;
     sleep(ms: number): void;
     drawPoint(color: RGBAColor, position: Position): void;
@@ -62,7 +69,8 @@ export declare class Canvas {
     initRenderSequence(): void;
     exposeRender(): void;
     waitFrame(): void;
-    loop(callback: () => void): void;
+    loop(callback: (deltaMs: number) => void, options?: LoopOptions): void;
+    batch(callback: () => void): void;
     get frameTime(): number;
     get fps(): number;
     onKeysDown(callback: (keys: Key[]) => void): void;
@@ -73,7 +81,9 @@ export declare class Canvas {
     private _searchFont;
     static convertPolarCoords(center: Position, angle: number, radius: number): Position;
     loadTexture(textureID: string, filePath: string): void;
-    drawTexture(textureID: string, pos: Position): void;
+    drawTexture(textureID: string, pos: Position, options?: TextureDrawOptions): void;
+    unloadTexture(textureID: string): void;
+    drawAnimation(animation: SpriteAnimation, pos: Position, options?: Omit<TextureDrawOptions, "source">): void;
     static getScreenResolution(): Resolution;
     getTextureResolution(textureID: string): Resolution;
     addLayer(layerID: string, bitPerPixel: PixelFormat, backgroundColor?: RGBAColor): void;
@@ -93,6 +103,20 @@ export declare class Canvas {
     detach(): void;
     close(): void;
     endLoop(): void;
+    onWindowEvent(type: WindowEventType, callback: WindowEventHandler): () => void;
+    onWindowResize(callback: (width: number, height: number) => void): () => void;
+    onWindowMove(callback: (x: number, y: number) => void): () => void;
+    onWindowFocus(callback: () => void): () => void;
+    onWindowUnfocus(callback: () => void): () => void;
+    onWindowMinimize(callback: () => void): () => void;
+    onWindowMaximize(callback: () => void): () => void;
+    onWindowRestore(callback: () => void): () => void;
+    onWindowShow(callback: () => void): () => void;
+    onWindowHide(callback: () => void): () => void;
+    onWindowMouseEnter(callback: () => void): () => void;
+    onWindowMouseLeave(callback: () => void): () => void;
+    onWindowClose(callback: () => boolean | void): () => void;
+    private _dispatchWindowEvent;
     get mousePosition(): Position;
     applyFilter(fn: (v: number, i: number, buff: Uint8Array) => number): void;
 }

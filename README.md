@@ -11,7 +11,7 @@ Visual Studio VC tools are required. For more, see https://github.com/nodejs/nod
 
 ### For Linux
 To use Simply2D you must have installed make, a C++17 compiler, Python 3, pkg-config and the SDL2 development packages. To install SDL2 you can use the following command:
-- For Ubuntu: `sudo apt install build-essential python3 pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
+- For Debian and Ubuntu: `sudo apt install build-essential python3 pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
 - For Red Hat and Fedora: `sudo dnf install gcc-c++ make python3 pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_ttf-devel`
 - For Arch Linux: `sudo pacman -S --needed base-devel python pkgconf sdl2 sdl2_image sdl2_ttf`
 
@@ -19,32 +19,64 @@ To use Simply2D you must have installed make, a C++17 compiler, Python 3, pkg-co
 
 
 ### For contributors
-On Windows you must create the following files in your project directory:
-```
-📁 bin
-│  📁 sdl
-│  │  📁 winx64
-│  │  │  📄 SDl2.dll
-│  │  │  📄 SDL2.lib
-│  │  │  📄 SDL2main.lib
-│  │  │  📄 SDL2test.lib
-│  📁 sdlimg
-│  │  📁 winx64
-│  │  │  📄 SDL2_image.dll
-│  │  │  📄 SDL2_image.lib
-│  📁 sdlttf
-│  │  📁 winx64
-│  │  │  📄 SDL2_ttf.dll
-│  │  │  📄 SDL2_ttf.lib
-```
-These files can be extracted from the following links:
-- https://github.com/libsdl-org/SDL/releases/download/release-2.30.7/SDL2-devel-2.30.7-VC.zip
-- https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-VC.zip
-- https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-VC.zip
+Windows x64 SDL runtime and import libraries are included in npm releases. The local `bin/` directory is ignored by Git. Before packing a release, populate it with the official SDL 2.32.10, SDL_image 2.8.12, and SDL_ttf 2.24.0 VC x64 libraries and their upstream licenses; CI downloads these automatically. Visual Studio C++ build tools and Python are still required to compile the Node addon.
 
-Under the lib/x64 path
+Run `npm install`, then `npm run build`. Run `npm test` for the small animation, framebuffer, and window-event smoke tests. CI also builds on Windows and installs the packed npm release into a separate project.
 
-To build from source, run `npm install`, then `npm run build`. Run the small framebuffer smoke test with `npm test` (Linux uses offscreen video). Before packing a release, supply the Windows DLLs and import libraries above in `bin/`; these are included in the npm package. The Windows CI job downloads them before building.
+## Preparing 1.4.0
+
+The working version is `1.4.0-dev.0`.
+
+### Drawing and frame timing
+
+`canvas.loop(callback, { fps: 60, maxDeltaMs: 100 })` passes elapsed milliseconds to each frame. Drawing inside the callback is presented once. Set `clear: false` to retain the preceding frame. `canvas.endLoop()` stops the timer and restores immediate drawing.
+
+Use `canvas.batch(() => { ... })` to group synchronous drawing outside a loop into one presentation. Nested batches share the presentation. Set `vsync: false` in the Canvas constructor options to disable vertical synchronization.
+
+### Sprites and animations
+
+```js
+import { SpriteSheet } from "simply2d";
+
+canvas.loadTexture("player", "player.png");
+const sheet = new SpriteSheet("player", 16, 16, 4, 2);
+const walk = sheet.animation([0, 1, 2, 3], { fps: 10 });
+canvas.loop(deltaMs => {
+    walk.update(deltaMs);
+    canvas.drawAnimation(walk, { x: 40, y: 60 }, {
+        width: 32, height: 32, flipX: false
+    });
+});
+```
+
+`SpriteAnimation` also accepts an array of source rectangles for irregular sprite sheets. Animations support `play(restart)`, `pause()`, `stop()`, `reset()`, and `loop: false`. Updating an animation is explicit, so drawing it more than once does not advance its timing.
+
+`drawTexture(id, position, options)` supports a source rectangle, output width and height, rotation in degrees, horizontal and vertical flips, opacity from 0 to 1, and `filtering: "nearest" | "linear"`. Nearest sampling is the default. `unloadTexture(id)` releases a loaded texture.
+
+### Window events
+
+Handlers apply to the SDL canvas window. Each registration returns an unsubscribe function:
+
+```js
+const unsubscribe = canvas.onWindowResize((width, height) => {
+    console.log(width, height); // logical canvas pixels
+});
+canvas.onWindowUnfocus(() => { paused = true; });
+canvas.onWindowClose(() => unsavedChanges ? false : undefined);
+```
+
+Available handlers are `onWindowResize`, `onWindowMove`, `onWindowFocus`, `onWindowUnfocus`, `onWindowMinimize`, `onWindowMaximize`, `onWindowRestore`, `onWindowShow`, `onWindowHide`, `onWindowMouseEnter`, `onWindowMouseLeave`, and `onWindowClose`. `onWindowEvent(type, callback)` receives the corresponding event object.
+
+Events are polled by the frame loop. Call `pollEvents()` when managing your own loop. `resize(width, height)` resizes in logical pixels and preserves existing canvas and layer pixels. Returning `false` from a close handler cancels `requestClose()` or the window close button; `close()` closes immediately.
+
+### Examples and performance
+
+- `node examples/mario.js`: platforming, scrolling, animated sprites, coins, checkpoints, pause, and restart. Move with arrows or A/D, jump with Space/Up/W, and run with Shift. P pauses, R restarts, and Escape closes.
+- `node examples/animation.js`: sprite playback, scaling, flips, rotation, and opacity. Space pauses and R resets.
+- `node examples/window-events.js`: SDL window handlers.
+- `npm run bench`: compares immediate drawing with a single batch using 500 rectangles per frame.
+
+Rendering changes include cached texture dimensions, font reuse, event polling at frame boundaries, and a paced frame loop. The previous loop already grouped drawing; the batching benchmark measures drawing outside that loop. Results depend on the renderer and machine.
 
 ## API
 ### Canvas

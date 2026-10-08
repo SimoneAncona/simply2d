@@ -3,6 +3,11 @@
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
+	exports.Set("pollEvents", Napi::Function::New<SDL::poll_events>(env));
+	exports.Set("resizeWindow", Napi::Function::New<SDL::resize_window>(env));
+	exports.Set("requestWindowClose", Napi::Function::New<SDL::request_window_close>(env));
+	exports.Set("onWindowEvent", Napi::Function::New<SDL::on_window_event>(env));
+	exports.Set("unloadTexture", Napi::Function::New<SDLImage::unload_texture>(env));
 	exports.Set(Napi::String::New(env, "init"), Napi::Function::New<SDL::init>(env));
 	exports.Set(Napi::String::New(env, "getError"), Napi::Function::New<SDL::get_error>(env));
 	exports.Set(Napi::String::New(env, "createWindow"), Napi::Function::New<SDL::create_window>(env));

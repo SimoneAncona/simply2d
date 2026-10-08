@@ -20,14 +20,14 @@ jobs:
       - name: Install Linux SDL2 development libraries
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev pkg-config
-      - name: Download Windows SDL2 libraries
+      - name: Download Windows release libraries
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $libraries = @(
-            @{ Repo = "SDL"; Name = "SDL2"; Version = "2.30.7"; Destination = "sdl" },
-            @{ Repo = "SDL_image"; Name = "SDL2_image"; Version = "2.8.2"; Destination = "sdlimg" },
-            @{ Repo = "SDL_ttf"; Name = "SDL2_ttf"; Version = "2.22.0"; Destination = "sdlttf" }
+            @{ Repo = 'SDL'; Name = 'SDL2'; Version = '2.32.10'; Destination = 'sdl' },
+            @{ Repo = 'SDL_image'; Name = 'SDL2_image'; Version = '2.8.12'; Destination = 'sdlimg' },
+            @{ Repo = 'SDL_ttf'; Name = 'SDL2_ttf'; Version = '2.24.0'; Destination = 'sdlttf' }
           )
           foreach ($library in $libraries) {
             $archive = "$env:RUNNER_TEMP/$($library.Name).zip"
@@ -35,12 +35,26 @@ jobs:
             $url = "https://github.com/libsdl-org/$($library.Repo)/releases/download/release-$($library.Version)/$($library.Name)-devel-$($library.Version)-VC.zip"
             Invoke-WebRequest $url -OutFile $archive
             Expand-Archive $archive -DestinationPath $extracted
-            $source = Get-ChildItem $extracted -Directory -Recurse | Where-Object { $_.Name -eq 'x64' -and $_.Parent.Name -eq 'lib' } | Select-Object -First 1
-            if (!$source) { throw "Cannot find x64 libraries for $($library.Name)" }
             $destination = "bin/$($library.Destination)/winx64"
             New-Item $destination -ItemType Directory -Force | Out-Null
-            Get-ChildItem $source.FullName -File | Where-Object { $_.Extension -in '.dll', '.lib' } | Copy-Item -Destination $destination
+            Get-ChildItem $extracted -File -Recurse | Where-Object { $_.FullName -match '[\\/]lib[\\/]x64[\\/]' -and $_.Extension -in '.dll', '.lib' } | Copy-Item -Destination $destination
+            Get-ChildItem $extracted -File -Recurse -Filter 'LICENSE*' | Copy-Item -Destination $destination
           }
       - run: npm ci
       - run: npm test
-      - run: npm pack --dry-run
+      - name: Pack release
+        if: runner.os == 'Windows'
+        run: npm pack --pack-destination ${{ runner.temp }}
+      - name: Install packed release on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $archive = Get-ChildItem "$env:RUNNER_TEMP/simply2d-*.tgz" | Select-Object -First 1
+          $consumer = "$env:RUNNER_TEMP/package-consumer"
+          New-Item $consumer -ItemType Directory -Force | Out-Null
+          Set-Location $consumer
+          npm init -y
+          npm install $archive.FullName --omit=dev
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node --input-type=module -e "import { Canvas } from 'simply2d'; const c = new Canvas('Package smoke test', 16, 16, 0, 0, {mode: 'hidden'}); c.close();"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }

@@ -39,6 +39,11 @@
                                 '<(module_root_dir)/bin/sdl/winx64/SDL2.dll',
                                 '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll',
                                 '<(module_root_dir)/bin/sdlttf/winx64/SDL2_ttf.dll',
+                                '<(module_root_dir)/bin/sdlimg/winx64/libavif-16.dll',
+                                '<(module_root_dir)/bin/sdlimg/winx64/libtiff-5.dll',
+                                '<(module_root_dir)/bin/sdlimg/winx64/libwebp-7.dll',
+                                '<(module_root_dir)/bin/sdlimg/winx64/libwebpdemux-2.dll',
+
                             ]
                         }
                     ]

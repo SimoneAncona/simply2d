@@ -5,6 +5,7 @@
 #include <cmath>
 #include <map>
 #include <cstring>
+#include <algorithm>
 #include "common.hh"
 #include "antialiasing.hh"
 
@@ -20,6 +21,7 @@ namespace SDLImage
 {
 	void compose_frame(SDL_Renderer *renderer);
 	void reset_state();
+	bool resize_targets(SDL_Renderer *renderer, int width, int height);
 }
 
 namespace SDL
@@ -29,6 +31,7 @@ namespace SDL
 		int x, y;
 	};
 
+	std::map<Uint32, Napi::FunctionReference> window_event_callbacks;
 	Napi::FunctionReference on_click_callback_ref;
 	Napi::FunctionReference on_keydown_callback_ref;
 	Napi::FunctionReference on_keyup_callback_ref;
@@ -45,7 +48,8 @@ namespace SDL
 		SDL_RenderPresent(renderer);
 		SDL_SetRenderTarget(renderer, target);
 	}
-	TTF_Font *current_font;
+	TTF_Font *current_font = nullptr;
+	std::map<std::pair<std::string, int>, TTF_Font *> fonts;
 	bool antialiasing = false;
 	short scale = 1;
 
@@ -69,39 +73,100 @@ namespace SDL
 	void handle_events(const Napi::Env &env)
 	{
 		SDL_Event event{};
-		SDL_PollEvent(&event);
-
-		int x_mouse;
-		int y_mouse;
-
-		switch (event.type)
+		while (SDL_PollEvent(&event))
 		{
-		case SDL_QUIT:
-			SDL_Quit();
-			TTF_Quit();
-			exit(0);
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			SDL_GetMouseState(&x_mouse, &y_mouse);
-			if (on_click_callback_ref.IsEmpty())
+			switch (event.type)
+			{
+			case SDL_QUIT:
+				// Window close requests are handled below; never terminate the host process.
 				break;
-			on_click_callback_ref.Call({Napi::Number::New(env, x_mouse / scale), Napi::Number::New(env, y_mouse / scale)});
-			break;
-		case SDL_KEYDOWN:
-			if (!on_keydown_callback_ref.IsEmpty())
-				on_keydown_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
-			if (!on_keysdown_callback_ref.IsEmpty())
-				on_keysdown_callback_ref.Call({get_pressed_keys(env)});
-			break;
-		case SDL_KEYUP:
-			if (!on_keyup_callback_ref.IsEmpty())
-				on_keyup_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
-			if (!on_keysup_callback_ref.IsEmpty())
-				on_keysup_callback_ref.Call({get_pressed_keys(env)});
-			break;
-		default:
-			break;
+			case SDL_WINDOWEVENT:
+			{
+				auto handler = window_event_callbacks.find(event.window.windowID);
+				if (handler == window_event_callbacks.end()) break;
+				const char *type = nullptr;
+				int first = event.window.data1, second = event.window.data2;
+				switch (event.window.event)
+				{
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+				{
+					SDL_Window *window = SDL_GetWindowFromID(event.window.windowID);
+					SDL_Renderer *renderer = window ? SDL_GetRenderer(window) : nullptr;
+					first = std::max(1, first / scale); second = std::max(1, second / scale);
+					if (!renderer || !SDLImage::resize_targets(renderer, first, second))
+					{
+						Napi::Error::New(env, std::string("Cannot resize framebuffer: ") + SDL_GetError()).ThrowAsJavaScriptException();
+						return;
+					}
+					type = "resize"; break;
+				}
+				case SDL_WINDOWEVENT_MOVED: type = "move"; break;
+				case SDL_WINDOWEVENT_FOCUS_GAINED: type = "focus"; break;
+				case SDL_WINDOWEVENT_FOCUS_LOST: type = "unfocus"; break;
+				case SDL_WINDOWEVENT_MINIMIZED: type = "minimize"; break;
+				case SDL_WINDOWEVENT_MAXIMIZED: type = "maximize"; break;
+				case SDL_WINDOWEVENT_RESTORED: type = "restore"; break;
+				case SDL_WINDOWEVENT_SHOWN: type = "show"; break;
+				case SDL_WINDOWEVENT_HIDDEN: type = "hide"; break;
+				case SDL_WINDOWEVENT_ENTER: type = "mouseEnter"; break;
+				case SDL_WINDOWEVENT_LEAVE: type = "mouseLeave"; break;
+				case SDL_WINDOWEVENT_CLOSE: type = "close"; break;
+				default: break;
+				}
+				if (type)
+				{
+					Napi::Function callback = handler->second.Value();
+					callback.Call({Napi::String::New(env, type), Napi::Number::New(env, first), Napi::Number::New(env, second)});
+				}
+				break;
+			}
+			case SDL_MOUSEBUTTONDOWN:
+				if (!on_click_callback_ref.IsEmpty())
+					on_click_callback_ref.Call({Napi::Number::New(env, event.button.x / scale), Napi::Number::New(env, event.button.y / scale)});
+				break;
+			case SDL_KEYDOWN:
+				if (!on_keydown_callback_ref.IsEmpty()) on_keydown_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+				if (!on_keysdown_callback_ref.IsEmpty()) on_keysdown_callback_ref.Call({get_pressed_keys(env)});
+				break;
+			case SDL_KEYUP:
+				if (!on_keyup_callback_ref.IsEmpty()) on_keyup_callback_ref.Call({Napi::String::New(env, SDL_GetKeyName(event.key.keysym.sym))});
+				if (!on_keysup_callback_ref.IsEmpty()) on_keysup_callback_ref.Call({get_pressed_keys(env)});
+				break;
+			default: break;
+			}
+			if (env.IsExceptionPending() || SDL_WasInit(SDL_INIT_VIDEO) == 0) return;
 		}
+	}
+
+	Napi::Value poll_events(const Napi::CallbackInfo &info)
+	{
+		handle_events(info.Env());
+		return info.Env().Undefined();
+	}
+
+	Napi::Value on_window_event(const Napi::CallbackInfo &info)
+	{
+		SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		window_event_callbacks.insert_or_assign(SDL_GetWindowID(window), Napi::Persistent(info[1].As<Napi::Function>()));
+		return info.Env().Undefined();
+	}
+
+	Napi::Value resize_window(const Napi::CallbackInfo &info)
+	{
+		SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_SetWindowSize(window, info[1].As<Napi::Number>().Int32Value(), info[2].As<Napi::Number>().Int32Value());
+		return info.Env().Undefined();
+	}
+
+	Napi::Value request_window_close(const Napi::CallbackInfo &info)
+	{
+		SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
+		SDL_Event event{};
+		event.type = SDL_WINDOWEVENT;
+		event.window.windowID = SDL_GetWindowID(window);
+		event.window.event = SDL_WINDOWEVENT_CLOSE;
+		if (SDL_PushEvent(&event) < 0) Napi::Error::New(info.Env(), SDL_GetError()).ThrowAsJavaScriptException();
+		return info.Env().Undefined();
 	}
 
 	int read_pixels(SDL_Renderer *renderer, uint8_t *buffer, size_t size, int width, int height, Uint32 format)
@@ -144,7 +209,16 @@ namespace SDL
 		Napi::Env env = info.Env();
 		for (auto &entry : main_targets) SDL_DestroyTexture(entry.second);
 		main_targets.clear();
+		window_event_callbacks.clear();
+		on_click_callback_ref.Reset();
+		on_keydown_callback_ref.Reset();
+		on_keyup_callback_ref.Reset();
+		on_keysdown_callback_ref.Reset();
+		on_keysup_callback_ref.Reset();
 		SDLImage::reset_state();
+		for (auto &entry : fonts) TTF_CloseFont(entry.second);
+		fonts.clear();
+		current_font = nullptr;
 		SDL_Quit();
 		TTF_Quit();
 		return env.Undefined();
@@ -272,7 +346,7 @@ namespace SDL
 		int index = info[1].As<Napi::Number>().Int64Value();
 		Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 		TTF_Init();
-		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_ACCELERATED);
 		if (renderer == NULL)
 			return env.Undefined();
 		int w, h;
@@ -321,7 +395,6 @@ namespace SDL
 		int green = info[2].As<Napi::Number>().Int64Value();
 		int blue = info[3].As<Napi::Number>().Int64Value();
 		int alpha = info[4].As<Napi::Number>().Int64Value();
-		handle_events(env);
 		return Napi::Number::New(env, SDL_SetRenderDrawColor(renderer, red, green, blue, alpha));
 	}
 
@@ -356,7 +429,6 @@ namespace SDL
 		SDL_Renderer *renderer = GET_RENDERER;
 		int px = info[1].As<Napi::Number>().Int64Value();
 		int py = info[2].As<Napi::Number>().Int64Value();
-		handle_events(env);
 		return Napi::Number::New(env, SDL_RenderDrawPoint(renderer, px, py));
 	}
 
@@ -368,7 +440,6 @@ namespace SDL
 		int y1 = info[2].As<Napi::Number>().Int64Value();
 		int x2 = info[3].As<Napi::Number>().Int64Value();
 		int y2 = info[4].As<Napi::Number>().Int64Value();
-		handle_events(env);
 		if (antialiasing)
 		{
 			AA::draw_line_aa(renderer, x1, y1, x2, y2);
@@ -382,7 +453,6 @@ namespace SDL
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[1].As<Napi::ArrayBuffer>());
-		handle_events(env);
 		return Napi::Number::New(env, SDL_RenderCopy(renderer, texture, NULL, NULL));
 	}
 
@@ -400,7 +470,6 @@ namespace SDL
 		rect.y = y;
 		rect.w = w;
 		rect.h = h;
-		handle_events(env);
 		if (fill)
 			return Napi::Number::New(env, SDL_RenderFillRect(renderer, &rect));
 		return Napi::Number::New(env, SDL_RenderDrawRect(renderer, &rect));
@@ -415,7 +484,6 @@ namespace SDL
 		int w = info[3].As<Napi::Number>().Int64Value();
 		int h = info[4].As<Napi::Number>().Int64Value();
 		SDL_Texture *texture = SDL_CreateTexture(renderer, flags, access, w, h);
-		handle_events(env);
 		return Napi::ArrayBuffer::New(env, texture, sizeof(texture));
 	}
 
@@ -437,7 +505,6 @@ namespace SDL
 		}
 
 		SDL_UnlockTexture(texture);
-		handle_events(env);
 		return env.Undefined();
 	}
 
@@ -446,7 +513,6 @@ namespace SDL
 		Napi::Env env = info.Env();
 		SDL_Texture *texture = (SDL_Texture *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
 		SDL_DestroyTexture(texture);
-		handle_events(env);
 		return env.Undefined();
 	}
 
@@ -460,10 +526,10 @@ namespace SDL
 		uint8_t *pixels = new uint8_t[size];
 		if (read_pixels(renderer, pixels, size, width, height, SDL_PIXELFORMAT_RGBA8888) != 0)
 		{
+			delete[] pixels;
 			throw Napi::Error::New(env, std::string("Cannot read data: ") + SDL_GetError());
 		}
-		handle_events(env);
-		return Napi::ArrayBuffer::New(env, (void *)pixels, size);
+		return Napi::ArrayBuffer::New(env, (void *)pixels, size, [](Napi::Env, void *data) { delete[] static_cast<uint8_t *>(data); });
 	}
 
 	Napi::Value set_scale(const Napi::CallbackInfo &info)
@@ -477,7 +543,6 @@ namespace SDL
 		{
 			throw Napi::Error::New(env, std::string("Cannot set the render scale: ") + SDL_GetError());
 		}
-		handle_events(env);
 		return env.Undefined();
 	}
 
@@ -539,7 +604,17 @@ namespace SDL
 	inline Napi::Value set_font(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
-		current_font = TTF_OpenFont(info[0].As<Napi::String>().Utf8Value().c_str(), info[1].As<Napi::Number>().Int32Value());
+		std::string filename = info[0].As<Napi::String>().Utf8Value();
+		int size = info[1].As<Napi::Number>().Int32Value();
+		if (size <= 0) { Napi::RangeError::New(env, "Font size must be positive").ThrowAsJavaScriptException(); return env.Undefined(); }
+		auto key = std::make_pair(filename, size);
+		auto entry = fonts.find(key);
+		if (entry == fonts.end()) {
+			TTF_Font *font = TTF_OpenFont(filename.c_str(), size);
+			if (!font) { Napi::Error::New(env, TTF_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
+			entry = fonts.emplace(key, font).first;
+		}
+		current_font = entry->second;
 		return env.Undefined();
 	}
 
@@ -563,9 +638,13 @@ namespace SDL
 			static_cast<Uint8>(info[3].As<Napi::Number>().Uint32Value()),
 			static_cast<Uint8>(info[4].As<Napi::Number>().Uint32Value()),
 			255};
-		SDL_Surface *surface = TTF_RenderText_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
+		if (!current_font) { Napi::Error::New(env, "Load a font before drawing text").ThrowAsJavaScriptException(); return env.Undefined(); }
+		if (info[1].As<Napi::String>().Utf8Value().empty()) return env.Undefined();
+		SDL_Surface *surface = TTF_RenderUTF8_Solid(current_font, info[1].As<Napi::String>().Utf8Value().c_str(), color);
 
+		if (!surface) { Napi::Error::New(env, TTF_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
 		SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+		if (!texture) { SDL_FreeSurface(surface); Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
 		int texW = 0;
 		int texH = 0;
 		int x = info[5].As<Napi::Number>().Int32Value();
@@ -573,7 +652,8 @@ namespace SDL
 		SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
 		SDL_Rect dstrect = {x, y, texW, texH};
 		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-		handle_events(env);
+		SDL_FreeSurface(surface);
+		SDL_DestroyTexture(texture);
 		return env.Undefined();
 	}
 

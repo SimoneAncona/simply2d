@@ -1,0 +1,33 @@
+import assert from "node:assert/strict";
+import { SpriteSheet } from "../lib/animation.js";
+
+const sheet = new SpriteSheet("player", 16, 24, 3, 2);
+assert.deepEqual(sheet.frame(4), { x: 16, y: 24, width: 16, height: 24 });
+assert.throws(() => sheet.frame(6), RangeError);
+const walk = sheet.animation([0, 1, 2], { fps: 10 });
+walk.update(250);
+assert.equal(walk.frameIndex, 2);
+walk.update(50);
+assert.equal(walk.frameIndex, 0);
+walk.pause();
+walk.update(100);
+assert.equal(walk.frameIndex, 0);
+walk.play();
+walk.update(1000000);
+assert.equal(walk.frameIndex, 1);
+walk.stop();
+assert.equal(walk.isPlaying, false);
+assert.equal(walk.frameIndex, 0);
+
+const once = sheet.animation([0, 1, 2], { fps: 10, loop: false });
+once.update(200);
+assert.equal(once.frameIndex, 2);
+assert.equal(once.finished, false);
+once.update(100);
+assert.equal(once.finished, true);
+assert.equal(once.isPlaying, false);
+once.play();
+assert.equal(once.frameIndex, 0);
+assert.equal(once.finished, false);
+assert.throws(() => once.update(-1), RangeError);
+console.log("Animation timing smoke tests passed.");

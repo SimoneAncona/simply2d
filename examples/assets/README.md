@@ -6,3 +6,5 @@ and [overworld tile metadata](https://github.com/meth-meth-method/super-mario/bl
 The Mario artwork depicts Nintendo characters and is kept within the examples.
 
 `mario.png`, `png_test.png`, and `Roboto-Regular.ttf` were already in this repository.
+
+`star.svg` is an original vector illustration for the SVG example. Audio effects in `../sounds.js` are synthesized by the example and require no external assets.

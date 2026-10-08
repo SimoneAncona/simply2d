@@ -1,3 +1,4 @@
+import { SVGOptions } from "./types.js";
 import { beginRenderBatch, endRenderBatch, clearRenderingSequence, clearWithColor, getRenderer, getTicks, getWindow, onClickEvent, onKeyDownEvent, onKeyUpEvent, onKeysDownEvent, onKeysUpEvent, refresh, renderPresent, saveJPG, savePNG, setJPG, setLine, setPNG, setPoint, setRawData, setRectangle, setRenderingSequence, watchRawData, setAntialias, setText, setArc, sdl2bind, setTexture, render } from "./sdl2int.js";
 import { SDL_PIXEL_FORMAT, SDL_WindowPos, SDL_Window_Flags } from "./sdlValues.js";
 import { CanvasOptions, Key, Layer, PixelFormat, Position, RGBAColor, Resolution, TextureDrawOptions, LoopOptions, WindowEvent, WindowEventType, WindowEventHandler } from "./types.js";
@@ -547,6 +548,19 @@ export class Canvas {
 	 */
 	loadTexture(textureID: string, filePath: string): void {
 		sdl2bind.loadTextureBuffer(this._renderer, textureID, filePath);
+	}
+
+	/** Rasterize an SVG file or encoded SVG bytes into a reusable texture. */
+	loadSVG(textureID: string, source: string | Uint8Array, options: SVGOptions = {}): void {
+		if (this._closed) throw new Error("The canvas is closed");
+		if (typeof textureID !== "string" || !textureID) throw new TypeError("An SVG needs a nonempty texture ID");
+		if (!(typeof source === "string" || source instanceof Uint8Array)) throw new TypeError("SVG source must be a filename or SVG bytes");
+		for (const value of [options.width, options.height]) {
+			if (value !== undefined && (!Number.isSafeInteger(value) || value <= 0 || value > 2147483647)) {
+				throw new RangeError("SVG dimensions must be positive integers");
+			}
+		}
+		sdl2bind.loadSVG(this._renderer, textureID, source, options.width ?? 0, options.height ?? 0);
 	}
 
 	/**

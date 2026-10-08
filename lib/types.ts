@@ -83,3 +83,6 @@ export type Resolution = {
 }
 
 export type PixelFormat = 8 | 16 | 24 | 32;
+
+/** Rasterization size; omit either dimension to preserve the SVG aspect ratio. */
+export type SVGOptions = { width?: number; height?: number };

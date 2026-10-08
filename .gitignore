@@ -114,5 +114,4 @@ lib/*.js
 
 index.js
 
-bin/
 .zed/

@@ -1,0 +1,1 @@
+Windows x64 SDL runtime and import libraries from official libsdl-org releases: SDL 2.32.10, SDL_image 2.8.12, SDL_ttf 2.24.0. Each directory includes the upstream license. SDL_image optional codec DLLs are included alongside its runtime.

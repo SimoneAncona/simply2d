@@ -339,6 +339,12 @@ namespace SDL
 		return Napi::ArrayBuffer::New(env, window, sizeof(window));
 	}
 
+	Napi::Value get_window_flags(const Napi::CallbackInfo &info)
+	{
+		SDL_Window *window = static_cast<SDL_Window *>(get_ptr_from_js(info[0].As<Napi::ArrayBuffer>()));
+		return Napi::Number::New(info.Env(), SDL_GetWindowFlags(window));
+	}
+
 	Napi::Value create_renderer(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();

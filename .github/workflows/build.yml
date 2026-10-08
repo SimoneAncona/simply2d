@@ -1,0 +1,46 @@
+name: Build and smoke test
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [22, 24, 26]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+          cache: npm
+      - name: Install Linux SDL2 development libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev pkg-config
+      - name: Download Windows SDL2 libraries
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $libraries = @(
+            @{ Repo = "SDL"; Name = "SDL2"; Version = "2.30.7"; Destination = "sdl" },
+            @{ Repo = "SDL_image"; Name = "SDL2_image"; Version = "2.8.2"; Destination = "sdlimg" },
+            @{ Repo = "SDL_ttf"; Name = "SDL2_ttf"; Version = "2.22.0"; Destination = "sdlttf" }
+          )
+          foreach ($library in $libraries) {
+            $archive = "$env:RUNNER_TEMP/$($library.Name).zip"
+            $extracted = "$env:RUNNER_TEMP/$($library.Name)"
+            $url = "https://github.com/libsdl-org/$($library.Repo)/releases/download/release-$($library.Version)/$($library.Name)-devel-$($library.Version)-VC.zip"
+            Invoke-WebRequest $url -OutFile $archive
+            Expand-Archive $archive -DestinationPath $extracted
+            $source = Get-ChildItem $extracted -Directory -Recurse | Where-Object { $_.Name -eq 'x64' -and $_.Parent.Name -eq 'lib' } | Select-Object -First 1
+            if (!$source) { throw "Cannot find x64 libraries for $($library.Name)" }
+            $destination = "bin/$($library.Destination)/winx64"
+            New-Item $destination -ItemType Directory -Force | Out-Null
+            Get-ChildItem $source.FullName -File | Where-Object { $_.Extension -in '.dll', '.lib' } | Copy-Item -Destination $destination
+          }
+      - run: npm ci
+      - run: npm test
+      - run: npm pack --dry-run

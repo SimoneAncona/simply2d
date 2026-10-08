@@ -1,14 +1,18 @@
 {
-	"compilerOptions": {
-		"module": "NodeNext",
-		"noImplicitAny": true,
-		"removeComments": true,
-		"preserveConstEnums": true,
-		"sourceMap": false,
-		"declaration": true
-	},
-	"include": [
-		"index.ts",
-		"lib/**/*"
-	]
+  "compilerOptions": {
+    "module": "NodeNext",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": false,
+    "declaration": true,
+    "strict": false,
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "lib/**/*"
+  ]
 }

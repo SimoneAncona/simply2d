@@ -4,7 +4,7 @@ const height = 500;
 const width = 500;
 const playerSize = 10;
 
-const canvas = new Canvas("title", height, width);
+const canvas = new Canvas("game", height, width);
 
 let playerCurrentPos = { x: 20, y: height - playerSize };
 let playerVerticalSpeed = 0;

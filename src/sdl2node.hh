@@ -4,6 +4,7 @@
 #include <string>
 #include <cmath>
 #include <map>
+#include <cstring>
 #include "common.hh"
 #include "antialiasing.hh"
 
@@ -14,6 +15,12 @@
 #ifdef _DEBUG
 	#include <iostream>
 #endif
+
+namespace SDLImage
+{
+	void compose_frame(SDL_Renderer *renderer);
+	void reset_state();
+}
 
 namespace SDL
 {
@@ -27,8 +34,17 @@ namespace SDL
 	Napi::FunctionReference on_keyup_callback_ref;
 	Napi::FunctionReference on_keysdown_callback_ref;
 	Napi::FunctionReference on_keysup_callback_ref;
-	Napi::Uint8Array video_buffer;
+	Napi::Reference<Napi::Uint8Array> video_buffer;
 	SDL_Texture* attached_texture;
+	std::map<SDL_Renderer *, SDL_Texture *> main_targets;
+
+	void present_frame(SDL_Renderer *renderer)
+	{
+		SDL_Texture *target = SDL_GetRenderTarget(renderer);
+		SDLImage::compose_frame(renderer);
+		SDL_RenderPresent(renderer);
+		SDL_SetRenderTarget(renderer, target);
+	}
 	TTF_Font *current_font;
 	bool antialiasing = false;
 	short scale = 1;
@@ -52,7 +68,7 @@ namespace SDL
 
 	void handle_events(const Napi::Env &env)
 	{
-		SDL_Event event;
+		SDL_Event event{};
 		SDL_PollEvent(&event);
 
 		int x_mouse;
@@ -109,28 +125,26 @@ namespace SDL
 			bpp = 4;
 		}
 		if (size < (size_t)(width * height * bpp)) return 1;
-		uint8_t *pixels = new uint8_t[width * height * (int)pow(scale, 2) * bpp];
-		auto code = SDL_RenderReadPixels(renderer, NULL, format, (void *)pixels, width * scale * bpp);
+		const int read_scale = SDL_GetRenderTarget(renderer) == nullptr ? scale : 1;
+		const int pitch = width * read_scale * bpp;
+		std::vector<uint8_t> pixels((size_t)pitch * height * read_scale);
+		SDL_Rect rect{0, 0, width * read_scale, height * read_scale};
+		auto code = SDL_RenderReadPixels(renderer, &rect, format, pixels.data(), pitch);
 		if (code) return code;
 
-		size_t index = 0;
-		for (int i = 0; i < height; i++)
-		{
-			for (int j = 0; j < width; j++)
-			{
-				for (int k = 0; k < bpp; k++)
-					buffer[(i * width * bpp) + j] = pixels[index++];
-				index += bpp * (scale - 1); 
-			}
-			index += width * bpp * (scale - 1);
-		}
-		delete pixels;
+		for (int y = 0; y < height; y++)
+			for (int x = 0; x < width; x++)
+				std::memcpy(buffer + (y * width + x) * bpp,
+					pixels.data() + y * read_scale * pitch + x * read_scale * bpp, bpp);
 		return 0;
 	}
 
 	Napi::Value close(const Napi::CallbackInfo& info)
 	{
 		Napi::Env env = info.Env();
+		for (auto &entry : main_targets) SDL_DestroyTexture(entry.second);
+		main_targets.clear();
+		SDLImage::reset_state();
 		SDL_Quit();
 		TTF_Quit();
 		return env.Undefined();
@@ -141,7 +155,7 @@ namespace SDL
 		Napi::Env env = info.Env();
 		if (attached_texture == nullptr) return env.Undefined();
 		SDL_Renderer *renderer = GET_RENDERER;
-		uint8_t *raw_pixels = video_buffer.Data();
+		uint8_t *raw_pixels = video_buffer.Value().Data();
 		uint8_t *texture_data;
 		int pitch;
 		if (SDL_LockTexture(attached_texture, NULL, (void **)&texture_data, &pitch) != 0)
@@ -150,14 +164,16 @@ namespace SDL
 			return env.Undefined();
 		}
 		
-		for (size_t i = 0; i < video_buffer.ElementLength(); i++)
-		{
-			texture_data[i] = raw_pixels[i];
-		}
+		Uint32 format;
+		int width, height;
+		SDL_QueryTexture(attached_texture, &format, nullptr, &width, &height);
+		const int row_size = width * SDL_BYTESPERPIXEL(format);
+		for (int y = 0; y < height; y++)
+			std::memcpy(texture_data + y * pitch, raw_pixels + y * row_size, row_size);
 
 		SDL_UnlockTexture(attached_texture);
 		SDL_RenderCopy(renderer, attached_texture, NULL, NULL);
-		SDL_RenderPresent(renderer);
+		present_frame(renderer);
 		handle_events(env);
 		return env.Undefined();
 	}
@@ -167,17 +183,23 @@ namespace SDL
 		Napi::Env env = info.Env();
 		if (attached_texture != nullptr) return env.Undefined();
 		SDL_Renderer *renderer = GET_RENDERER;
-		video_buffer = info[1].As<Napi::Uint8Array>();
+		auto buffer = info[1].As<Napi::Uint8Array>();
 		Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 		int width = info[3].As<Napi::Number>().Int32Value();
 		int height = info[4].As<Napi::Number>().Int32Value();
 		attached_texture = SDL_CreateTexture(renderer, flags, SDL_TEXTUREACCESS_STREAMING, width, height);
-		auto pixels = video_buffer.Data();
-		if (read_pixels(renderer, pixels, video_buffer.ElementLength(), width, height, flags) != 0)
+		if (attached_texture == nullptr) {
+			Napi::Error::New(env, std::string("Cannot create attached texture: ") + SDL_GetError()).ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
+		if (read_pixels(renderer, buffer.Data(), buffer.ElementLength(), width, height, flags) != 0)
 		{
+			SDL_DestroyTexture(attached_texture);
+			attached_texture = nullptr;
 			Napi::Error::New(env, std::string("Cannot read pixels: ") + SDL_GetError()).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
+		video_buffer = Napi::Persistent(buffer);
 		return env.Undefined();
 	}
 
@@ -186,6 +208,7 @@ namespace SDL
 		Napi::Env env = info.Env();
 		SDL_DestroyTexture(attached_texture);
 		attached_texture = nullptr;
+		video_buffer.Reset();
 		return env.Undefined();
 	}
 
@@ -250,11 +273,26 @@ namespace SDL
 		Uint32 flags = info[2].As<Napi::Number>().Uint32Value();
 		TTF_Init();
 		SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		if (renderer == NULL)
+			return env.Undefined();
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
 		SDL_RenderSetLogicalSize(renderer, w / scale, h / scale);
-		if (renderer == NULL)
+		// Window backbuffers are invalid after SDL_RenderPresent. Keep the
+		// canvas in a target texture so later drawing and filters retain it.
+		SDL_Texture *main_target = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
+			SDL_TEXTUREACCESS_TARGET, w / scale, h / scale);
+		if (main_target == nullptr || SDL_SetRenderTarget(renderer, main_target) != 0)
+		{
+			Napi::Error::New(env, std::string("Cannot create canvas framebuffer: ") + SDL_GetError()).ThrowAsJavaScriptException();
+			SDL_DestroyTexture(main_target);
+			SDL_DestroyRenderer(renderer);
 			return env.Undefined();
+		}
+		main_targets[renderer] = main_target;
+		SDL_SetTextureBlendMode(main_target, SDL_BLENDMODE_NONE);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		return Napi::ArrayBuffer::New(env, renderer, sizeof(renderer));
 	}
@@ -298,7 +336,7 @@ namespace SDL
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
-		SDL_RenderPresent(renderer);
+		present_frame(renderer);
 		handle_events(env);
 		return env.Undefined();
 	}

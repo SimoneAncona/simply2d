@@ -247,6 +247,15 @@ export class Canvas {
 		clearWithColor(this._renderer, 0, 0, 0, 255);
 	}
 
+	/** @deprecated Retained for compatibility; use bitPerPixel. */
+	getBitPerPixel(): PixelFormat {
+		return this.bitPerPixel;
+	}
+
+	/** @deprecated Pixel formats are selected by attach(). */
+	setBitPerPixel(bitPerPixel: PixelFormat): void {
+	}
+
 	/**
 	 * Get the current pixel format
 	 * @returns {PixelFormat} the current pixel format
@@ -533,7 +542,7 @@ export class Canvas {
 				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
 				break;
 			case 24:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB24;
 				break;
 			case 32:
 				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
@@ -676,8 +685,8 @@ export class Canvas {
 	attach(buffer: Uint8Array, bitPerPixel: PixelFormat) {
 		if (buffer.length !== this._width * this._height * (bitPerPixel / 8)) throw `The buffer must be the same size as the canvas resolution times the number of bytes per pixel (${this._width * this._height * (bitPerPixel / 8)})`;
 		if (!(bitPerPixel === 8 || bitPerPixel === 16 || bitPerPixel === 24 || bitPerPixel === 32)) throw "The bitPerPixel param must be 8, 16, 24 or 32";
+		if (this._isAttachedMode) throw new Error("A buffer is already attached");
 		this.endLoop();
-		this._isAttachedMode = true;
 		this._currentBitPerPixel = bitPerPixel;
 		let format;
 		switch (bitPerPixel) {
@@ -688,13 +697,14 @@ export class Canvas {
 				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB565;
 				break;
 			case 24:
-				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB888;
+				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGB24;
 				break;
 			case 32:
 				format = SDL_PIXEL_FORMAT.SDL_PIXELFORMAT_RGBA8888;
 				break;
 		}
 		sdl2bind.attach(this._renderer, buffer, format, this._width, this._height);
+		this._isAttachedMode = true;
 		this._attachLoop = setInterval(() => {
 			sdl2bind.update(this._renderer);
 		})
@@ -716,6 +726,8 @@ export class Canvas {
 	 * @since v1.3.4
 	 */
 	close() {
+		this.endLoop();
+		this.detach();
 		sdl2bind.close();
 	}
 
@@ -739,15 +751,21 @@ export class Canvas {
 
 	/**
 	 * Apply a function to every byte in the framebuffer
-	 * @param {Function} fn the filter, a function that takes current pixel value, current pixel index (optional), current buffer (optional)
+	 * @param {Function} fn the filter, a function that takes current byte value, byte index and buffer; changes are applied in place
 	 * @since v1.3.7
 	 */
 	applyFilter(fn: (v: number, i: number, buff: Uint8Array) => number): void {
+		if (typeof fn !== "function") throw new TypeError("The filter must be a function");
+		if (this._isAttachedMode) throw new Error("Detach the buffer before applying a filter");
 		let size = this._width * this._height * this.bitPerPixel / 8;
 		let buffer = new Uint8Array(size);
 		this.attach(buffer, this.bitPerPixel);
-		for (let i = 0; i < size; i++)
-			buffer[i] = fn(buffer[i], i, buffer);
-		this.detach();
+		try {
+			for (let i = 0; i < size; i++)
+				buffer[i] = fn(buffer[i], i, buffer);
+			sdl2bind.update(this._renderer);
+		} finally {
+			this.detach();
+		}
 	}
 }

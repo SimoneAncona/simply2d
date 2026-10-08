@@ -3,18 +3,20 @@
 This library for nodejs allows you, thanks to SDL2, to create windows and draw on the screen. 
 
 ## Installation
-You can install this library using `npm i simply2d`.  
+You can install this library using `npm i simply2d`. Node.js 22.22.2+, 24.15.0+, or 26+ is required.
 This library require `SDL2` in order to run. Simple DirectMedia Layer is a cross-platform library designed to provide low level access to different resources such as video. SDL2 is available for windows, linux and macos as well.
 
 ### For Windows
 Visual Studio VC tools are required. For more, see https://github.com/nodejs/node-gyp#readme
 
 ### For Linux
-To use Simply2D you must have installed make, a C++ compiler and SDL2. To install SDL2 you can use the following command:
-- For Ubuntu: `sudo apt install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-ttf-2.0-0`
-- For Red Hat and Fedora: `sudo dnf install SDL2 SDL2_image SDL2_ttf`  
+To use Simply2D you must have installed make, a C++17 compiler, Python 3, pkg-config and the SDL2 development packages. To install SDL2 you can use the following command:
+- For Ubuntu: `sudo apt install build-essential python3 pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
+- For Red Hat and Fedora: `sudo dnf install gcc-c++ make python3 pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_ttf-devel`
+- For Arch Linux: `sudo pacman -S --needed base-devel python pkgconf sdl2 sdl2_image sdl2_ttf`
 
 > If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
+
 
 ### For contributors
 On Windows you must create the following files in your project directory:
@@ -41,6 +43,8 @@ These files can be extracted from the following links:
 - https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.22.0/SDL2_ttf-devel-2.22.0-VC.zip
 
 Under the lib/x64 path
+
+To build from source, run `npm install`, then `npm run build`. Run the small framebuffer smoke test with `npm test` (Linux uses offscreen video). Before packing a release, supply the Windows DLLs and import libraries above in `bin/`; these are included in the npm package. The Windows CI job downloads them before building.
 
 ## API
 ### Canvas
@@ -374,6 +378,16 @@ Terminate the current loop
 get mousePosition(): Position
 ```
 Return the current mouse position
+
+### Canvas.applyFilter
+```ts
+applyFilter(fn: (value: number, index: number, buffer: Uint8Array) => number): void
+```
+Apply a callback to every byte of the current rendering target and display the result. The callback receives the byte value, byte index, and buffer. Updates happen in place, in index order; returned values are converted to unsigned bytes. This stops the render loop, like `attach`. Detach any existing buffer first. The temporary buffer is always detached, including when the callback throws.
+
+```ts
+canvas.applyFilter(value => Math.floor(value / 2));
+```
 
 ### Canvas options
 ```ts

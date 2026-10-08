@@ -16,7 +16,10 @@
     "build:tsc": "tsc --build",
     "start": "node index.js",
     "test": "node test/test.js",
-    "check:win32wsl": "tsc --build && node-gyp rebuild && ubuntu run nvm use node && tsc --build && node-gyp rebuild"
+    "check:win32wsl": "tsc --build && node-gyp rebuild && ubuntu run nvm use node && tsc --build && node-gyp rebuild",
+    "install": "node-gyp rebuild",
+    "prepare": "npm run build:tsc",
+    "prepack": "npm run build:tsc"
   },
   "keywords": [
     "2d",
@@ -28,18 +31,34 @@
     "bindings",
     "sdl2",
     "standalone",
-    "standalone-application"
+    "standalone-application",
+    "2d-games"
   ],
   "author": "Simone Ancona",
   "license": "Apache-2.0",
   "dependencies": {
-    "node-addon-api": "^6.1.0",
-    "node-gyp": "^9.3.1",
-    "simply2d": "file:",
-    "typescript": "^5.0.4"
+    "node-addon-api": "^8.9.2",
+    "node-gyp": "^13.1.0"
   },
   "devDependencies": {
-    "@types/node": "^18.16.0"
+    "@types/node": "^26.0.0",
+    "typescript": "^7.0.2"
   },
-  "gypfile": true
+  "gypfile": true,
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/*.js",
+    "lib/*.d.ts",
+    "binding.gyp",
+    "src/",
+    "include/",
+    "bin/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.txt"
+  ]
 }

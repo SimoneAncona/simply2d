@@ -41,7 +41,6 @@ export function getRenderer(window: ArrayBuffer, index: number, flag: number) {
 export function render(renderer: ArrayBuffer) {
 	if (renderingSequence)
 		return;
-	sdl2bind.renderLayers(renderer);
 	sdl2bind.renderPresent(renderer);
 }
 
@@ -98,7 +97,6 @@ export async function setRectangle(renderer: ArrayBuffer, x: number, y: number, 
 }
 
 export async function renderPresent(renderer: ArrayBuffer) {
-	sdl2bind.renderLayers(renderer);
 	sdl2bind.renderPresent(renderer);
 }
 

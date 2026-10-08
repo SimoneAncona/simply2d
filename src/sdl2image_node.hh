@@ -1,3 +1,4 @@
+#include <algorithm>
 #pragma once
 #include <SDL_image.h>
 #include <map>
@@ -20,6 +21,25 @@ namespace SDLImage
 	std::map<std::string, Layer> layers;
 	std::vector<std::string> layers_order;
 	std::string current_layer;
+
+	void reset_state()
+	{
+		textures.clear();
+		layers.clear();
+		layers_order.clear();
+		current_layer.clear();
+	}
+
+	void compose_frame(SDL_Renderer *renderer)
+	{
+		SDL_SetRenderTarget(renderer, nullptr);
+		SDL_RenderCopy(renderer, SDL::main_targets.at(renderer), nullptr, nullptr);
+		for (const auto &layer_id : layers_order)
+		{
+			const auto &layer = layers.at(layer_id);
+			if (layer.is_active) SDL_RenderCopy(renderer, layer.texture, nullptr, nullptr);
+		}
+	}
 
 	Napi::Value init(const Napi::CallbackInfo &info)
 	{
@@ -137,7 +157,7 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
-		SDL_SetRenderTarget(renderer, NULL);
+		SDL_SetRenderTarget(renderer, SDL::main_targets.at(renderer));
 		current_layer = "";
 		return env.Undefined();
 	}
@@ -146,17 +166,9 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
-		for (auto layer_id : layers_order)
-		{
-			auto layer = layers.at(layer_id);
-			if (layer.is_active)
-			{
-				SDL_SetRenderTarget(renderer, NULL);
-				SDL_RenderCopy(renderer, layer.texture, NULL, NULL);
-				if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
-			}
-
-		}
+		SDL_Texture *target = SDL_GetRenderTarget(renderer);
+		compose_frame(renderer);
+		SDL_SetRenderTarget(renderer, target);
 		return env.Undefined();
 	}
 
@@ -231,13 +243,15 @@ namespace SDLImage
 	{
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
+		SDL_Texture *target = SDL_GetRenderTarget(renderer);
+		SDL_SetRenderTarget(renderer, SDL::main_targets.at(renderer));
 		SDL_RenderClear(renderer);
 		for (auto layer : layers)
 		{
 			SDL_SetRenderTarget(renderer, layer.second.texture);
 			SDL_RenderClear(renderer);
 		}
-		if (current_layer != "") SDL_SetRenderTarget(renderer, layers.at(current_layer).texture);
+		SDL_SetRenderTarget(renderer, target);
 		return env.Undefined();
 	}
 

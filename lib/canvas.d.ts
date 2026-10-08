@@ -48,6 +48,8 @@ export declare class Canvas {
     getHeight(): number;
     get height(): number;
     clear(): void;
+    getBitPerPixel(): PixelFormat;
+    setBitPerPixel(bitPerPixel: PixelFormat): void;
     get bitPerPixel(): PixelFormat;
     getRawData(): Uint8Array;
     dumpPNG(filename: string): void;

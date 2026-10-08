@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.3.7
+
+- **`[Added]`** framebuffer filters with `Canvas.applyFilter`
+- **`[Updated]`** Node.js build dependencies and TypeScript; Node.js 22.22.2+, 24.15.0+, or 26+ required
+- **`[Fixed]`** persistent canvas framebuffer preserves pixels after display for drawing and filters
+- **`[Fixed]`** filters now display their output and detach when callbacks throw
+- **`[Fixed]`** framebuffer byte indexing, scaled reads, texture row padding, and attached buffer lifetime
+- **`[Fixed]`** window close clears rendering timers
+- **`[Fixed]`** Linux library discovery through pkg-config
+- **`[Fixed]`** release packaging compiles JavaScript and removes the self-dependency
+- **`[Changed]`** retained deprecated pixel-format methods for compatibility
+
+## 1.3.6
+
+- **`[Fixed]`** Linux SDL library lookup
+
 ## 1.3.5
 
 - **`[Added]`** get mouse position

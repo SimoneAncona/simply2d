@@ -59,6 +59,7 @@ export declare const SDL_PIXEL_FORMAT: {
     SDL_PIXELFORMAT_RGB565: number;
     SDL_PIXELFORMAT_BGR565: number;
     SDL_PIXELFORMAT_RGB888: number;
+    SDL_PIXELFORMAT_RGB24: number;
     SDL_PIXELFORMAT_RGBA8888: number;
     SDL_PIXELFORMAT_RGB332: number;
 };

@@ -15,7 +15,7 @@
                 'OTHER_FLAGS': ['-std=c++17', '-stdlib=libc++']
             },
             'msvs_settings': {
-                'VCCLCompilerTool': {'ExceptionHandling': 1},
+                'VCCLCompilerTool': {'ExceptionHandling': 1, 'AdditionalOptions': ['/std:c++17']},
             },
             'dependencies': [
                 "<!(node -p \"require('node-addon-api').gyp\")"
@@ -45,7 +45,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "<!@(node tools/locate_libs.js) <!@(node tools/locate_libs.js -i)"
+                        "<!@(pkg-config --libs sdl2 SDL2_image SDL2_ttf)"
                     ]
                 }]
             ]

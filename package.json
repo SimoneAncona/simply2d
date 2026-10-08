@@ -15,7 +15,7 @@
     "build:dev": "tsc --build && node-gyp rebuild --debug && node tools/debug.js",
     "build:tsc": "tsc --build",
     "start": "node index.js",
-    "test": "node test/animation.js && node test/test.js && node test/game.js",
+    "test": "node test/animation.js && node test/test.js && node test/game.js && node test/audio.js",
     "check:win32wsl": "tsc --build && node-gyp rebuild && ubuntu run nvm use node && tsc --build && node-gyp rebuild",
     "install": "node-gyp rebuild",
     "prepare": "npm run build:tsc",

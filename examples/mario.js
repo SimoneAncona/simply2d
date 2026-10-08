@@ -1,8 +1,9 @@
-import { Canvas, Colors, SpriteAnimation, SpriteSheet } from "../index.js";
+import { Audio, Canvas, Colors, SpriteAnimation, SpriteSheet } from "../index.js";
 import { fileURLToPath } from "node:url";
+import { loadGameSounds } from "./sounds.js";
 import { MarioWorld, TILE, WORLD_WIDTH, FLOOR, FLAG_X, platforms } from "./mario-world.js";
 
-// Arrows/A/D: move. Space/Up/W: jump. Shift: run. P: pause. R: restart. Escape: close.
+// Arrows/A/D: move. Space/Up/W: jump. Shift: run. P: pause. R: restart. M: mute. Escape: close.
 const smoke = process.argv.includes("--smoke");
 if (smoke) {
     if (process.platform === "linux") process.env.SDL_VIDEODRIVER ??= "offscreen";
@@ -13,6 +14,14 @@ const canvas = new Canvas("Simply2D — Mario platformer", 320, 180, 0, 0, { sca
 canvas.loadTexture("characters", asset("mario-sprites.png"));
 canvas.loadTexture("tiles", asset("mario-tiles.png"));
 canvas.loadFont("ui", asset("Roboto-Regular.ttf"));
+let audio;
+let muted = false;
+if (!process.argv.includes("--no-audio")) {
+    try { audio = new Audio(); loadGameSounds(audio); audio.volume = 0.4; }
+    catch (error) { audio?.close(); audio = undefined; console.warn(`Audio unavailable: ${error.message}`); }
+}
+canvas.onWindowClose(() => audio?.close());
+const sound = id => audio?.play(id);
 const tiles = new SpriteSheet("tiles", TILE, TILE, 16, 14);
 const marioFrame = x => ({ x, y: 88, width: 16, height: 16 });
 const walk = new SpriteAnimation("characters", [16, 32, 48].map(marioFrame), { fps: 12 });
@@ -27,7 +36,8 @@ canvas.onKeyDown(key => {
     keys.add(key);
     if (jumpKeys.has(key) && !paused) game.jump();
     if (key === "P") paused = !paused;
-    if (key === "R") { game.restart(); camera = 0; walk.play(true); paused = false; }
+    if (key === "M") { muted = !muted; if (audio) audio.volume = muted ? 0 : 0.4; }
+    if (key === "R") { audio?.stopAll(); game.restart(); camera = 0; walk.play(true); paused = false; }
     if (key === "Escape") canvas.requestClose();
 });
 canvas.onKeyUp(key => { keys.delete(key); if (jumpKeys.has(key)) game.releaseJump(); });
@@ -79,7 +89,7 @@ function draw() {
     canvas.drawRectangle({ red: 15, green: 30, blue: 55, alpha: 210 }, { x: 0, y: 0 }, canvas.width, 24, true);
     const collected = game.coins.filter(coin => coin.collected).length;
     text(`MARIO   ${String(game.score).padStart(5, "0")}    COINS ${collected}/${game.coins.length}    FALLS ${game.deaths}`, 7, 3, 8);
-    text("ARROWS / A D: MOVE   SPACE: JUMP   SHIFT: RUN   P: PAUSE   R: RESTART", 7, 15, 5);
+    text(`MOVE: ARROWS/A D   JUMP: SPACE   RUN: SHIFT   P: PAUSE   R: RESET   M: ${muted ? "UNMUTE" : "MUTE"}`, 7, 15, 5);
     if (paused || game.won) {
         canvas.drawRectangle({ red: 10, green: 20, blue: 40, alpha: 200 }, { x: 0, y: 24 }, canvas.width, canvas.height - 24, true);
         text(game.won ? "LEVEL COMPLETE!" : "PAUSED", Math.max(10, canvas.width / 2 - 48), canvas.height / 2 - 10, 13);
@@ -89,9 +99,15 @@ function draw() {
 
 const screenshot = process.argv.find(argument => argument.startsWith("--screenshot="));
 canvas.loop(deltaMs => {
+    if (audio && paused !== audio.paused) paused ? audio.pause() : audio.resume();
     if (!paused && !game.won) {
+        const before = { vy: game.player.vy, score: game.score, deaths: game.deaths, won: game.won };
         game.update(deltaMs / 1000, { left: keys.has("Left") || keys.has("A"), right: keys.has("Right") || keys.has("D"),
             run: keys.has("Left Shift") || keys.has("Right Shift") });
+        if (game.deaths > before.deaths) sound("fall");
+        else if (game.player.vy < 0 && before.vy >= 0) sound("jump");
+        if (game.won && !before.won) sound("win");
+        else if (game.score > before.score) sound("coin");
         walk.update(deltaMs);
         coinAnimation.update(deltaMs);
     }

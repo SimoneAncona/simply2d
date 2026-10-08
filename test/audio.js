@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import { toneWav } from "../examples/sounds.js";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+process.env.SDL_AUDIODRIVER = "dummy";
+if (process.platform === "linux") process.env.SDL_VIDEODRIVER ??= "offscreen";
+const { Audio, Canvas } = await import("../index.js");
+const directory = mkdtempSync(join(tmpdir(), "simply2d-audio-"));
+const audio = new Audio();
+try {
+    audio.pause();
+    const wav = toneWav([440], 0.08);
+    const filename = join(directory, "tone.wav");
+    writeFileSync(filename, wav);
+    assert.ok(Math.abs(audio.loadSound("tone", filename) - 0.08) < 0.001);
+    audio.loadSound("other", new Uint8Array(wav));
+    assert.throws(() => audio.loadSound("bad", Buffer.from("invalid")), /WAV/);
+    assert.throws(() => audio.play("missing"), /not loaded/);
+    assert.throws(() => { audio.volume = 2; }, RangeError);
+    const first = audio.play("tone", { loop: true, volume: 0.25 });
+    const second = audio.play("tone");
+    assert.notEqual(first.id, second.id);
+    first.pause(); assert.equal(first.state, "paused");
+    first.resume(); assert.equal(first.state, "paused");
+    first.volume = 0.5; assert.equal(first.volume, 0.5);
+    // The renderer's shutdown must leave the separate audio subsystem alive.
+    const canvas = new Canvas("Audio lifecycle", 8, 8, 0, 0, { mode: "hidden", vsync: false });
+    canvas.close();
+    assert.equal(first.state, "paused");
+    audio.resume();
+    const deadline = Date.now() + 2000;
+    while (second.state !== "stopped" && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 20));
+    assert.equal(second.state, "stopped");
+    assert.equal(first.state, "playing");
+    first.stop(); assert.equal(first.state, "stopped");
+    audio.pause();
+    const voices = Array.from({ length: 32 }, () => audio.play("other", { loop: true }));
+    assert.throws(() => audio.play("other"), /32 audio voices/);
+    audio.unloadSound("other");
+    assert.ok(voices.every(voice => voice.state === "stopped"));
+    audio.play("tone", { loop: true }); audio.stopAll();
+    audio.close(); audio.close();
+    assert.equal(first.state, "stopped");
+    assert.throws(() => audio.play("tone"), /closed/);
+    const reopened = new Audio(); reopened.close();
+} finally { audio.close(); rmSync(directory, { recursive: true, force: true }); }
+console.log("Audio loading, playback, controls, and lifecycle passed.");

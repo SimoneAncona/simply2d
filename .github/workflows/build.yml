@@ -56,5 +56,6 @@ jobs:
           npm init -y
           npm install $archive.FullName --omit=dev
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
-          node --input-type=module -e "import { Canvas } from 'simply2d'; const c = new Canvas('Package smoke test', 16, 16, 0, 0, {mode: 'hidden'}); c.close();"
+          $env:SDL_AUDIODRIVER = "dummy"
+          node --input-type=module -e "import { Audio, Canvas } from 'simply2d'; const c = new Canvas('Package smoke test', 16, 16, 0, 0, {mode: 'hidden'}); const a = new Audio(); c.close(); a.stopAll(); a.close();"
           if ($LASTEXITCODE) { exit $LASTEXITCODE }

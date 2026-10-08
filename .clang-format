@@ -1,0 +1,15 @@
+BasedOnStyle: Microsoft
+BreakBeforeBraces: Allman
+NamespaceIndentation: All
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+ColumnLimit: 120
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+IndentCaseLabels: true
+SortIncludes: Never
+FixNamespaceComments: false

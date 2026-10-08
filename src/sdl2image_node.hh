@@ -6,7 +6,7 @@
 #include <vector>
 #include "common.hh"
 #ifdef _DEBUG
-	#include <iostream>
+#include <iostream>
 #endif
 
 namespace SDLImage
@@ -30,8 +30,9 @@ namespace SDLImage
 	bool resize_targets(SDL_Renderer *renderer, int width, int height)
 	{
 		SDL_Texture *target = SDL_GetRenderTarget(renderer);
-		std::vector<SDL_Texture **> targets{ &SDL::main_targets.at(renderer) };
-		for (auto &layer : layers) targets.push_back(&layer.second.texture);
+		std::vector<SDL_Texture **> targets{&SDL::main_targets.at(renderer)};
+		for (auto &layer : layers)
+			targets.push_back(&layer.second.texture);
 		std::vector<SDL_Texture *> replacements;
 		for (auto old : targets)
 		{
@@ -40,7 +41,8 @@ namespace SDLImage
 			SDL_Texture *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, width, height);
 			if (!texture)
 			{
-				for (auto created : replacements) SDL_DestroyTexture(created);
+				for (auto created : replacements)
+					SDL_DestroyTexture(created);
 				return false;
 			}
 			replacements.push_back(texture);
@@ -62,7 +64,8 @@ namespace SDLImage
 			SDL_QueryTexture(old, nullptr, nullptr, &destination.w, &destination.h);
 			SDL_SetTextureBlendMode(old, SDL_BLENDMODE_NONE);
 			SDL_RenderCopy(renderer, old, nullptr, &destination);
-			if (target == old) target = replacement;
+			if (target == old)
+				target = replacement;
 			*targets[i] = replacement;
 			SDL_DestroyTexture(old);
 		}
@@ -86,7 +89,8 @@ namespace SDLImage
 		for (const auto &layer_id : layers_order)
 		{
 			const auto &layer = layers.at(layer_id);
-			if (layer.is_active) SDL_RenderCopy(renderer, layer.texture, nullptr, nullptr);
+			if (layer.is_active)
+				SDL_RenderCopy(renderer, layer.texture, nullptr, nullptr);
 		}
 	}
 
@@ -158,7 +162,8 @@ namespace SDLImage
 		int width, height;
 		SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
 		auto previous = textures.find(id);
-		if (previous != textures.end()) SDL_DestroyTexture(previous->second.texture);
+		if (previous != textures.end())
+			SDL_DestroyTexture(previous->second.texture);
 		textures.insert_or_assign(id, Texture{texture, width, height});
 		return env.Undefined();
 	}
@@ -168,26 +173,44 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		SDL_Renderer *renderer = GET_RENDERER;
 		SDL_RWops *input = nullptr;
-		if (info[2].IsString()) input = SDL_RWFromFile(info[2].As<Napi::String>().Utf8Value().c_str(), "rb");
-		else {
+		if (info[2].IsString())
+			input = SDL_RWFromFile(info[2].As<Napi::String>().Utf8Value().c_str(), "rb");
+		else
+		{
 			auto buffer = info[2].As<Napi::Uint8Array>();
-			if (buffer.ByteLength() > static_cast<size_t>(2147483647)) {
-				Napi::RangeError::New(env, "SVG buffer is too large").ThrowAsJavaScriptException(); return env.Undefined();
+			if (buffer.ByteLength() > static_cast<size_t>(2147483647))
+			{
+				Napi::RangeError::New(env, "SVG buffer is too large").ThrowAsJavaScriptException();
+				return env.Undefined();
 			}
 			input = SDL_RWFromConstMem(buffer.Data(), static_cast<int>(buffer.ByteLength()));
 		}
-		if (!input) { Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
-		SDL_Surface *surface = IMG_LoadSizedSVG_RW(input, info[3].As<Napi::Number>().Int32Value(), info[4].As<Napi::Number>().Int32Value());
+		if (!input)
+		{
+			Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
+		SDL_Surface *surface = IMG_LoadSizedSVG_RW(input, info[3].As<Napi::Number>().Int32Value(),
+		                                           info[4].As<Napi::Number>().Int32Value());
 		std::string error = SDL_GetError();
 		SDL_RWclose(input);
-		if (!surface) { Napi::Error::New(env, "Cannot load SVG: " + error).ThrowAsJavaScriptException(); return env.Undefined(); }
+		if (!surface)
+		{
+			Napi::Error::New(env, "Cannot load SVG: " + error).ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
 		SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
 		int width = surface->w, height = surface->h;
 		SDL_FreeSurface(surface);
-		if (!texture) { Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException(); return env.Undefined(); }
+		if (!texture)
+		{
+			Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException();
+			return env.Undefined();
+		}
 		std::string id = info[1].As<Napi::String>().Utf8Value();
 		auto previous = textures.find(id);
-		if (previous != textures.end()) SDL_DestroyTexture(previous->second.texture);
+		if (previous != textures.end())
+			SDL_DestroyTexture(previous->second.texture);
 		textures.insert_or_assign(id, Texture{texture, width, height});
 		return env.Undefined();
 	}
@@ -217,30 +240,35 @@ namespace SDLImage
 			return env.Undefined();
 		}
 		const auto &cached = entry->second;
-		Napi::Object options = info.Length() > 4 && info[4].IsObject() ? info[4].As<Napi::Object>() : Napi::Object::New(env);
+		Napi::Object options =
+		    info.Length() > 4 && info[4].IsObject() ? info[4].As<Napi::Object>() : Napi::Object::New(env);
 		SDL_Rect source{0, 0, cached.width, cached.height};
 		if (options.Has("source"))
 		{
 			Napi::Object rect = options.Get("source").As<Napi::Object>();
 			source = {rect.Get("x").As<Napi::Number>().Int32Value(), rect.Get("y").As<Napi::Number>().Int32Value(),
-				rect.Get("width").As<Napi::Number>().Int32Value(), rect.Get("height").As<Napi::Number>().Int32Value()};
+			          rect.Get("width").As<Napi::Number>().Int32Value(),
+			          rect.Get("height").As<Napi::Number>().Int32Value()};
 		}
 		float width = options.Has("width") ? options.Get("width").As<Napi::Number>().FloatValue() : source.w;
 		float height = options.Has("height") ? options.Get("height").As<Napi::Number>().FloatValue() : source.h;
 		double angle = options.Has("rotation") ? options.Get("rotation").As<Napi::Number>().DoubleValue() : 0;
 		double opacity = options.Has("opacity") ? options.Get("opacity").As<Napi::Number>().DoubleValue() : 1;
-		if (source.x < 0 || source.y < 0 || source.w <= 0 || source.h <= 0
-			|| source.x > cached.width - source.w || source.y > cached.height - source.h
-			|| !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height)
-			|| width <= 0 || height <= 0 || !std::isfinite(angle) || !std::isfinite(opacity) || opacity < 0 || opacity > 1)
+		if (source.x < 0 || source.y < 0 || source.w <= 0 || source.h <= 0 || source.x > cached.width - source.w ||
+		    source.y > cached.height - source.h || !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) ||
+		    !std::isfinite(height) || width <= 0 || height <= 0 || !std::isfinite(angle) || !std::isfinite(opacity) ||
+		    opacity < 0 || opacity > 1)
 		{
 			Napi::RangeError::New(env, "Invalid texture rectangle or drawing options").ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
 		int flip = SDL_FLIP_NONE;
-		if (options.Has("flipX") && options.Get("flipX").As<Napi::Boolean>().Value()) flip |= SDL_FLIP_HORIZONTAL;
-		if (options.Has("flipY") && options.Get("flipY").As<Napi::Boolean>().Value()) flip |= SDL_FLIP_VERTICAL;
-		std::string filtering = options.Has("filtering") ? options.Get("filtering").As<Napi::String>().Utf8Value() : "nearest";
+		if (options.Has("flipX") && options.Get("flipX").As<Napi::Boolean>().Value())
+			flip |= SDL_FLIP_HORIZONTAL;
+		if (options.Has("flipY") && options.Get("flipY").As<Napi::Boolean>().Value())
+			flip |= SDL_FLIP_VERTICAL;
+		std::string filtering =
+		    options.Has("filtering") ? options.Get("filtering").As<Napi::String>().Utf8Value() : "nearest";
 		if (filtering != "nearest" && filtering != "linear")
 		{
 			Napi::RangeError::New(env, "Texture filtering must be nearest or linear").ThrowAsJavaScriptException();
@@ -249,9 +277,11 @@ namespace SDLImage
 		SDL_SetTextureScaleMode(cached.texture, filtering == "linear" ? SDL_ScaleModeLinear : SDL_ScaleModeNearest);
 		SDL_FRect destination{x, y, width, height};
 		SDL_SetTextureAlphaMod(cached.texture, static_cast<Uint8>(std::round(opacity * 255)));
-		int result = SDL_RenderCopyExF(renderer, cached.texture, &source, &destination, angle, nullptr, static_cast<SDL_RendererFlip>(flip));
+		int result = SDL_RenderCopyExF(renderer, cached.texture, &source, &destination, angle, nullptr,
+		                               static_cast<SDL_RendererFlip>(flip));
 		SDL_SetTextureAlphaMod(cached.texture, 255);
-		if (result != 0) Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException();
+		if (result != 0)
+			Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException();
 		return env.Undefined();
 	}
 
@@ -266,7 +296,7 @@ namespace SDLImage
 		SDL_Texture *texture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, w, h);
 		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
 
-		layers.insert_or_assign(layer_id, Layer{ texture, true });
+		layers.insert_or_assign(layer_id, Layer{texture, true});
 		layers_order.push_back(layer_id);
 		return env.Undefined();
 	}
@@ -325,7 +355,8 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		std::string id = info[1].As<Napi::String>().Utf8Value();
 		auto entry = textures.find(id);
-		if (entry == textures.end()) {
+		if (entry == textures.end())
+		{
 			Napi::Error::New(env, "Texture is not loaded: " + id).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
@@ -347,7 +378,7 @@ namespace SDLImage
 		Napi::Env env = info.Env();
 		Napi::Array napi_layers = Napi::Array::New(env);
 		size_t i = 0;
-		for (auto layer : layers_order) 
+		for (auto layer : layers_order)
 		{
 			auto object = Napi::Object::New(env);
 			object.Set(Napi::String::New(env, "id"), Napi::String::New(env, layer));
@@ -390,15 +421,16 @@ namespace SDLImage
 		return env.Undefined();
 	}
 
-	Napi::Value move_layer(const Napi::CallbackInfo& info)
+	Napi::Value move_layer(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
 		std::string layer_id = info[0].As<Napi::String>().Utf8Value();
 		bool move_up = info[1].As<Napi::Boolean>().Value();
 		int steps = info[2].As<Napi::Number>().Int32Value();
 		auto el = std::find(layers_order.begin(), layers_order.end(), layer_id);
-		
-		if (el == layers_order.end()) return env.Undefined();
+
+		if (el == layers_order.end())
+			return env.Undefined();
 
 		auto new_pos = el;
 
@@ -406,12 +438,12 @@ namespace SDLImage
 			new_pos += steps;
 		else
 			new_pos -= steps;
-		
+
 		if (new_pos >= layers_order.end())
 			new_pos = layers_order.end() - 1;
 		else if (new_pos <= layers_order.begin())
 			new_pos = layers_order.begin();
-		
+
 		std::swap(*el, *new_pos);
 		return env.Undefined();
 	}

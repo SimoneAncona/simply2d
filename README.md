@@ -19,13 +19,11 @@ To use Simply2D you must have installed make, a C++17 compiler, Python 3, pkg-co
 
 
 ### For contributors
-Windows x64 SDL runtime and import libraries are included in npm releases. The local `bin/` directory is ignored by Git. Before packing a release, populate it with the official SDL 2.32.10, SDL_image 2.8.12, and SDL_ttf 2.24.0, and SDL_mixer 2.8.2 VC x64 libraries and their upstream licenses; CI downloads these automatically. Visual Studio C++ build tools and Python are still required to compile the Node addon.
+Windows x64 SDL runtime and import libraries are included in npm releases. The local `bin/` directory is ignored by Git. Before packing a release, populate it with the official SDL 2.32.10, SDL_image 2.8.12, SDL_ttf 2.24.0, and SDL_mixer 2.8.2 VC x64 libraries and their upstream licenses; CI downloads these automatically. Visual Studio C++ build tools and Python are still required to compile the Node addon.
 
-Run `npm install`, then `npm run build`. Run `npm test` for the small animation, framebuffer, and window-event smoke tests. CI also builds on Windows and installs the packed npm release into a separate project.
+Run `npm install`, then `npm run build`. Run `npm test` for the collision, animation, framebuffer, window-event, and audio smoke tests. CI also builds on Windows and installs the packed npm release into a separate project.
 
-## Preparing 1.4.0
-
-The working version is `1.4.0-dev.0`.
+## Features in 1.4.0
 
 ### Drawing and frame timing
 

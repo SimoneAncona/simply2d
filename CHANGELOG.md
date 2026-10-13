@@ -1,18 +1,22 @@
 # Changelog
 
-## 1.4.0 (in development)
+## 1.4.0 — 2026-10-13
 
-- **`[Added]`** reusable rectangle, circle, point, intersection, and penetration collision helpers.
-- **`[Updated]`** audio uses SDL_mixer for MP3, OGG, FLAC, and WAV effects plus streamed music.
-- **`[Updated]`** Mario uses shared collisions and an original OGG background melody.
-- **`[Updated]`** Windows bundles SDL_mixer DLLs, import libraries, and codec dependencies.
-
-- **`[Added]`** sprite sheets and time-based animations.
+- **`[Added]`** sprite sheets and time-based animations with looping, pause, reset, and one-shot playback.
 - **`[Added]`** texture cropping, scaling, rotation, flips, opacity, filtering, and unloading.
-- **`[Added]`** synchronous drawing batches and a paced loop with elapsed frame time.
-- **`[Added]`** SDL window handlers, resize support, unsubscribe functions, and cancellable close requests.
-- **`[Changed]`** Cached texture dimensions and fonts; released temporary text and screenshot resources.
-- **`[Changed]`** Replaced game.js with a Mario platforming example and added an animation example.
+- **`[Added]`** SVG loading from files or bytes, with optional rasterization dimensions.
+- **`[Added]`** rectangle, circle, point, intersection, and penetration collision helpers.
+- **`[Added]`** SDL_mixer audio for WAV, MP3, OGG, and FLAC effects, plus streamed music, volume, pause, stop, and looping.
+- **`[Added]`** synchronous drawing batches and a paced frame loop with elapsed time and configurable frame limits.
+- **`[Added]`** SDL window handlers, unsubscribe functions, resize support, and cancellable close requests.
+- **`[Fixed]`** the resizable option now enables interactive window resizing.
+- **`[Changed]`** texture dimensions and fonts are cached; temporary text and screenshot resources are released.
+- **`[Changed]`** audio and canvas have separate lifetimes; only one Audio instance may be open at a time.
+- **`[Changed]`** Mario replaces game.js and demonstrates platforming, shared collisions, animations, effects, and an original OGG background track.
+- **`[Added]`** separate animation, audio, SVG, window-event, and rendering benchmark examples.
+- **`[Updated]`** Windows packages include SDL_mixer, codec dependencies, and licenses; CI verifies installation from the packed release.
+
+Linux installations now require SDL_mixer development libraries. Windows support is x64; Visual Studio C++ tools and Python remain required. Node.js requirements are unchanged from 1.3.8.
 
 ## 1.3.8
 

@@ -23,116 +23,6 @@ Windows x64 SDL runtime and import libraries are included in npm releases. The l
 
 Run `npm install`, then `npm run build`. Run `npm test` for the collision, animation, framebuffer, window-event, and audio smoke tests. CI also builds on Windows and installs the packed npm release into a separate project.
 
-## Features in 1.4.0
-
-### Drawing and frame timing
-
-`canvas.loop(callback, { fps: 60, maxDeltaMs: 100 })` passes elapsed milliseconds to each frame. Drawing inside the callback is presented once. Set `clear: false` to retain the preceding frame. `canvas.endLoop()` stops the timer and restores immediate drawing.
-
-Use `canvas.batch(() => { ... })` to group synchronous drawing outside a loop into one presentation. Nested batches share the presentation. Set `vsync: false` in the Canvas constructor options to disable vertical synchronization.
-
-### Sprites and animations
-
-```js
-import { SpriteSheet } from "simply2d";
-
-canvas.loadTexture("player", "player.png");
-const sheet = new SpriteSheet("player", 16, 16, 4, 2);
-const walk = sheet.animation([0, 1, 2, 3], { fps: 10 });
-canvas.loop(deltaMs => {
-    walk.update(deltaMs);
-    canvas.drawAnimation(walk, { x: 40, y: 60 }, {
-        width: 32, height: 32, flipX: false
-    });
-});
-```
-
-`SpriteAnimation` also accepts an array of source rectangles for irregular sprite sheets. Animations support `play(restart)`, `pause()`, `stop()`, `reset()`, and `loop: false`. Updating an animation is explicit, so drawing it more than once does not advance its timing.
-
-`drawTexture(id, position, options)` supports a source rectangle, output width and height, rotation in degrees, horizontal and vertical flips, opacity from 0 to 1, and `filtering: "nearest" | "linear"`. Nearest sampling is the default. `unloadTexture(id)` releases a loaded texture.
-
-### Collision utilities
-
-```js
-import { rectanglesOverlap, rectangleContact } from "simply2d";
-
-if (rectanglesOverlap(player, platform)) {
-    const contact = rectangleContact(player, platform);
-    player.x += contact.translation.x;
-    player.y += contact.translation.y;
-}
-```
-
-`rectanglesOverlap(a, b)` detects axis-aligned rectangle overlap. `rectangleIntersection(a, b)` returns the overlap rectangle, or `null`. `rectangleContact(a, b)` returns penetration `depth`, an outward `normal`, and the smallest axis-aligned `translation` needed to move the first rectangle out of the second; it does not mutate the inputs.
-
-`circlesOverlap(a, b)` and `circleIntersectsRectangle(circle, rect)` detect circle collisions. Circles use `{ x, y, radius }` with `x/y` at the center. Pass `true` as the final argument to count touching edges. `pointInRectangle(point, rect, touching = true)` tests containment and counts boundaries by default. Zero-size shapes do not collide. These helpers use logical coordinates and do not handle rotated shapes or continuous motion; fast movement still needs substeps, as demonstrated by Mario.
-
-### SVG textures
-
-```js
-canvas.loadSVG("icon", "icon.svg", { width: 64 });
-canvas.drawTexture("icon", { x: 20, y: 20 }, { rotation: 15 });
-canvas.unloadTexture("icon");
-```
-
-`loadSVG(id, filenameOrSvgBytes, { width?, height? })` rasterizes an SVG into a reusable texture. It accepts a filename or `Uint8Array` containing SVG data. Omit both dimensions for the intrinsic size; supply only one to preserve aspect ratio, or both for an explicit size. Dimensions must be positive integers. Drawing uses the normal texture controls, including cropping, opacity, flips, and filtering. Rasterization happens when loading, so reload at a larger size when higher resolution is needed.
-
-Run `node examples/svg.js` for the example. SDL_image 2.6.0 or later is required for sized SVG loading.
-
-### Audio
-
-`Audio` uses SDL_mixer for WAV, MP3, OGG, and FLAC playback independently of a canvas. It supports 32 simultaneous playback instances. Files are decoded and converted once when loaded; playback and mixing run on SDL's audio thread.
-
-```js
-import { Audio } from "simply2d";
-
-const audio = new Audio();
-audio.loadSound("jump", "jump.wav");
-audio.volume = 0.5;
-const jump = audio.play("jump", { volume: 0.8 });
-const background = audio.play("jump", { loop: true });
-background.pause();
-background.resume();
-background.volume = 0.3;
-background.stop();
-audio.close();
-```
-
-`loadSound(id, filenameOrAudioBytes)` accepts a path or `Uint8Array` containing encoded audio data and returns duration in seconds. `getSoundDuration(id)` returns that duration. Each `play()` returns a separate `SoundPlayback` with `state`, `isPlaying`, `volume`, `pause()`, `resume()`, and `stop()`.
-
-Master controls are `audio.volume`, `pause()`, `resume()`, `stopAll()`, and `unloadSound(id)`. Volume ranges from 0 to 1. Unloading stops instances of that loaded sound. Loading an existing ID replaces the sound for future playback while current instances finish with their original data. Playing when all 32 voices are occupied throws an error.
-
-Call `audio.close()` when finished; closing a canvas leaves audio available. Playback does not keep the Node event loop alive. SDL_mixer 2.6+ development libraries are required on Linux; Windows releases bundle SDL_mixer and its codec libraries. One `Audio` instance may be open at a time. Sound effects are decoded into memory; music is streamed from files.
-
-Load music with `audio.loadMusic("theme", "theme.ogg")`, then call `audio.playMusic("theme", { loop: true, volume: 0.3 })`. The returned playback has the same controls as sound effects. One music track plays alongside the 32 effect channels; starting another track replaces it. `unloadMusic(id)` releases a track and stops it if playing. Master volume, pause/resume, `stopAll()`, and `close()` affect both music and effects.
-
-Run `node examples/audio.js` for a standalone example. The Mario example uses the shared collision helpers, an original streamed OGG background melody, and synthesized effects for jumping, coins, falls, and completing the level. Press M to mute, or start it with `--no-audio` to disable sound. If an audio device is unavailable, the game continues without sound.
-
-### Window events
-
-Handlers apply to the SDL canvas window. Each registration returns an unsubscribe function:
-
-```js
-const unsubscribe = canvas.onWindowResize((width, height) => {
-    console.log(width, height); // logical canvas pixels
-});
-canvas.onWindowUnfocus(() => { paused = true; });
-canvas.onWindowClose(() => unsavedChanges ? false : undefined);
-```
-
-Available handlers are `onWindowResize`, `onWindowMove`, `onWindowFocus`, `onWindowUnfocus`, `onWindowMinimize`, `onWindowMaximize`, `onWindowRestore`, `onWindowShow`, `onWindowHide`, `onWindowMouseEnter`, `onWindowMouseLeave`, and `onWindowClose`. `onWindowEvent(type, callback)` receives the corresponding event object.
-
-Events are polled by the frame loop. Call `pollEvents()` when managing your own loop. `resize(width, height)` resizes in logical pixels and preserves existing canvas and layer pixels. Returning `false` from a close handler cancels `requestClose()` or the window close button; `close()` closes immediately.
-
-### Examples and performance
-
-- `node examples/mario.js`: platforming, scrolling, animated sprites, coins, checkpoints, pause, and restart. Move with arrows or A/D, jump with Space/Up/W, and run with Shift. P pauses, R restarts, and Escape closes.
-- `node examples/animation.js`: sprite playback, scaling, flips, rotation, and opacity. Space pauses and R resets.
-- `node examples/window-events.js`: SDL window handlers.
-- `npm run bench`: compares immediate drawing with a single batch using 500 rectangles per frame.
-
-Rendering changes include cached texture dimensions, font reuse, event polling at frame boundaries, and a paced frame loop. The previous loop already grouped drawing; the batching benchmark measures drawing outside that loop. Results depend on the renderer and machine.
-
 ## API
 ### Canvas
 The `Canvas` class allows you to create a canvas and to draw on it
@@ -250,6 +140,12 @@ getScale(): number
 ```
 Return the scale factor
 
+### Canvas.resize
+```ts
+resize(width: number, height: number): void
+```
+Resize the window in logical canvas pixels. Existing canvas and layer pixels are preserved.
+
 ### Canvas.onClick
 ```ts
 onClick(callback: (x: number, y: number) => void): void
@@ -288,9 +184,15 @@ Sleep for a certain time before the next frame is rendered
 
 ### Canvas.loop
 ```ts
-loop(callback: () => void): void
+loop(callback: (deltaMs: number) => void, options?: LoopOptions): void
 ```
-Start the rendering loop
+Start the rendering loop. The callback receives elapsed milliseconds. Drawing is displayed once per frame. Defaults to 60 fps and limits elapsed time to 100 ms. Use `clear: false` to keep the previous frame.
+
+### Canvas.batch
+```ts
+batch(callback: () => void): void
+```
+Draw synchronously and display once when the callback finishes. Nested batches share the same display update.
 
 ### Canvas.onKeysDown
 ```ts
@@ -322,7 +224,7 @@ drawArc(color: RGBAColor, center: Position, radius: number, startingAngle: numbe
 ```
 Draw an arc
 
-### Canvas.convertPolarCords
+### Canvas.convertPolarCoords
 ```ts
 static convertPolarCoords(center: Position, angle: number, radius: number): Position
 ```
@@ -334,11 +236,29 @@ loadTexture(textureID: string, filePath: string): void
 ```
 Load a new texture from the specified file
 
+### Canvas.loadSVG
+```ts
+loadSVG(textureID: string, source: string | Uint8Array, options?: SVGOptions): void
+```
+Load an SVG file or SVG bytes as a texture. Omit dimensions for the original size, or supply one dimension to preserve the aspect ratio. Rasterization happens when loading. Requires SDL_image 2.6.0 or later.
+
 ### Canvas.drawTexture
 ```ts
-drawTexture(textureID: string, pos: Position): void
+drawTexture(textureID: string, pos: Position, options?: TextureDrawOptions): void
 ```
-Draw a previously loaded texture
+Draw a previously loaded texture. Options control cropping, size, rotation, flips, opacity and filtering. Nearest filtering is used by default.
+
+### Canvas.unloadTexture
+```ts
+unloadTexture(textureID: string): void
+```
+Release a loaded texture.
+
+### Canvas.drawAnimation
+```ts
+drawAnimation(animation: SpriteAnimation, pos: Position, options?: Omit<TextureDrawOptions, "source">): void
+```
+Draw the current animation frame. Call `animation.update(deltaMs)` separately to advance playback.
 
 ### Canvas.getScreenResolution
 ```ts
@@ -392,7 +312,7 @@ Get current frame time, only if the scene is rendered with loop
 ```ts
 get fps(): number
 ```
-Get current frame time, only if the scene is rendered with loop
+Get the current frames per second, only if the scene is rendered with loop
 
 ### Canvas.getLayers
 ```ts
@@ -448,6 +368,12 @@ detach(): void
 ```
 Detach the current buffer from the video memory
 
+### Canvas.requestClose
+```ts
+requestClose(): void
+```
+Request to close the window. Returning `false` from an `onWindowClose` handler cancels the request. `close()` closes immediately.
+
 ### Canvas.close
 ```ts
 close(): void
@@ -476,6 +402,90 @@ Apply a callback to every byte of the current rendering target and display the r
 canvas.applyFilter(value => Math.floor(value / 2));
 ```
 
+### Canvas.pollEvents
+```ts
+pollEvents(): void
+```
+Process pending window and input events. The rendering loop calls this automatically.
+
+### Canvas.onWindowEvent
+```ts
+onWindowEvent(type: WindowEventType, callback: WindowEventHandler): () => void
+```
+Register a window event handler. The returned function removes the handler. Events refer to the canvas window.
+
+### Canvas.onWindowResize
+```ts
+onWindowResize(callback: (width: number, height: number) => void): () => void
+```
+On window resize. Width and height are in logical canvas pixels. The returned function removes the handler.
+
+### Canvas.onWindowMove
+```ts
+onWindowMove(callback: (x: number, y: number) => void): () => void
+```
+On window move. Coordinates are in screen pixels. The returned function removes the handler.
+
+### Canvas.onWindowFocus
+```ts
+onWindowFocus(callback: () => void): () => void
+```
+On window focus. The returned function removes the handler.
+
+### Canvas.onWindowUnfocus
+```ts
+onWindowUnfocus(callback: () => void): () => void
+```
+On window focus lost. The returned function removes the handler.
+
+### Canvas.onWindowMinimize
+```ts
+onWindowMinimize(callback: () => void): () => void
+```
+On window minimized. The returned function removes the handler.
+
+### Canvas.onWindowMaximize
+```ts
+onWindowMaximize(callback: () => void): () => void
+```
+On window maximized. The returned function removes the handler.
+
+### Canvas.onWindowRestore
+```ts
+onWindowRestore(callback: () => void): () => void
+```
+On window restored. The returned function removes the handler.
+
+### Canvas.onWindowShow
+```ts
+onWindowShow(callback: () => void): () => void
+```
+On window shown. The returned function removes the handler.
+
+### Canvas.onWindowHide
+```ts
+onWindowHide(callback: () => void): () => void
+```
+On window hidden. The returned function removes the handler.
+
+### Canvas.onWindowMouseEnter
+```ts
+onWindowMouseEnter(callback: () => void): () => void
+```
+On mouse entering the window. The returned function removes the handler.
+
+### Canvas.onWindowMouseLeave
+```ts
+onWindowMouseLeave(callback: () => void): () => void
+```
+On mouse leaving the window. The returned function removes the handler.
+
+### Canvas.onWindowClose
+```ts
+onWindowClose(callback: () => boolean | void): () => void
+```
+On window close requested. Return `false` to cancel closing. The returned function removes the handler.
+
 ### Canvas options
 ```ts
 type CanvasOptions = {
@@ -483,9 +493,12 @@ type CanvasOptions = {
 	resizable?: boolean,
 	scale?: number,
 	antiAliasing?: boolean,
-	removeWindowDecoration?: boolean
+	removeWindowDecoration?: boolean,
+	vsync?: boolean
 }
 ```
+
+Set `resizable` to `true` to allow window resizing. Set `vsync` to `false` to disable vertical synchronization.
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:
@@ -495,6 +508,286 @@ import { Canvas, Colors } from "simply2d"
 const canvas = new Canvas("myCanvas", 200, 200);
 canvas.drawLine(Colors.BLUE, canvas.TOP_LEFT /* the top left corner */, canvas.BOTTOM_RIGHT /* the bottom right corner */);
 ```
+
+### SpriteSheet
+A sprite sheet stores a regular grid of frames. Indexes run from left to right, then down.
+```ts
+import { SpriteSheet } from "simply2d";
+const sheet = new SpriteSheet("player", 16, 16, 4, 2);
+```
+The constructor takes the texture ID, frame width, frame height, columns and rows. Load the texture with `Canvas.loadTexture` first.
+
+### SpriteSheet.frame
+```ts
+frame(index: number): Rectangle
+```
+Return the source rectangle for a frame.
+
+### SpriteSheet.animation
+```ts
+animation(indexes: readonly number[], options?: AnimationOptions): SpriteAnimation
+```
+Create an animation from frame indexes.
+
+### SpriteAnimation
+An animation stores source rectangles and playback timing.
+```ts
+import { SpriteAnimation } from "simply2d";
+const walk = new SpriteAnimation("player", [
+	{ x: 0, y: 0, width: 16, height: 16 },
+	{ x: 16, y: 0, width: 16, height: 16 }
+], { fps: 10 });
+
+canvas.loop(deltaMs => {
+	walk.update(deltaMs);
+	canvas.drawAnimation(walk, { x: 40, y: 60 });
+});
+```
+
+### get SpriteAnimation.frame
+```ts
+get frame(): Readonly<Rectangle>
+```
+Return the current source rectangle.
+
+### get SpriteAnimation.frameIndex
+```ts
+get frameIndex(): number
+```
+Return the current frame index.
+
+### get SpriteAnimation.isPlaying
+```ts
+get isPlaying(): boolean
+```
+Return whether the animation is playing.
+
+### get SpriteAnimation.finished
+```ts
+get finished(): boolean
+```
+Return whether a non-looping animation has finished.
+
+### SpriteAnimation.update
+```ts
+update(deltaMs: number): void
+```
+Advance playback by elapsed milliseconds. Update once per frame, even when drawing the animation more than once.
+
+### SpriteAnimation.play
+```ts
+play(restart?: boolean): void
+```
+Resume playback. Set `restart` to `true` to start from the first frame. Finished animations restart automatically.
+
+### SpriteAnimation.pause
+```ts
+pause(): void
+```
+Pause playback on the current frame.
+
+### SpriteAnimation.stop
+```ts
+stop(): void
+```
+Stop playback and return to the first frame.
+
+### SpriteAnimation.reset
+```ts
+reset(): void
+```
+Return to the first frame without changing whether playback is paused.
+
+### Audio
+Audio uses SDL_mixer to play WAV, MP3, OGG and FLAC files. One Audio instance can be open at a time, with 32 sound effects and one music track playing together.
+```ts
+import { Audio } from "simply2d";
+const audio = new Audio();
+audio.loadSound("jump", "jump.wav");
+audio.play("jump");
+audio.loadMusic("theme", "theme.ogg");
+audio.playMusic("theme", { loop: true });
+```
+SDL_mixer 2.6.0 or later is required. Sound effects are loaded into memory; music is streamed from files. Playback does not keep the Node.js event loop alive.
+
+### Audio.loadSound
+```ts
+loadSound(id: string, source: string | Uint8Array): number
+```
+Load a sound from a file or encoded audio bytes. Return its duration in seconds. Replacing an ID affects future playback; existing instances keep their original sound.
+
+### Audio.getSoundDuration
+```ts
+getSoundDuration(id: string): number
+```
+Return the duration of a loaded sound in seconds.
+
+### Audio.play
+```ts
+play(id: string, options?: SoundOptions): SoundPlayback
+```
+Play a loaded sound and return its playback controls. Each call creates a separate playback instance. Throws when all 32 sound channels are in use.
+
+### Audio.unloadSound
+```ts
+unloadSound(id: string): void
+```
+Stop playback instances of the loaded sound and release it.
+
+### Audio.loadMusic
+```ts
+loadMusic(id: string, filename: string): void
+```
+Load a music file for streaming.
+
+### Audio.playMusic
+```ts
+playMusic(id: string, options?: SoundOptions): SoundPlayback
+```
+Play a loaded music track and return its playback controls. Replaces the current track.
+
+### Audio.unloadMusic
+```ts
+unloadMusic(id: string): void
+```
+Release a loaded music track. Stop it if it is playing.
+
+### get Audio.volume
+```ts
+get volume(): number
+```
+Return the master volume.
+
+### set Audio.volume
+```ts
+set volume(value: number)
+```
+Set the volume of music and sound effects, from 0 to 1. Defaults to 1.
+
+### get Audio.paused
+```ts
+get paused(): boolean
+```
+Return whether all audio is paused.
+
+### Audio.pause
+```ts
+pause(): void
+```
+Pause music and sound effects.
+
+### Audio.resume
+```ts
+resume(): void
+```
+Resume audio. Instances paused individually remain paused.
+
+### Audio.stopAll
+```ts
+stopAll(): void
+```
+Stop music and all sound effects.
+
+### Audio.close
+```ts
+close(): void
+```
+Stop playback and release the audio device. Closing a canvas does not close audio.
+
+### get Audio.closed
+```ts
+get closed(): boolean
+```
+Return whether the audio device is closed.
+
+### SoundPlayback
+Playback controls returned by `Audio.play` and `Audio.playMusic`.
+```ts
+const sound = audio.play("jump", { volume: 0.5 });
+sound.pause();
+sound.resume();
+sound.stop();
+```
+
+### get SoundPlayback.state
+```ts
+get state(): PlaybackState
+```
+Return `"playing"`, `"paused"` or `"stopped"`.
+
+### get SoundPlayback.isPlaying
+```ts
+get isPlaying(): boolean
+```
+Return whether this instance is playing.
+
+### get SoundPlayback.volume
+```ts
+get volume(): number
+```
+Return the instance volume.
+
+### set SoundPlayback.volume
+```ts
+set volume(value: number)
+```
+Set the instance volume, from 0 to 1. The master volume also applies.
+
+### SoundPlayback.pause
+```ts
+pause(): void
+```
+Pause this playback instance.
+
+### SoundPlayback.resume
+```ts
+resume(): void
+```
+Resume this playback instance.
+
+### SoundPlayback.stop
+```ts
+stop(): void
+```
+Stop this playback instance.
+
+### rectanglesOverlap
+```ts
+rectanglesOverlap(a: Rectangle, b: Rectangle, touching?: boolean): boolean
+```
+Return whether two axis-aligned rectangles overlap. Set `touching` to `true` to count touching edges. Defaults to `false`.
+
+### rectangleIntersection
+```ts
+rectangleIntersection(a: Rectangle, b: Rectangle): Rectangle | null
+```
+Return the overlap rectangle, or `null` when separated or only touching.
+
+### rectangleContact
+```ts
+rectangleContact(a: Rectangle, b: Rectangle): RectangleContact | null
+```
+Return the smallest axis-aligned translation needed to move the first rectangle out of the second, or `null` when they do not overlap. Inputs are not changed.
+
+### pointInRectangle
+```ts
+pointInRectangle(point: Position, rect: Rectangle, touching?: boolean): boolean
+```
+Return whether a point is inside a rectangle. Boundaries count by default; set `touching` to `false` to exclude them.
+
+### circlesOverlap
+```ts
+circlesOverlap(a: Circle, b: Circle, touching?: boolean): boolean
+```
+Return whether two circles overlap. Set `touching` to `true` to count touching edges. Defaults to `false`.
+
+### circleIntersectsRectangle
+```ts
+circleIntersectsRectangle(circle: Circle, rect: Rectangle, touching?: boolean): boolean
+```
+Return whether a circle overlaps an axis-aligned rectangle. Set `touching` to `true` to count touching edges. Defaults to `false`.
+
+Collision functions use logical coordinates. Zero-size shapes do not collide. Rotated shapes and continuous motion are not supported; the Mario example uses small time steps for movement.
 
 ### Colors
 Colors is an object that contains different standard colors and some useful function
@@ -590,3 +883,121 @@ PixelFormats.rgb565;
 PixelFormats.rgb888;
 PixelFormats.rgba8888;
 ```
+
+### Rectangle
+```ts
+type Rectangle = Position & { width: number, height: number };
+```
+A rectangle with its position at the top left corner.
+
+### Circle
+```ts
+type Circle = Position & { radius: number };
+```
+A circle with its position at the center.
+
+### RectangleContact
+```ts
+type RectangleContact = {
+	depth: number,
+	normal: Position,
+	translation: Position
+};
+```
+Collision depth, outward direction and the translation needed to separate the first rectangle from the second.
+
+### TextureDrawOptions
+```ts
+type TextureDrawOptions = {
+	source?: Rectangle,
+	width?: number,
+	height?: number,
+	rotation?: number,
+	flipX?: boolean,
+	flipY?: boolean,
+	opacity?: number,
+	filtering?: "nearest" | "linear"
+};
+```
+Source coordinates are in texture pixels. Rotation is in degrees and opacity ranges from 0 to 1. Defaults to the source size, no rotation or flips, full opacity and nearest filtering.
+
+### SVGOptions
+```ts
+type SVGOptions = {
+	width?: number,
+	height?: number
+};
+```
+SVG rasterization size in pixels. Dimensions must be positive integers. Supply one dimension to preserve the aspect ratio, or both for an explicit size.
+
+### LoopOptions
+```ts
+type LoopOptions = {
+	fps?: number,
+	maxDeltaMs?: number,
+	clear?: boolean
+};
+```
+Defaults to 60 fps, a maximum elapsed time of 100 ms and clearing the canvas each frame.
+
+### AnimationOptions
+```ts
+type AnimationOptions = {
+	fps?: number,
+	loop?: boolean,
+	autoplay?: boolean
+};
+```
+Defaults to 12 fps, looping and automatic playback. Set `loop: false` to play once.
+
+### SoundOptions
+```ts
+type SoundOptions = {
+	loop?: boolean,
+	volume?: number
+};
+```
+Defaults to no looping and volume 1. Volume ranges from 0 to 1.
+
+### PlaybackState
+```ts
+type PlaybackState = "playing" | "paused" | "stopped";
+```
+Current state of a sound or music playback instance.
+
+### WindowEventType
+```ts
+type WindowEventType = "resize" | "focus" | "unfocus" | "move"
+	| "minimize" | "maximize" | "restore" | "show" | "hide"
+	| "mouseEnter" | "mouseLeave" | "close";
+```
+Available canvas window events.
+
+### WindowEvent
+```ts
+type WindowEvent = {
+	type: WindowEventType,
+	width?: number,
+	height?: number,
+	x?: number,
+	y?: number
+};
+```
+Resize events provide logical width and height. Move events provide screen coordinates.
+
+### WindowEventHandler
+```ts
+type WindowEventHandler = (event: WindowEvent) => boolean | void;
+```
+Callback for `Canvas.onWindowEvent`. Returning `false` from a close handler cancels closing.
+
+### Examples
+```sh
+node examples/mario.js
+node examples/animation.js
+node examples/audio.js
+node examples/svg.js
+node examples/window-events.js
+npm run bench
+```
+In Mario, move with arrows or A/D, jump with Space/Up/W and run with Shift. P pauses, R restarts, M mutes and Escape closes. Use `--no-audio` to disable sound.

@@ -2,6 +2,7 @@
 
 ## 1.4.1
 
+- **`[Updated]`** interactive audio example demonstrates effects, streamed music, looping, pause, mute, and volume controls.
 - **`[Fixed]`** initial Wayland size events no longer change the logical size of non-resizable canvases or detach their buffers.
 - **`[Fixed]`** detach commits pending buffer changes before releasing the attachment.
 - **`[Fixed]`** duplicate size events do not detach buffers when the logical canvas size is unchanged.

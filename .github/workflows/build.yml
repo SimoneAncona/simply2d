@@ -34,7 +34,8 @@ jobs:
             $archive = "$env:RUNNER_TEMP/$($library.Name).zip"
             $extracted = "$env:RUNNER_TEMP/$($library.Name)"
             $url = "https://github.com/libsdl-org/$($library.Repo)/releases/download/release-$($library.Version)/$($library.Name)-devel-$($library.Version)-VC.zip"
-            Invoke-WebRequest $url -OutFile $archive
+            curl.exe --fail --location --retry 3 --retry-all-errors --connect-timeout 30 --max-time 180 --output $archive $url
+            if ($LASTEXITCODE) { throw "Download failed: $url" }
             Expand-Archive $archive -DestinationPath $extracted
             $destination = "bin/$($library.Destination)/winx64"
             New-Item $destination -ItemType Directory -Force | Out-Null
@@ -43,6 +44,8 @@ jobs:
           }
       - run: npm ci
       - run: npm test
+      - name: Audio example smoke test
+        run: node examples/audio.js --smoke
       - name: Pack release
         if: runner.os == 'Windows'
         run: npm pack --pack-destination ${{ runner.temp }}

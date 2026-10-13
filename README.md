@@ -990,14 +990,3 @@ Resize events provide logical width and height. Move events provide screen coord
 type WindowEventHandler = (event: WindowEvent) => boolean | void;
 ```
 Callback for `Canvas.onWindowEvent`. Returning `false` from a close handler cancels closing.
-
-### Examples
-```sh
-node examples/mario.js
-node examples/animation.js
-node examples/audio.js
-node examples/svg.js
-node examples/window-events.js
-npm run bench
-```
-In Mario, move with arrows or A/D, jump with Space/Up/W and run with Shift. P pauses, R restarts, M mutes and Escape closes. Use `--no-audio` to disable sound.

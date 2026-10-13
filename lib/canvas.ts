@@ -794,9 +794,12 @@ export class Canvas {
 	 * @updated with v1.3.4
 	 */
 	detach() {
-		sdl2bind.detach();
-		this._isAttachedMode = false;
 		clearInterval(this._attachLoop);
+		try {
+			if (this._isAttachedMode) sdl2bind.detach(this._renderer);
+		} finally {
+			this._isAttachedMode = false;
+		}
 	}
 
 	/**

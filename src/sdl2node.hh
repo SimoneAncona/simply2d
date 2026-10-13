@@ -32,6 +32,7 @@ namespace SDL
 	};
 
 	std::map<Uint32, Napi::FunctionReference> window_event_callbacks;
+	std::map<Uint32, Position> fixed_window_sizes;
 	Napi::FunctionReference on_click_callback_ref;
 	Napi::FunctionReference on_keydown_callback_ref;
 	Napi::FunctionReference on_keyup_callback_ref;
@@ -95,6 +96,19 @@ namespace SDL
 							SDL_Renderer *renderer = window ? SDL_GetRenderer(window) : nullptr;
 							first = std::max(1, first / scale);
 							second = std::max(1, second / scale);
+							auto fixed = fixed_window_sizes.find(event.window.windowID);
+							if (fixed != fixed_window_sizes.end())
+							{
+								first = fixed->second.x;
+								second = fixed->second.y;
+							}
+							if (renderer)
+							{
+								int width, height;
+								SDL_QueryTexture(main_targets.at(renderer), nullptr, nullptr, &width, &height);
+								if (first == width && second == height)
+									break;
+							}
 							if (!renderer || !SDLImage::resize_targets(renderer, first, second))
 							{
 								Napi::Error::New(env, std::string("Cannot resize framebuffer: ") + SDL_GetError())
@@ -190,7 +204,24 @@ namespace SDL
 	Napi::Value resize_window(const Napi::CallbackInfo &info)
 	{
 		SDL_Window *window = (SDL_Window *)get_ptr_from_js(info[0].As<Napi::ArrayBuffer>());
-		SDL_SetWindowSize(window, info[1].As<Napi::Number>().Int32Value(), info[2].As<Napi::Number>().Int32Value());
+		int width = info[1].As<Napi::Number>().Int32Value();
+		int height = info[2].As<Napi::Number>().Int32Value();
+		auto fixed = fixed_window_sizes.find(SDL_GetWindowID(window));
+		if (fixed != fixed_window_sizes.end())
+			fixed->second = Position{width / scale, height / scale};
+		SDL_SetWindowSize(window, width, height);
+		// Fixed-size canvases still support explicit resize(), even when the compositor keeps the window size.
+		if (fixed != fixed_window_sizes.end())
+		{
+			SDL_Event event{};
+			event.type = SDL_WINDOWEVENT;
+			event.window.windowID = SDL_GetWindowID(window);
+			event.window.event = SDL_WINDOWEVENT_SIZE_CHANGED;
+			event.window.data1 = width;
+			event.window.data2 = height;
+			if (SDL_PushEvent(&event) < 0)
+				Napi::Error::New(info.Env(), SDL_GetError()).ThrowAsJavaScriptException();
+		}
 		return info.Env().Undefined();
 	}
 
@@ -250,6 +281,7 @@ namespace SDL
 			SDL_DestroyTexture(entry.second);
 		main_targets.clear();
 		window_event_callbacks.clear();
+		fixed_window_sizes.clear();
 		on_click_callback_ref.Reset();
 		on_keydown_callback_ref.Reset();
 		on_keyup_callback_ref.Reset();
@@ -265,31 +297,36 @@ namespace SDL
 		return env.Undefined();
 	}
 
+	bool upload_attached(SDL_Renderer *renderer)
+	{
+		uint8_t *texture_data;
+		int pitch;
+		if (SDL_LockTexture(attached_texture, nullptr, reinterpret_cast<void **>(&texture_data), &pitch) != 0)
+			return false;
+		Uint32 format;
+		int width, height;
+		SDL_QueryTexture(attached_texture, &format, nullptr, &width, &height);
+		const int row_size = width * SDL_BYTESPERPIXEL(format);
+		uint8_t *raw_pixels = video_buffer.Value().Data();
+		for (int y = 0; y < height; y++)
+			std::memcpy(texture_data + y * pitch, raw_pixels + y * row_size, row_size);
+		SDL_UnlockTexture(attached_texture);
+		// Keep the attached buffer's logical size when a resize detaches it.
+		SDL_Rect destination{0, 0, width, height};
+		return SDL_RenderCopy(renderer, attached_texture, nullptr, &destination) == 0;
+	}
+
 	Napi::Value update(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
 		if (attached_texture == nullptr)
 			return env.Undefined();
 		SDL_Renderer *renderer = GET_RENDERER;
-		uint8_t *raw_pixels = video_buffer.Value().Data();
-		uint8_t *texture_data;
-		int pitch;
-		if (SDL_LockTexture(attached_texture, NULL, (void **)&texture_data, &pitch) != 0)
+		if (!upload_attached(renderer))
 		{
-			Napi::Error::New(env, std::string("Unable to lock texture: ") + SDL_GetError())
-			    .ThrowAsJavaScriptException();
+			Napi::Error::New(env, SDL_GetError()).ThrowAsJavaScriptException();
 			return env.Undefined();
 		}
-
-		Uint32 format;
-		int width, height;
-		SDL_QueryTexture(attached_texture, &format, nullptr, &width, &height);
-		const int row_size = width * SDL_BYTESPERPIXEL(format);
-		for (int y = 0; y < height; y++)
-			std::memcpy(texture_data + y * pitch, raw_pixels + y * row_size, row_size);
-
-		SDL_UnlockTexture(attached_texture);
-		SDL_RenderCopy(renderer, attached_texture, NULL, NULL);
 		present_frame(renderer);
 		handle_events(env);
 		return env.Undefined();
@@ -326,9 +363,20 @@ namespace SDL
 	Napi::Value detach(const Napi::CallbackInfo &info)
 	{
 		Napi::Env env = info.Env();
+		std::string error;
+		if (attached_texture && info.Length() > 0)
+		{
+			SDL_Renderer *renderer = GET_RENDERER;
+			if (upload_attached(renderer))
+				present_frame(renderer);
+			else
+				error = SDL_GetError();
+		}
 		SDL_DestroyTexture(attached_texture);
 		attached_texture = nullptr;
 		video_buffer.Reset();
+		if (!error.empty())
+			Napi::Error::New(env, error).ThrowAsJavaScriptException();
 		return env.Undefined();
 	}
 
@@ -383,6 +431,8 @@ namespace SDL
 		    SDL_CreateWindow(title.c_str(), x, y, w * scale, h * scale, flags | SDL_WINDOW_ALLOW_HIGHDPI);
 		if (window == NULL)
 			return env.Undefined();
+		if (!(flags & SDL_WINDOW_RESIZABLE))
+			fixed_window_sizes[SDL_GetWindowID(window)] = Position{w, h};
 		return Napi::ArrayBuffer::New(env, window, sizeof(window));
 	}
 
@@ -404,6 +454,12 @@ namespace SDL
 			return env.Undefined();
 		int w, h;
 		SDL_GetWindowSize(window, &w, &h);
+		auto fixed = fixed_window_sizes.find(SDL_GetWindowID(window));
+		if (fixed != fixed_window_sizes.end())
+		{
+			w = fixed->second.x * scale;
+			h = fixed->second.y * scale;
+		}
 		SDL_RenderSetLogicalSize(renderer, w / scale, h / scale);
 		// Window backbuffers are invalid after SDL_RenderPresent. Keep the
 		// canvas in a target texture so later drawing and filters retain it.

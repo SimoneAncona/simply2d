@@ -366,7 +366,7 @@ Attach a buffer to the video memory. The loop and every other drawing functions 
 ```ts
 detach(): void
 ```
-Detach the current buffer from the video memory
+Write the final buffer changes to the canvas and detach it from the video memory
 
 ### Canvas.requestClose
 ```ts
@@ -498,7 +498,7 @@ type CanvasOptions = {
 }
 ```
 
-Set `resizable` to `true` to allow window resizing. Set `vsync` to `false` to disable vertical synchronization.
+Set `resizable` to `true` to allow window resizing. Non-resizable canvases keep their logical size unless `resize()` is called. Set `vsync` to `false` to disable vertical synchronization.
 
 ### Canvas constant positions
 It is possible to access constant positions relative to the size of the canvas. Example:

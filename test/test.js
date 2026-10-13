@@ -18,6 +18,36 @@ for (const scale of [1, 2]) {
         assert.throws(() => canvas.applyFilter(v => v), /Detach/);
         canvas.detach();
 
+        // Detaching must commit edits made before the interval gets another turn.
+        for (const format of [8, 16, 24, 32]) {
+            const pending = new Uint8Array(3 * 2 * format / 8);
+            canvas.attach(pending, format);
+            pending.fill(255);
+            canvas.detach();
+            canvas.attach(pending, format);
+            assert.ok(pending.every(value => value === 255), `detach must commit ${format}-bit pixels`);
+            canvas.detach();
+            canvas.detach(); // Repeated detachment is harmless.
+        }
+        canvas.setBackgroundColor(Colors.RED);
+
+        const live = new Uint8Array(3 * 2);
+        canvas.attach(live, PixelFormats.rgb332);
+        live.fill(255);
+        await new Promise(resolve => setTimeout(resolve, 30));
+        assert.ok(canvas._isAttachedMode);
+        assert.ok(new Uint32Array(canvas.getRawData().buffer).every(value => value === 0xffffffff));
+        canvas.resize(3, 2); canvas.pollEvents();
+        assert.ok(canvas._isAttachedMode, "An unchanged size must not detach the buffer");
+        canvas.resize(4, 3); canvas.pollEvents();
+        assert.equal(canvas._isAttachedMode, false);
+        assert.equal(canvas.width, 4);
+        const resized = new Uint32Array(canvas.getRawData().buffer);
+        assert.equal(resized[0], 0xffffffff);
+        assert.equal(resized[3], 0x000000ff, "Resizing must not stretch the attached buffer");
+        canvas.resize(3, 2); canvas.pollEvents();
+        canvas.setBackgroundColor(Colors.RED);
+
         // Identity filtering must retain the background and line after presentation.
         canvas.drawLine(Colors.WHITE, canvas.TOP_LEFT, canvas.BOTTOM_RIGHT);
         canvas.attach(rgba, PixelFormats.rgba8888);

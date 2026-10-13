@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.1
+
+- **`[Fixed]`** initial Wayland size events no longer change the logical size of non-resizable canvases or detach their buffers.
+- **`[Fixed]`** detach commits pending buffer changes before releasing the attachment.
+- **`[Fixed]`** duplicate size events do not detach buffers when the logical canvas size is unchanged.
+
 ## 1.4.0
 
 - **`[Added]`** sprite sheets and time-based animations with looping, pause, reset, and one-shot playback.

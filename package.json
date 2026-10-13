@@ -1,7 +1,7 @@
 {
   "name": "simply2d",
   "version": "1.4.1",
-  "description": "2D graphics library for node.js",
+  "description": "2D graphics and audio library for node.js",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {
@@ -33,7 +33,8 @@
     "sdl2",
     "standalone",
     "standalone-application",
-    "2d-games"
+    "2d-games",
+    "audio"
   ],
   "author": "Simone Ancona",
   "license": "Apache-2.0",

@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { toneWav } from "../examples/sounds.js";
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 process.env.SDL_AUDIODRIVER = "dummy";
 if (process.platform === "linux") process.env.SDL_VIDEODRIVER ??= "offscreen";
@@ -15,7 +16,7 @@ try {
     writeFileSync(filename, wav);
     assert.ok(Math.abs(audio.loadSound("tone", filename) - 0.08) < 0.001);
     audio.loadSound("other", new Uint8Array(wav));
-    assert.throws(() => audio.loadSound("bad", Buffer.from("invalid")), /WAV/);
+    assert.throws(() => audio.loadSound("bad", Buffer.from("invalid")), /sound/);
     assert.throws(() => audio.play("missing"), /not loaded/);
     assert.throws(() => { audio.volume = 2; }, RangeError);
     const first = audio.play("tone", { loop: true, volume: 0.25 });
@@ -43,6 +44,31 @@ try {
     audio.close(); audio.close();
     assert.equal(first.state, "stopped");
     assert.throws(() => audio.play("tone"), /closed/);
-    const reopened = new Audio(); reopened.close();
+    const reopened = new Audio();
+    try {
+        assert.throws(() => new Audio(), /one Audio instance/);
+        for (const extension of ["mp3", "ogg", "flac"]) {
+            const path = fileURLToPath(new URL(`./assets/tone.${extension}`, import.meta.url));
+            assert.ok(reopened.loadSound(extension, path) > 0);
+            assert.ok(reopened.loadSound(`${extension}-bytes`, readFileSync(path)) > 0);
+            reopened.play(extension);
+            reopened.loadMusic(extension, path);
+        }
+        reopened.pause();
+        const music = reopened.playMusic("ogg", { loop: true, volume: 0.2 });
+        assert.equal(music.state, "paused");
+        reopened.resume();
+        assert.equal(music.state, "playing");
+        music.pause(); assert.equal(music.state, "paused");
+        music.resume(); music.volume = 0.4;
+        const replacement = reopened.playMusic("mp3", { loop: true });
+        assert.equal(music.state, "stopped");
+        music.stop(); // A stale handle must not stop the replacement track.
+        assert.equal(replacement.state, "playing");
+        reopened.unloadMusic("mp3");
+        assert.equal(replacement.state, "stopped");
+        assert.throws(() => reopened.playMusic("missing"), /not loaded/);
+        reopened.playMusic("flac", { loop: true }); reopened.stopAll();
+    } finally { reopened.close(); }
 } finally { audio.close(); rmSync(directory, { recursive: true, force: true }); }
 console.log("Audio loading, playback, controls, and lifecycle passed.");

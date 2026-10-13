@@ -11,15 +11,15 @@ Visual Studio VC tools are required. For more, see https://github.com/nodejs/nod
 
 ### For Linux
 To use Simply2D you must have installed make, a C++17 compiler, Python 3, pkg-config and the SDL2 development packages. To install SDL2 you can use the following command:
-- For Debian and Ubuntu: `sudo apt install build-essential python3 pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev`
-- For Red Hat and Fedora: `sudo dnf install gcc-c++ make python3 pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_ttf-devel`
-- For Arch Linux: `sudo pacman -S --needed base-devel python pkgconf sdl2 sdl2_image sdl2_ttf`
+- For Debian and Ubuntu: `sudo apt install build-essential python3 pkg-config libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev`
+- For Red Hat and Fedora: `sudo dnf install gcc-c++ make python3 pkgconf-pkg-config SDL2-devel SDL2_image-devel SDL2_ttf-devel SDL2_mixer-devel`
+- For Arch Linux: `sudo pacman -S --needed base-devel python pkgconf sdl2 sdl2_image sdl2_ttf sdl2_mixer`
 
 > If you encounter any problems, it is recommended to install the latest version of python3 and run `python3 -m pip install setuptools` or just `pip install setuptools`
 
 
 ### For contributors
-Windows x64 SDL runtime and import libraries are included in npm releases. The local `bin/` directory is ignored by Git. Before packing a release, populate it with the official SDL 2.32.10, SDL_image 2.8.12, and SDL_ttf 2.24.0 VC x64 libraries and their upstream licenses; CI downloads these automatically. Visual Studio C++ build tools and Python are still required to compile the Node addon.
+Windows x64 SDL runtime and import libraries are included in npm releases. The local `bin/` directory is ignored by Git. Before packing a release, populate it with the official SDL 2.32.10, SDL_image 2.8.12, and SDL_ttf 2.24.0, and SDL_mixer 2.8.2 VC x64 libraries and their upstream licenses; CI downloads these automatically. Visual Studio C++ build tools and Python are still required to compile the Node addon.
 
 Run `npm install`, then `npm run build`. Run `npm test` for the small animation, framebuffer, and window-event smoke tests. CI also builds on Windows and installs the packed npm release into a separate project.
 
@@ -53,6 +53,22 @@ canvas.loop(deltaMs => {
 
 `drawTexture(id, position, options)` supports a source rectangle, output width and height, rotation in degrees, horizontal and vertical flips, opacity from 0 to 1, and `filtering: "nearest" | "linear"`. Nearest sampling is the default. `unloadTexture(id)` releases a loaded texture.
 
+### Collision utilities
+
+```js
+import { rectanglesOverlap, rectangleContact } from "simply2d";
+
+if (rectanglesOverlap(player, platform)) {
+    const contact = rectangleContact(player, platform);
+    player.x += contact.translation.x;
+    player.y += contact.translation.y;
+}
+```
+
+`rectanglesOverlap(a, b)` detects axis-aligned rectangle overlap. `rectangleIntersection(a, b)` returns the overlap rectangle, or `null`. `rectangleContact(a, b)` returns penetration `depth`, an outward `normal`, and the smallest axis-aligned `translation` needed to move the first rectangle out of the second; it does not mutate the inputs.
+
+`circlesOverlap(a, b)` and `circleIntersectsRectangle(circle, rect)` detect circle collisions. Circles use `{ x, y, radius }` with `x/y` at the center. Pass `true` as the final argument to count touching edges. `pointInRectangle(point, rect, touching = true)` tests containment and counts boundaries by default. Zero-size shapes do not collide. These helpers use logical coordinates and do not handle rotated shapes or continuous motion; fast movement still needs substeps, as demonstrated by Mario.
+
 ### SVG textures
 
 ```js
@@ -67,7 +83,7 @@ Run `node examples/svg.js` for the example. SDL_image 2.6.0 or later is required
 
 ### Audio
 
-`Audio` provides WAV playback independently of a canvas. It supports 32 simultaneous playback instances. Files are decoded and converted once when loaded; playback and mixing run on SDL's audio thread.
+`Audio` uses SDL_mixer for WAV, MP3, OGG, and FLAC playback independently of a canvas. It supports 32 simultaneous playback instances. Files are decoded and converted once when loaded; playback and mixing run on SDL's audio thread.
 
 ```js
 import { Audio } from "simply2d";
@@ -84,13 +100,15 @@ background.stop();
 audio.close();
 ```
 
-`loadSound(id, filenameOrWavBytes)` accepts a path or `Uint8Array` containing encoded WAV data and returns duration in seconds. `getSoundDuration(id)` returns that duration. Each `play()` returns a separate `SoundPlayback` with `state`, `isPlaying`, `volume`, `pause()`, `resume()`, and `stop()`.
+`loadSound(id, filenameOrAudioBytes)` accepts a path or `Uint8Array` containing encoded audio data and returns duration in seconds. `getSoundDuration(id)` returns that duration. Each `play()` returns a separate `SoundPlayback` with `state`, `isPlaying`, `volume`, `pause()`, `resume()`, and `stop()`.
 
 Master controls are `audio.volume`, `pause()`, `resume()`, `stopAll()`, and `unloadSound(id)`. Volume ranges from 0 to 1. Unloading stops instances of that loaded sound. Loading an existing ID replaces the sound for future playback while current instances finish with their original data. Playing when all 32 voices are occupied throws an error.
 
-Call `audio.close()` when finished; closing a canvas leaves audio available. Playback does not keep the Node event loop alive. This version supports WAV, including conversion of sample rates and mono/stereo layouts; MP3, OGG, and streamed music are not supported. No additional native dependency is required.
+Call `audio.close()` when finished; closing a canvas leaves audio available. Playback does not keep the Node event loop alive. SDL_mixer 2.6+ development libraries are required on Linux; Windows releases bundle SDL_mixer and its codec libraries. One `Audio` instance may be open at a time. Sound effects are decoded into memory; music is streamed from files.
 
-Run `node examples/audio.js` for a standalone example. The Mario example includes original synthesized effects for jumping, coins, falls, and completing the level. Press M to mute, or start it with `--no-audio` to disable sound. If an audio device is unavailable, the game continues without sound.
+Load music with `audio.loadMusic("theme", "theme.ogg")`, then call `audio.playMusic("theme", { loop: true, volume: 0.3 })`. The returned playback has the same controls as sound effects. One music track plays alongside the 32 effect channels; starting another track replaces it. `unloadMusic(id)` releases a track and stops it if playing. Master volume, pause/resume, `stopAll()`, and `close()` affect both music and effects.
+
+Run `node examples/audio.js` for a standalone example. The Mario example uses the shared collision helpers, an original streamed OGG background melody, and synthesized effects for jumping, coins, falls, and completing the level. Press M to mute, or start it with `--no-audio` to disable sound. If an audio device is unavailable, the game continues without sound.
 
 ### Window events
 

@@ -6,3 +6,5 @@ export { Position, RGBAColor, CanvasOptions, Resolution, Key, PixelFormat, Pixel
 export * from "./lib/sdl2int.js";
 
 export { Audio, SoundPlayback, SoundOptions, PlaybackState } from "./lib/audio.js";
+
+export { Circle, RectangleContact, rectanglesOverlap, rectangleIntersection, rectangleContact, pointInRectangle, circlesOverlap, circleIntersectsRectangle } from "./lib/collisions.js";

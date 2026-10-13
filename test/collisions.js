@@ -1,0 +1,27 @@
+import assert from "node:assert/strict";
+import { rectanglesOverlap, rectangleIntersection, rectangleContact, pointInRectangle,
+    circlesOverlap, circleIntersectsRectangle } from "../lib/collisions.js";
+const a = { x: -5, y: -5, width: 10, height: 10 };
+const b = { x: 3, y: 0, width: 10, height: 10 };
+assert.ok(rectanglesOverlap(a, b));
+assert.deepEqual(rectangleIntersection(a, b), { x: 3, y: 0, width: 2, height: 5 });
+const contact = rectangleContact(a, b);
+assert.deepEqual(contact, { depth: 2, normal: { x: -1, y: 0 }, translation: { x: -2, y: 0 } });
+assert.equal(rectanglesOverlap({ ...a, x: a.x + contact.translation.x }, b), false);
+assert.equal(rectanglesOverlap(a, { ...b, x: 5 }), false);
+assert.ok(rectanglesOverlap(a, { ...b, x: 5 }, true));
+assert.equal(rectangleIntersection(a, { ...b, x: 5 }), null);
+const inner = { x: 0, y: 0, width: 1, height: 1 };
+const nested = rectangleContact(inner, a);
+assert.equal(rectanglesOverlap({ ...inner, x: inner.x + nested.translation.x, y: inner.y + nested.translation.y }, a), false);
+assert.ok(pointInRectangle({ x: -5, y: 0 }, a));
+assert.equal(pointInRectangle({ x: -5, y: 0 }, a, false), false);
+assert.equal(rectanglesOverlap(a, { ...a, width: 0 }), false);
+assert.equal(circlesOverlap({ x: 0, y: 0, radius: 2 }, { x: 4, y: 0, radius: 2 }), false);
+assert.ok(circlesOverlap({ x: 0, y: 0, radius: 2 }, { x: 4, y: 0, radius: 2 }, true));
+assert.ok(circleIntersectsRectangle({ x: 0, y: 0, radius: 1 }, a));
+assert.equal(circleIntersectsRectangle({ x: 6, y: 6, radius: 1 }, a), false);
+assert.ok(circleIntersectsRectangle({ x: 6, y: 6, radius: 2 }, a));
+assert.throws(() => rectanglesOverlap(a, { ...b, width: -1 }), RangeError);
+assert.throws(() => circlesOverlap({ x: NaN, y: 0, radius: 1 }, { x: 0, y: 0, radius: 1 }), RangeError);
+console.log("Collision overlap, contact, containment, and boundary checks passed.");

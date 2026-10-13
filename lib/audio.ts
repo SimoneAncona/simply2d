@@ -20,7 +20,7 @@ export class SoundPlayback {
     stop(): void { this.audio.control(this.id, "stop"); }
 }
 
-/** SDL2 WAV playback with 32 simultaneous voices, independent of Canvas. */
+/** SDL_mixer playback with 32 simultaneous voices, independent of Canvas. */
 export class Audio {
     private readonly _device: unknown;
     private _closed = false;
@@ -36,11 +36,11 @@ export class Audio {
         this.checkOpen(); value = volumeValue(value);
         sdl2bind.audioGlobal(this._device, "volume", value); this._volume = value;
     }
-    /** Load a WAV file or encoded WAV bytes. Returns its duration in seconds. */
+    /** Load a sound file or encoded audio bytes. Returns its duration in seconds. */
     loadSound(id: string, source: string | Uint8Array): number {
         this.checkOpen();
         if (typeof id !== "string" || !id) throw new TypeError("A sound needs a nonempty ID");
-        if (!(typeof source === "string" || source instanceof Uint8Array)) throw new TypeError("Sound source must be a filename or WAV bytes");
+        if (!(typeof source === "string" || source instanceof Uint8Array)) throw new TypeError("Sound source must be a filename or audio bytes");
         const duration: number = sdl2bind.audioLoad(this._device, id, source);
         this._durations.set(id, duration); return duration;
     }
@@ -55,6 +55,19 @@ export class Audio {
         if (options.loop !== undefined && typeof options.loop !== "boolean") throw new TypeError("Loop must be a boolean");
         return new SoundPlayback(this, sdl2bind.audioPlay(this._device, id, options.loop ?? false, volume), volume);
     }
+    /** Load streamed music from a file. One music track can play alongside sound effects. */
+    loadMusic(id: string, filename: string): void {
+        this.checkOpen();
+        if (typeof id !== "string" || !id || typeof filename !== "string" || !filename) throw new TypeError("Music needs an ID and filename");
+        sdl2bind.audioMusicLoad(this._device, id, filename);
+    }
+    playMusic(id: string, options: SoundOptions = {}): SoundPlayback {
+        this.checkOpen();
+        const volume = volumeValue(options.volume ?? 1);
+        if (options.loop !== undefined && typeof options.loop !== "boolean") throw new TypeError("Loop must be a boolean");
+        return new SoundPlayback(this, sdl2bind.audioMusicPlay(this._device, id, options.loop ?? false, volume), volume);
+    }
+    unloadMusic(id: string): void { this.checkOpen(); sdl2bind.audioGlobal(this._device, "unloadMusic", id); }
     unloadSound(id: string): void {
         this.checkOpen(); sdl2bind.audioGlobal(this._device, "unload", id); this._durations.delete(id);
     }

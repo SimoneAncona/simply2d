@@ -1,3 +1,5 @@
+import { rectanglesOverlap as overlaps } from "../lib/collisions.js";
+
 // Small platforming model for the Mario example, in logical canvas pixels.
 export const TILE = 16;
 export const WORLD_WIDTH = 1344;
@@ -23,7 +25,6 @@ export const platforms = [
 const coinPositions = [[72, 124], [112, 96], [128, 96], [192, 64], [208, 64], [336, 124], [400, 96],
     [432, 96], [480, 64], [496, 64], [576, 96], [752, 124], [800, 96], [880, 64], [912, 64], [992, 96], [1120, 124], [1200, 76]];
 const checkpoints = [40, 320, 736, 1088];
-const overlaps = (a, b) => a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 const approach = (value, target, amount) => value < target ? Math.min(target, value + amount) : Math.max(target, value - amount);
 
 export class MarioWorld {

@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.0 — 2026-10-13
+## 1.4.0
 
 - **`[Added]`** sprite sheets and time-based animations with looping, pause, reset, and one-shot playback.
 - **`[Added]`** texture cropping, scaling, rotation, flips, opacity, filtering, and unloading.
@@ -15,8 +15,6 @@
 - **`[Changed]`** Mario replaces game.js and demonstrates platforming, shared collisions, animations, effects, and an original OGG background track.
 - **`[Added]`** separate animation, audio, SVG, window-event, and rendering benchmark examples.
 - **`[Updated]`** Windows packages include SDL_mixer, codec dependencies, and licenses; CI verifies installation from the packed release.
-
-Linux installations now require SDL_mixer development libraries. Windows support is x64; Visual Studio C++ tools and Python remain required. Node.js requirements are unchanged from 1.3.8.
 
 ## 1.3.8
 

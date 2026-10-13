@@ -19,7 +19,7 @@ jobs:
           cache: npm
       - name: Install Linux SDL2 development libraries
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev pkg-config
       - name: Download Windows release libraries
         if: runner.os == 'Windows'
         shell: pwsh
@@ -27,7 +27,8 @@ jobs:
           $libraries = @(
             @{ Repo = 'SDL'; Name = 'SDL2'; Version = '2.32.10'; Destination = 'sdl' },
             @{ Repo = 'SDL_image'; Name = 'SDL2_image'; Version = '2.8.12'; Destination = 'sdlimg' },
-            @{ Repo = 'SDL_ttf'; Name = 'SDL2_ttf'; Version = '2.24.0'; Destination = 'sdlttf' }
+            @{ Repo = 'SDL_ttf'; Name = 'SDL2_ttf'; Version = '2.24.0'; Destination = 'sdlttf' },
+            @{ Repo = 'SDL_mixer'; Name = 'SDL2_mixer'; Version = '2.8.2'; Destination = 'sdlmixer' }
           )
           foreach ($library in $libraries) {
             $archive = "$env:RUNNER_TEMP/$($library.Name).zip"
@@ -57,5 +58,22 @@ jobs:
           npm install $archive.FullName --omit=dev
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           $env:SDL_AUDIODRIVER = "dummy"
-          node --input-type=module -e "import { Audio, Canvas } from 'simply2d'; const c = new Canvas('Package smoke test', 16, 16, 0, 0, {mode: 'hidden'}); const a = new Audio(); c.close(); a.stopAll(); a.close();"
+          $smoke = @'
+          import { Audio, Canvas, rectanglesOverlap } from 'simply2d';
+          import { join } from 'node:path';
+          const c = new Canvas('Package smoke test', 16, 16, 0, 0, {mode: 'hidden'});
+          const a = new Audio();
+          c.close();
+          for (const format of ['mp3', 'ogg', 'flac']) {
+            const path = join(process.env.GITHUB_WORKSPACE, 'test', 'assets', 'tone.' + format);
+            a.loadSound(format, path);
+            a.play(format);
+            a.loadMusic(format, path);
+            const track = a.playMusic(format, {loop: true});
+            if (track.state !== 'playing') throw new Error(format + ' music did not start');
+          }
+          if (!rectanglesOverlap({x:0,y:0,width:2,height:2}, {x:1,y:1,width:2,height:2})) throw new Error('Collision exports missing');
+          a.stopAll(); a.close();
+          '@
+          node --input-type=module -e $smoke
           if ($LASTEXITCODE) { exit $LASTEXITCODE }

@@ -74,6 +74,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 	exports.Set("audioPlay", Napi::Function::New<SDLAudio::play>(env));
 	exports.Set("audioControl", Napi::Function::New<SDLAudio::control>(env));
 	exports.Set("audioGlobal", Napi::Function::New<SDLAudio::global>(env));
+	exports.Set("audioMusicLoad", Napi::Function::New<SDLAudio::music_load>(env));
+	exports.Set("audioMusicPlay", Napi::Function::New<SDLAudio::music_play>(env));
 	return exports;
 }
 

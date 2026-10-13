@@ -31,6 +31,9 @@ export declare class Audio {
     loadSound(id: string, source: string | Uint8Array): number;
     getSoundDuration(id: string): number;
     play(id: string, options?: SoundOptions): SoundPlayback;
+    loadMusic(id: string, filename: string): void;
+    playMusic(id: string, options?: SoundOptions): SoundPlayback;
+    unloadMusic(id: string): void;
     unloadSound(id: string): void;
     pause(): void;
     resume(): void;

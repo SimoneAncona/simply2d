@@ -2,6 +2,11 @@
 
 ## 1.4.0 (in development)
 
+- **`[Added]`** reusable rectangle, circle, point, intersection, and penetration collision helpers.
+- **`[Updated]`** audio uses SDL_mixer for MP3, OGG, FLAC, and WAV effects plus streamed music.
+- **`[Updated]`** Mario uses shared collisions and an original OGG background melody.
+- **`[Updated]`** Windows bundles SDL_mixer DLLs, import libraries, and codec dependencies.
+
 - **`[Added]`** sprite sheets and time-based animations.
 - **`[Added]`** texture cropping, scaling, rotation, flips, opacity, filtering, and unloading.
 - **`[Added]`** synchronous drawing batches and a paced loop with elapsed frame time.

@@ -14,10 +14,16 @@ const canvas = new Canvas("Simply2D — Mario platformer", 320, 180, 0, 0, { sca
 canvas.loadTexture("characters", asset("mario-sprites.png"));
 canvas.loadTexture("tiles", asset("mario-tiles.png"));
 canvas.loadFont("ui", asset("Roboto-Regular.ttf"));
-let audio;
+let audio, music;
 let muted = false;
 if (!process.argv.includes("--no-audio")) {
-    try { audio = new Audio(); loadGameSounds(audio); audio.volume = 0.4; }
+    try {
+        audio = new Audio();
+        loadGameSounds(audio);
+        audio.loadMusic("theme", asset("platform-theme.ogg"));
+        audio.volume = 0.4;
+        music = audio.playMusic("theme", { loop: true, volume: 0.3 });
+    }
     catch (error) { audio?.close(); audio = undefined; console.warn(`Audio unavailable: ${error.message}`); }
 }
 canvas.onWindowClose(() => audio?.close());
@@ -37,7 +43,7 @@ canvas.onKeyDown(key => {
     if (jumpKeys.has(key) && !paused) game.jump();
     if (key === "P") paused = !paused;
     if (key === "M") { muted = !muted; if (audio) audio.volume = muted ? 0 : 0.4; }
-    if (key === "R") { audio?.stopAll(); game.restart(); camera = 0; walk.play(true); paused = false; }
+    if (key === "R") { audio?.stopAll(); if (audio) music = audio.playMusic("theme", { loop: true, volume: 0.3 }); game.restart(); camera = 0; walk.play(true); paused = false; }
     if (key === "Escape") canvas.requestClose();
 });
 canvas.onKeyUp(key => { keys.delete(key); if (jumpKeys.has(key)) game.releaseJump(); });
@@ -106,7 +112,7 @@ canvas.loop(deltaMs => {
             run: keys.has("Left Shift") || keys.has("Right Shift") });
         if (game.deaths > before.deaths) sound("fall");
         else if (game.player.vy < 0 && before.vy >= 0) sound("jump");
-        if (game.won && !before.won) sound("win");
+        if (game.won && !before.won) { music?.stop(); sound("win"); }
         else if (game.score > before.score) sound("coin");
         walk.update(deltaMs);
         coinAnimation.update(deltaMs);

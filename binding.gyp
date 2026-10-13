@@ -23,6 +23,7 @@
             'include_dirs': [
                 "<(module_root_dir)/include/sdl/",
                 "<(module_root_dir)/include/sdlimg/",
+                "<(module_root_dir)/include/sdlmixer/",
                 "<!@(node -p \"require('node-addon-api').include\")",
             ],
             'conditions': [
@@ -31,6 +32,7 @@
                         "<(module_root_dir)/bin/sdl/winx64/SDL2.lib",
                         "<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.lib",
                         '<(module_root_dir)/bin/sdlttf/winx64/SDL2_ttf.lib',
+                        '<(module_root_dir)/bin/sdlmixer/winx64/SDL2_mixer.lib',
                     ],
                     'copies': [
                         {
@@ -39,6 +41,14 @@
                                 '<(module_root_dir)/bin/sdl/winx64/SDL2.dll',
                                 '<(module_root_dir)/bin/sdlimg/winx64/SDL2_image.dll',
                                 '<(module_root_dir)/bin/sdlttf/winx64/SDL2_ttf.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/SDL2_mixer.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libgme.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libogg-0.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libopus-0.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libopusfile-0.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libwavpack-1.dll',
+                                '<(module_root_dir)/bin/sdlmixer/winx64/libxmp.dll',
+
                                 '<(module_root_dir)/bin/sdlimg/winx64/libavif-16.dll',
                                 '<(module_root_dir)/bin/sdlimg/winx64/libtiff-5.dll',
                                 '<(module_root_dir)/bin/sdlimg/winx64/libwebp-7.dll',
@@ -50,7 +60,7 @@
                 }],
                 ["OS==\"linux\"", {
                     "libraries": [
-                        "<!@(pkg-config --libs sdl2 SDL2_image SDL2_ttf)"
+                        "<!@(pkg-config --libs sdl2 SDL2_image SDL2_ttf SDL2_mixer)"
                     ]
                 }]
             ]

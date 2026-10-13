@@ -8,3 +8,5 @@ The Mario artwork depicts Nintendo characters and is kept within the examples.
 `mario.png`, `png_test.png`, and `Roboto-Regular.ttf` were already in this repository.
 
 `star.svg` is an original vector illustration for the SVG example. Audio effects in `../sounds.js` are synthesized by the example and require no external assets.
+
+`platform-theme.ogg` is an original synthesized melody generated with `toneWav` from `examples/sounds.js`, then encoded with FFmpeg.
